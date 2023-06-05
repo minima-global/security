@@ -1,0 +1,9 @@
+.splash {
+  display: grid;
+  height: 100vh;
+}
+.splash button {
+  align-self: flex-end;
+  justify-self: stretch;
+  margin-bottom: 5vh;
+}

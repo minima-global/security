@@ -1,2 +1,2 @@
 # Security
- Secure your node
+ Secure your node and lock up your funds
