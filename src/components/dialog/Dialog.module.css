@@ -1,0 +1,153 @@
+.grid {
+  height: 100vh;
+  display: grid;
+
+  grid-template-columns: 1fr;
+  grid-template-rows: 56px 1fr 85px;
+  grid-template-areas:
+              'header'
+              'main'
+              'footer';
+  
+  position: absolute;
+  z-index: 44;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  z-index: 43;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+.grid > header {
+  grid-area: header;
+}
+.grid > main {
+  grid-area: main;
+  height: calc(100vh - 85px - 56px);
+  overflow: hidden;
+
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr minmax(0, 560px) 1fr;
+}
+.grid main > section {
+  grid-area: 1 / 2 / 1 / 3;
+
+  display: grid;
+  margin: 0 16px;
+  background: none!important;
+}
+.grid main > section.full {
+  grid-area: 1 / 1 / 1 / 4
+}
+.grid > footer {
+  grid-area: footer;
+}
+.dialog {
+  background-color: #F9F9FA;
+  border-radius: 4px;
+  padding: 40px 24px;
+
+  align-self: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.dialog div:first-of-type, .button__wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.button__wrapper {
+  align-items: center;
+}
+.dialog div:first-of-type h6 {
+  margin: 0;
+  padding: 0;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: #08090B;
+  text-align: center;
+}
+.dialog div:first-of-type p {
+  margin: 0;
+  padding: 0;
+  color: #08090B;
+  line-height: 1.5;
+  letter-spacing: 0.05em;
+  font-weight: 400;
+  font-size: 1rem;
+  text-align: center;
+  word-break: break-all;
+}
+.dialog div:last-of-type button:first-of-type {
+  background-color: #08090B;
+  border-radius: 4px;
+  padding: 16px;
+  color: #FFFFFF;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  font-weight: 600;
+  border: none;
+  width: 100%;
+  font-size: 1rem;
+  text-align: center;
+}
+.dialog div:last-of-type .primary:hover {
+  background-color: #464C4F;
+  cursor: pointer;
+}
+.dialog div:last-of-type .primary:disabled {
+  background-color: #D3D3D8;
+  cursor: not-allowed;
+}
+.dialog div:last-of-type .secondary {
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid #17191C;
+  padding-bottom: 4px;
+  color: #17191C;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  font-weight: 600;
+  max-width: fit-content;
+  padding: 0;
+  font-size: 1rem;
+}
+.dialog div:last-of-type .secondary:hover {
+  cursor: pointer;
+  color: #91919D;
+  border-color: #91919D;
+}
+
+@media screen and (min-width: 700px) {
+  
+  
+  .grid {  
+    grid-template-rows: 56px 48px 1fr;
+    
+    grid-template-areas: 
+              'header'
+              'subheader'
+              'main';
+  }
+
+
+  .grid > footer {
+    grid-area: subheader;
+  }
+  
+}
+

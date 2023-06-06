@@ -5,6 +5,8 @@ import UnderstandRadio from "../../UI/UnderstandRadio";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import * as rpc from "../../../__minima__/libs/RPC";
+import { useContext, useState } from "react";
+import { appContext } from "../../../AppContext";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -37,6 +39,8 @@ interface IProps {
   dismiss: () => void;
 }
 const LockPrivateKeys = ({ display, dismiss }: IProps) => {
+  const { setModal } = useContext(appContext);
+  const [confirmation, setConfirmation] = useState(true);
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -48,8 +52,48 @@ const LockPrivateKeys = ({ display, dismiss }: IProps) => {
 
       await rpc
         .vaultPasswordLock(formData.password)
-        .then((r) => {
-          formik.setStatus(r);
+        .then((response) => {
+          const isPending = response === 0;
+          const isConfirmed = response === 1;
+
+          if (isPending) {
+            return setModal({
+              display: true,
+              title: (
+                <img alt="vault-lock-confirmation" src="./assets/lock.svg" />
+              ),
+              subtitle: (
+                <p>
+                  Your command is now pending. <br />
+                  To accept this command you need to navigate to the pending
+                  page and accept it.
+                </p>
+              ),
+              buttonTitle: "Close",
+              dismiss: false,
+              primaryButtonAction: () => setModal(false),
+              primaryButtonDisable: false,
+              cancelAction: null,
+            });
+          }
+          if (isConfirmed) {
+            return setModal({
+              display: true,
+              title: (
+                <img alt="vault-lock-confirmation" src="./assets/lock.svg" />
+              ),
+              subtitle: (
+                <p>
+                  You have locked your <br /> private keys
+                </p>
+              ),
+              buttonTitle: "Close",
+              dismiss: false,
+              primaryButtonAction: () => setModal(false),
+              primaryButtonDisable: false,
+              cancelAction: null,
+            });
+          }
         })
         .catch(() => {
           formik.setStatus("Something went wrong");
@@ -57,8 +101,6 @@ const LockPrivateKeys = ({ display, dismiss }: IProps) => {
     },
     validationSchema: validationSchema,
   });
-
-  console.log("form validity", formik.errors);
 
   return (
     <SlideScreen display={display}>
