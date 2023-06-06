@@ -2,9 +2,9 @@ import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import Input from "../../UI/Input";
 import UnderstandRadio from "../../UI/UnderstandRadio";
-import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import * as yup from "yup";
+import * as rpc from "../../../__minima__/libs/RPC";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -43,8 +43,17 @@ const LockPrivateKeys = ({ display, dismiss }: IProps) => {
       confirmPassword: "",
       understand: false,
     },
-    onSubmit: (formData) => {
+    onSubmit: async (formData) => {
       console.log("submitting..");
+
+      await rpc
+        .vaultPasswordLock(formData.password)
+        .then((r) => {
+          formik.setStatus(r);
+        })
+        .catch(() => {
+          formik.setStatus("Something went wrong");
+        });
     },
     validationSchema: validationSchema,
   });
