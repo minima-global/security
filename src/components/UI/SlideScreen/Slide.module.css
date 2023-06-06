@@ -1,0 +1,16 @@
+.slideEnter {
+  right: -1000px;
+}
+.slideEnterActive {
+  right: 0;
+  transition: right 200ms;
+}
+
+
+.slideExit {
+  right: 0;
+}
+.slideExitActive {
+  right: -1000px;
+  transition: opacity 200ms;
+}

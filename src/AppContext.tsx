@@ -26,7 +26,7 @@ const AppProvider = ({ children }: IProps) => {
   useEffect(() => {
     if (!loaded.current) {
       loaded.current = true;
-      (window as any).MDS.init((evt: any) => {
+      (window as any).MDS.init(() => {
         rpc.isVaultLocked().then((r) => {
           setVaultLocked(r);
         });

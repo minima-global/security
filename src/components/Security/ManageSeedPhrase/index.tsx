@@ -1,7 +1,11 @@
 import Button from "../../UI/Button";
 import SlideScreen from "../../UI/SlideScreen";
 
-const ManageSeedPhrase = ({ display, dismiss }) => {
+interface IProps {
+  display: any;
+  dismiss: any;
+}
+const ManageSeedPhrase = ({ display, dismiss }: IProps) => {
   return (
     <SlideScreen display={display}>
       <div className="flex flex-col h-full bg-black">

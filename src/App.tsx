@@ -1,11 +1,11 @@
 import "./App.css";
-import Dashboard from "./pages/Dashboard";
 import AppProvider from "./AppContext";
+import { Outlet } from "react-router-dom";
 
 function App() {
   return (
     <AppProvider>
-      <Dashboard />
+      <Outlet />
     </AppProvider>
   );
 }

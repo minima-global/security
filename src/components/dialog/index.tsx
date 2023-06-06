@@ -3,6 +3,7 @@ import { useTransition, animated } from "@react-spring/web";
 import { modalAnimation } from "../../animations";
 import { useContext } from "react";
 import { appContext } from "../../AppContext";
+import { FluidValue } from "@react-spring/shared";
 
 interface IProps {
   title: any;
@@ -22,13 +23,13 @@ const Dialog = ({
   primaryButtonAction,
   primaryButtonDisable = false,
 }: IProps) => {
-  const { modal, setModal } = useContext(appContext);
+  const { modal } = useContext(appContext);
   const transition: any = useTransition(modal?.display, modalAnimation as any);
 
   return (
     <div>
       {transition(
-        (style, display) =>
+        (style: string | FluidValue<string, any> | undefined, display: any) =>
           display && (
             <div>
               <div className={styles["backdrop"]} />

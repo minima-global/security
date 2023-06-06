@@ -2,13 +2,6 @@ import { useContext } from "react";
 import styles from "./Dialog.module.css";
 import { appContext } from "../../AppContext";
 
-interface IProps {
-  buttonTitle: string;
-  dismiss: boolean;
-  primaryButtonAction: () => any;
-  cancelAction?: () => void;
-  primaryButtonDisable?: boolean;
-}
 const OldDialog = () => {
   const { modal } = useContext(appContext);
 

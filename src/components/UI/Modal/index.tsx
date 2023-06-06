@@ -1,20 +1,20 @@
-import { PropsWithChildren } from 'react';
-import { useTransition, animated } from '@react-spring/web';
-import { modalAnimation } from '../../../animations';
-import Button from '../Button';
+import { useTransition, animated } from "@react-spring/web";
+import { modalAnimation } from "../../../animations";
+import Button from "../Button";
 
 type ModalProps = {
   display: boolean;
   frosted: boolean;
   closeAtBottom?: () => void;
+  children: any;
 };
 
-export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
+export const Modal = ({
   frosted = false,
   closeAtBottom,
   display,
   children,
-}) => {
+}: ModalProps) => {
   const transition: any = useTransition(display, modalAnimation as any);
 
   return (
@@ -38,7 +38,9 @@ export const Modal: React.FC<PropsWithChildren<ModalProps>> = ({
                   </Button>
                 </div>
               )}
-              {frosted && <div className="absolute z-[70] bg-black bg-opacity-90 top-0 left-0 w-full h-full"></div>}
+              {frosted && (
+                <div className="absolute z-[70] bg-black bg-opacity-90 top-0 left-0 w-full h-full"></div>
+              )}
             </div>
           )}
         </div>

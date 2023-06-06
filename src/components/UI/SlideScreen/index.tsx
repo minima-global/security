@@ -1,35 +1,25 @@
-import * as React from 'react';
-import { useTransition, animated } from '@react-spring/web';
-import { slideAnimation } from '../../../animations';
-
-type SlideScreenProps = {
+import { CSSTransition } from "react-transition-group";
+import styles from "./Slide.module.css";
+interface IProps {
   display: boolean;
-};
+  children: any;
+}
 
-export const SlideScreen: React.FC<React.PropsWithChildren<SlideScreenProps>> = ({ display, children }) => {
-  const transition: any = useTransition(display, slideAnimation as any);
-
+export const SlideScreen = ({ display, children }: IProps) => {
   return (
-    <div>
-      {transition((style, display) => (
-        <div>
-          {display && (
-            <div className="mx-auto absolute w-full h-full z-[60] flex items-center justify-center text-black">
-              {display && (
-                <div className="relative z-[60] w-full h-full">
-                  <animated.div
-                    style={style}
-                    className="modal h-full text-white box-shadow-lg mx-auto relative overflow-hidden"
-                  >
-                    {children}
-                  </animated.div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      ))}
-    </div>
+    <CSSTransition
+      in={display}
+      unmountOnExit
+      timeout={200}
+      className={{
+        enter: styles.slideEnter,
+        enterDone: styles.slideEnterActive,
+        exit: styles.slideExit,
+        exitActive: styles.slideExitActive,
+      }}
+    >
+      {children}
+    </CSSTransition>
   );
 };
 

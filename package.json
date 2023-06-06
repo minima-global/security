@@ -1,14 +1,18 @@
 {
   "name": "security",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "description": "secure your node",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "package": "bash ./create-minima-app/package.sh",
+    "postbuild": "node ./create-minima-app/postbuild.js",
+    "zip": "npm run build && npm run postbuild && npm run package",
+    "src:zip": "bash create-minima-app/zip.sh"
   },
   "dependencies": {
     "@react-spring/web": "^9.7.2",
@@ -17,6 +21,8 @@
     "formik": "^2.4.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-router-dom": "^6.11.2",
+    "react-transition-group": "^4.4.5",
     "vite-plugin-html": "^3.2.0",
     "yup": "^1.2.0"
   },

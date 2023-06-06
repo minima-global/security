@@ -1,14 +1,12 @@
 import { useTransition, animated } from "@react-spring/web";
 import { modalAnimation } from "../../../animations";
 
-type FullScreenProps = {
-  display: boolean;
-};
+interface IProps {
+  children?: any;
+  display?: any;
+}
 
-const FullScreen: React.FC<React.PropsWithChildren<FullScreenProps>> = ({
-  children,
-  display,
-}) => {
+const FullScreen = ({ children, display }: IProps) => {
   const transition: any = useTransition(display, modalAnimation as any);
 
   return (

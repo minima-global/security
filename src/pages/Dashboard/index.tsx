@@ -1,15 +1,15 @@
-import { useContext, useState } from "react";
-import Security from "../../components/Security";
+import { useContext } from "react";
 import Grid from "../../components/UI/Grid";
-import Splash from "../../components/Splash";
 import TitleBar from "../../components/TitleBar";
 import { appContext } from "../../AppContext";
+import { Outlet, matchPath, useLocation, useMatch } from "react-router-dom";
+import Security from "../../components/Security";
 import OldDialog from "../../components/oldDialog";
 
 const Dashboard = () => {
-  const [visited, setVisited] = useState(true);
-
   const { modal } = useContext(appContext);
+  const location = useLocation();
+  const index = matchPath({ path: "/dashboard" }, location.pathname);
 
   return (
     <Grid
@@ -23,13 +23,9 @@ const Dashboard = () => {
         <>
           {!!modal.display && <OldDialog />}
 
-          {!modal.display && (
-            <>
-              {!visited && <Splash />}
+          {!!index && !modal.display && <Security />}
 
-              {!!visited && <Security />}
-            </>
-          )}
+          {!index && !modal.display && <Outlet />}
         </>
       }
     />
