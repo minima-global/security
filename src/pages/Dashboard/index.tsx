@@ -2,13 +2,18 @@ import { useState } from "react";
 import Security from "../../components/Security";
 import Grid from "../../components/UI/Grid";
 import Splash from "../../components/Splash";
+import TitleBar from "../../components/TitleBar";
 
 const Dashboard = () => {
-  const [visited, setVisited] = useState(false);
+  const [visited, setVisited] = useState(true);
 
   return (
     <Grid
-      header={<></>}
+      header={
+        <>
+          <TitleBar />
+        </>
+      }
       footer={<></>}
       content={
         <>
