@@ -18,7 +18,7 @@ export function Security() {
   const [restoreFromBackup, setShowRestoreFromBackup] = useState(false);
   const [chainResync, setShowChainResync] = useState(false);
   const [manageSeedPhrase, setShowManageSeedPhrase] = useState(false);
-  console.log("isvault locked", vaultLocked);
+
   return (
     <FullScreen display={display}>
       <LockPrivateKeys
@@ -98,7 +98,7 @@ export function Security() {
             onClick={() => setShowLockKeys(true)}
             className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer"
           >
-            Lock private keys
+            {!vaultLocked ? "Lock private keys" : "Unlock private keys"}
             <div className="absolute right-0 top-0 h-full px-5 flex items-center">
               <svg
                 width="8"
