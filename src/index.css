@@ -17,14 +17,92 @@
   --core-grey-5: #F9F9FA;
   --core-grey-20: #E9E9EB;
   --core-grey-80: #A7A7B0;
+  --core-grey-100: #D9D9D9;
   --core-black-100: #08090B;
   --core-black-contrast: #17191C;
   --core-black-contrast-2: #282B2E;
   --core-black-contrast-3: #464C4F;
 }
 
+.form-error-message {
+  color: var(--status-red);
+  font-weight: 600;
+}
+.form-error-border {
+  border: 1px solid var(--status-red)
+}
+
+input[type="checkbox"] {
+  /* Add if not using autoprefixer */
+  -webkit-appearance: none;
+  appearance: none;
+  /* For iOS < 15 to remove gradient background */
+  background-color: var(--core-grey-100);
+  /* Not removed via appearance */
+  margin: 0;
+  font: inherit;
+  color: #BDBDC4;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #BDBDC4;
+  border-radius: 50%;
+  transform: translateY(-0.01em);
+}
+input[type="checkbox"]:disabled {
+  background-color: #E9E9EB;
+}
+input[type="checkbox"] {
+  /* ...existing styles */
+
+  display: grid;
+  place-content: center;
+}
+input[type="checkbox"]::before {
+  content: "";
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: 120ms transform ease-in-out;
+  box-shadow: inset 1em 1em #08090B;
+}
+input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+
+input[type="checkbox"]::before {
+  /* ...existing styles */
+
+  /* Windows High Contrast Mode */
+  background-color: #08090B;
+}
+
+input[type="checkbox"]:focus {
+  outline: max(2px, 0.15em) solid #08090B;
+  outline-offset: max(2px, 0.15em);
+}
+
+.password-label {
+  color: var(--core-grey-80);
+}
+
+.understand-label {
+  color: #08090B;
+}
+
+.core-grey-100 {
+  background-color: var(--core-grey-100);
+}
+
+.text-core-grey-80 {
+  color: var(--core-grey-80);
+}
+
 .core-black-contrast-2 {
   background-color: var(--core-black-contrast-2);
+}
+.core-black-contrast {
+  background-color: var(--core-black-contrast);
 }
 
 

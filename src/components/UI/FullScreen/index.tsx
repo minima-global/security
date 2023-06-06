@@ -16,7 +16,7 @@ const FullScreen: React.FC<React.PropsWithChildren<FullScreenProps>> = ({
       {transition((style, display) => (
         <div>
           {display && (
-            <div className="mx-auto absolute w-full h-full z-[60] flex items-center justify-center text-black">
+            <div className="mx-auto w-full h-full z-[60] flex items-center justify-center text-black">
               {display && (
                 <div className="relative z-[60] w-full h-full">
                   <animated.div

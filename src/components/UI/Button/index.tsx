@@ -1,21 +1,30 @@
-import * as React from 'react';
+import * as React from "react";
 
 type ButtonProps = {
-  variant?: 'primary' | 'secondary';
-  onClick?: () => void;
+  variant?: "primary" | "secondary";
+  onClick?: any;
+  disabled?: boolean;
+  type?: "submit" | "button";
 };
 
-const Button: React.FC<React.PropsWithChildren<ButtonProps>> = ({ variant = 'primary', onClick = null, children }) => {
-  let base = 'w-full px-4 py-3.5 rounded font-bold disabled:opacity-40 disabled:cursor-not-allowed';
+const Button: React.FC<React.PropsWithChildren<ButtonProps>> = ({
+  variant = "primary",
+  onClick = null,
+  children,
+  disabled,
+  type = "button",
+}) => {
+  let base =
+    "w-full px-4 py-3.5 rounded font-bold disabled:opacity-40 disabled:cursor-not-allowed";
 
-  if (variant === 'primary') {
-    base += ' text-black bg-white';
-  } else if (variant === 'secondary') {
-    base += ' text-white core-black-contrast-3';
+  if (variant === "primary") {
+    base += " text-black bg-white";
+  } else if (variant === "secondary") {
+    base += " text-white core-black-contrast-3";
   }
 
   return (
-    <button className={base} onClick={onClick}>
+    <button type={type} disabled={disabled} className={base} onClick={onClick}>
       {children}
     </button>
   );
