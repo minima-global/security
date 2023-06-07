@@ -9,26 +9,27 @@ const RestoreFromBackup = () => {
   const { setModal } = useContext(appContext);
   const [step, setStep] = useState<0 | 1>(0);
 
+  const InformativeDialog = {
+    content: (
+      <div>
+        <img alt="informative" src="./assets/error.svg" />{" "}
+        <h1 className="text-2xl">Please note</h1>
+        <p className="text-xl">
+          Restoring a backup is irreversible. <br /> Consider taking a backup of
+          this node before restoring.
+        </p>
+      </div>
+    ),
+    primaryActions: <Button onClick={() => setStep(1)}>Continue</Button>,
+    secondaryActions: <Button onClick={() => setModal(false)}>Cancel</Button>,
+  };
+
   const handleWarningClick = () => {
     setModal({
       display: true,
-      title: (
-        <div>
-          <img alt="error" src="./assets/error.svg" />{" "}
-          <h1 className="text-2xl">Please note</h1>
-        </div>
-      ),
-      subtitle: (
-        <p>
-          Restoring a backup is irreversible. <br /> Consider taking a backup of
-          this node <br /> before restoring.
-        </p>
-      ),
-      buttonTitle: "Continue",
-      dismiss: true,
-      primaryButtonAction: () => setStep(1),
-      primaryButtonDisable: false,
-      cancelAction: () => setModal(false),
+      content: InformativeDialog.content,
+      primaryActions: InformativeDialog.primaryActions,
+      secondaryActions: InformativeDialog.secondaryActions,
     });
   };
 

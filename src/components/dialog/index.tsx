@@ -16,16 +16,19 @@ const Dialog = () => {
               {modal.content}
 
               {modal.primaryActions && (
-                <div className={`${styles.primaryActions}`}>
-                  {modal.primaryActions}
-                </div>
-              )}
-              {/* this button is rendered in the dialog but only for desktop */}
-              {modal.secondaryActions && (
-                <div
-                  className={`${styles.desktop_only} ${styles.secondaryActions}`}
-                >
-                  {modal.secondaryActions}
+                <div className="flex flex-col gap-3">
+                  <div className={`${styles.primaryActions}`}>
+                    {modal.primaryActions}
+                  </div>
+
+                  {/* this button is rendered in the dialog but only for desktop */}
+                  {modal.secondaryActions && (
+                    <div
+                      className={`${styles.desktop_only} ${styles.secondaryActions}`}
+                    >
+                      {modal.secondaryActions}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
