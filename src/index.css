@@ -36,6 +36,10 @@
   border: 1px solid var(--status-red)
 }
 
+.make-svg-inline svg {
+  display: inline;
+}
+
 input[type="checkbox"] {
   /* Add if not using autoprefixer */
   -webkit-appearance: none;

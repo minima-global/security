@@ -4,14 +4,16 @@ interface IProps {
   header: any;
   content: any;
   footer: any;
+
+  fullHeight?: boolean;
 }
-const Grid = ({ header, content, footer }: IProps) => {
+const Grid = ({ header, content, footer, fullHeight = false }: IProps) => {
   return (
     <div className={styles["grid"]}>
       <header>{header}</header>
 
       <main>
-        <section>{content}</section>
+        <section className={fullHeight ? "!h-screen" : ""}>{content}</section>
       </main>
 
       <footer>{footer}</footer>

@@ -11,6 +11,8 @@ import {
 import Splash from "./components/Splash/index.tsx";
 import Dashboard from "./pages/Dashboard/index.tsx";
 import LockPrivateKeys from "./components/Security/LockPrivateKeys/index.tsx";
+import BackupNode from "./components/Security/BackUpNode/index.tsx";
+import RestoreFromBackup from "./components/Security/RestoreFromBackup/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -18,6 +20,8 @@ const router = createHashRouter(
       <Route index element={<Splash />} />
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="lockprivatekeys" element={<LockPrivateKeys />} />
+        <Route path="backup" element={<BackupNode />} />
+        <Route path="restore" element={<RestoreFromBackup />} />
       </Route>
     </Route>
   )

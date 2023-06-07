@@ -3,11 +3,10 @@
   display: grid;
 
   grid-template-columns: 1fr;
-  grid-template-rows: 56px 1fr 85px;
+  grid-template-rows: 56px 1fr;
   grid-template-areas:
               'header'
-              'main'
-              'footer';
+              'main';
   
   position: absolute;
   z-index: 44;
@@ -31,9 +30,10 @@
 }
 .grid > main {
   grid-area: main;
-  height: calc(100vh - 85px - 56px);
+  height: calc(100vh - 56px);
   overflow: hidden;
-
+  overflow-y: overlay;
+  
   display: grid;
   grid-template-rows: 1fr;
   grid-template-columns: 1fr minmax(0, 560px) 1fr;
@@ -44,15 +44,32 @@
   display: grid;
   margin: 0 16px;
   background: none!important;
+
+  grid-template-areas: 
+            'main';
+}
+.grid main > section {
+  grid-template-areas:
+              'main'
+              'actions';
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+}
+
+.grid main > section div:first-of-type {
+  grid-area: main;
+}
+.grid main > section div:last-of-type {
+  grid-area: actions;
+}
+.grid main > section div:first-of-type {
+  grid-area: main;
 }
 .grid main > section.full {
   grid-area: 1 / 1 / 1 / 4
 }
-.grid > footer {
-  grid-area: footer;
-}
 .dialog {
-  background-color: #F9F9FA;
+  background-color: #282B2E;
   border-radius: 4px;
   padding: 40px 24px;
 
@@ -84,7 +101,7 @@
 .dialog div:first-of-type p {
   margin: 0;
   padding: 0;
-  color: #08090B;
+  color: #E9E9EB;
   line-height: 1.5;
   letter-spacing: 0.05em;
   font-weight: 400;
@@ -92,11 +109,11 @@
   text-align: center;
   word-break: break-all;
 }
-.dialog div:last-of-type button:first-of-type {
-  background-color: #08090B;
+.primaryActions button {
+  background-color: #F9F9FA;
   border-radius: 4px;
-  padding: 16px;
-  color: #FFFFFF;
+  padding: 16px!important;
+  color: #282B2E;
   letter-spacing: 0.05em;
   line-height: 1.5;
   font-weight: 600;
@@ -105,48 +122,68 @@
   font-size: 1rem;
   text-align: center;
 }
-.dialog div:last-of-type .primary:hover {
-  background-color: #464C4F;
+.primaryActions button:hover {
+  opacity: 0.8;
   cursor: pointer;
 }
-.dialog div:last-of-type .primary:disabled {
+.primaryActions button:disabled {
   background-color: #D3D3D8;
   cursor: not-allowed;
 }
-.dialog div:last-of-type .secondary {
-  background-color: transparent;
+.secondaryActions button {
+  background-color: #464C4F!important;
   border: none;
-  border-bottom: 1px solid #17191C;
-  padding-bottom: 4px;
-  color: #17191C;
+  border-radius: 4px;
+  padding: 16px;
+  color: #F9F9FA;
   letter-spacing: 0.05em;
   line-height: 1.5;
   font-weight: 600;
-  max-width: fit-content;
-  padding: 0;
   font-size: 1rem;
+  width: 100%;
 }
-.dialog div:last-of-type .secondary:hover {
+.secondaryActions button:hover {
   cursor: pointer;
   color: #91919D;
   border-color: #91919D;
 }
 
-@media screen and (min-width: 700px) {
+
+.desktop_only {
+  display: none;
+}
+.mobile_only {
+  display: block;
+  margin-bottom: 2.375em;
+}
+@media screen and (min-width: 560px) {
   
   
   .grid {  
-    grid-template-rows: 56px 48px 1fr;
+    grid-template-rows: 56px 1fr auto;
     
     grid-template-areas: 
               'header'
-              'subheader'
-              'main';
+              'main'
+              'footer';
   }
 
+  .grid main > section {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+                'main';
+  }
 
   .grid > footer {
-    grid-area: subheader;
+    grid-area: footer;
+  }
+
+  .desktop_only {
+    display: block;
+  }
+  .mobile_only {
+    display: none;
   }
   
 }

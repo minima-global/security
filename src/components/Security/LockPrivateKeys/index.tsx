@@ -41,6 +41,37 @@ const validationSchemaUnlock = yup.object().shape({
 const LockPrivateKeys = () => {
   const { setModal, vaultLocked } = useContext(appContext);
   const navigate = useNavigate();
+
+  const PendingDialog = {
+    content: <p>Your action is pending.</p>,
+    primaryActions: null,
+    secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+  };
+  const UnlockDialog = {
+    content: (
+      <div>
+        <img alt="unlock" src="./assets/lock_open.svg" />{" "}
+        <h1 className="text-2xl">
+          You have unlocked <br /> your private keys
+        </h1>
+      </div>
+    ),
+    primaryActions: null,
+    secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+  };
+  const LockDialog = {
+    content: (
+      <div>
+        <img alt="unlock" src="./assets/lock.svg" />{" "}
+        <h1 className="text-2xl">
+          You have locked <br /> your private keys
+        </h1>
+      </div>
+    ),
+    primaryActions: null,
+    secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+  };
+
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -59,39 +90,17 @@ const LockPrivateKeys = () => {
             if (isPending) {
               return setModal({
                 display: true,
-                title: (
-                  <img alt="vault-lock-confirmation" src="./assets/lock.svg" />
-                ),
-                subtitle: (
-                  <p>
-                    Your command is now pending. <br />
-                    To accept this command you need to navigate to the pending
-                    page and accept it.
-                  </p>
-                ),
-                buttonTitle: "Close",
-                dismiss: false,
-                primaryButtonAction: () => setModal(false),
-                primaryButtonDisable: false,
-                cancelAction: null,
+                content: PendingDialog.content,
+                primaryActions: PendingDialog.primaryActions,
+                secondaryActions: PendingDialog.secondaryActions,
               });
             }
             if (isConfirmed) {
               return setModal({
                 display: true,
-                title: (
-                  <img alt="vault-lock-confirmation" src="./assets/lock.svg" />
-                ),
-                subtitle: (
-                  <p>
-                    You have locked your <br /> private keys
-                  </p>
-                ),
-                buttonTitle: "Close",
-                dismiss: false,
-                primaryButtonAction: () => setModal(false),
-                primaryButtonDisable: false,
-                cancelAction: null,
+                content: LockDialog.content,
+                primaryActions: LockDialog.primaryActions,
+                secondaryActions: LockDialog.secondaryActions,
               });
             }
           })
@@ -110,39 +119,17 @@ const LockPrivateKeys = () => {
             if (isPending) {
               return setModal({
                 display: true,
-                title: (
-                  <img alt="vault-lock-confirmation" src="./assets/lock.svg" />
-                ),
-                subtitle: (
-                  <p>
-                    Your command is now pending. <br />
-                    To accept this command you need to navigate to the pending
-                    page and accept it.
-                  </p>
-                ),
-                buttonTitle: "Close",
-                dismiss: false,
-                primaryButtonAction: () => setModal(false),
-                primaryButtonDisable: false,
-                cancelAction: null,
+                content: PendingDialog.content,
+                primaryActions: PendingDialog.primaryActions,
+                secondaryActions: PendingDialog.secondaryActions,
               });
             }
             if (isConfirmed) {
               return setModal({
                 display: true,
-                title: (
-                  <img alt="vault-lock-confirmation" src="./assets/lock.svg" />
-                ),
-                subtitle: (
-                  <p>
-                    You have unlocked your <br /> private keys
-                  </p>
-                ),
-                buttonTitle: "Close",
-                dismiss: false,
-                primaryButtonAction: () => setModal(false),
-                primaryButtonDisable: false,
-                cancelAction: null,
+                content: UnlockDialog.content,
+                primaryActions: UnlockDialog.primaryActions,
+                secondaryActions: UnlockDialog.secondaryActions,
               });
             }
           })
@@ -158,7 +145,7 @@ const LockPrivateKeys = () => {
     <>
       <SlideScreen display={!vaultLocked}>
         <div className="flex flex-col h-full bg-black">
-          <div className="pt-10 px-6 pb-6 flex flex-col h-full">
+          <div className="flex flex-col h-full">
             <div
               onClick={() => navigate(-1)}
               className="cursor-pointer mb-4 flex items-center"
@@ -182,7 +169,7 @@ const LockPrivateKeys = () => {
               Lock private keys
             </div>
             <div className="flex flex-col gap-5">
-              <div className="core-black-contrast rounded">
+              <div className="rounded">
                 <div>
                   <div className="mb-3 text-left pb-2">
                     Locking your private keys prevents unauthorised access to
@@ -309,7 +296,7 @@ const LockPrivateKeys = () => {
 
       <SlideScreen display={!!vaultLocked}>
         <div className="flex flex-col h-full bg-black">
-          <div className="pt-10 px-6 pb-6 flex flex-col h-full">
+          <div className="flex flex-col h-full">
             <div
               onClick={() => navigate(-1)}
               className="cursor-pointer mb-4 flex items-center"
@@ -333,7 +320,7 @@ const LockPrivateKeys = () => {
               Unlock private keys
             </div>
             <div className="flex flex-col gap-5">
-              <div className="core-black-contrast rounded">
+              <div className="rounded">
                 <div>
                   <div className="mb-3 text-left pb-2">
                     Your seed phrase and private keys will be visible and

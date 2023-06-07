@@ -14,13 +14,9 @@ const AppProvider = ({ children }: IProps) => {
   const [vaultLocked, setVaultLocked] = useState(false);
   const [modal, setModal] = useState({
     display: false,
-    title: null,
-    subtitle: null,
-    buttonTitle: null,
-    dismiss: false,
-    primaryButtonAction: null,
-    primaryButtonDisable: false,
-    cancelAction: null,
+    content: null,
+    primaryActions: null,
+    secondaryActions: null,
   });
 
   useEffect(() => {

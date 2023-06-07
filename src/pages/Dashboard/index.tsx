@@ -2,9 +2,9 @@ import { useContext } from "react";
 import Grid from "../../components/UI/Grid";
 import TitleBar from "../../components/TitleBar";
 import { appContext } from "../../AppContext";
-import { Outlet, matchPath, useLocation, useMatch } from "react-router-dom";
+import { Outlet, matchPath, useLocation } from "react-router-dom";
 import Security from "../../components/Security";
-import OldDialog from "../../components/oldDialog";
+import Dialog from "../../components/Dialog";
 
 const Dashboard = () => {
   const { modal } = useContext(appContext);
@@ -21,7 +21,7 @@ const Dashboard = () => {
       footer={<></>}
       content={
         <>
-          {!!modal.display && <OldDialog />}
+          {!!modal.display && <Dialog />}
 
           {!!index && !modal.display && <Security />}
 

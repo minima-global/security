@@ -1,16 +1,43 @@
+import { useNavigate } from "react-router-dom";
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
-interface IProps {
-  display: boolean;
-  dismiss: () => void;
-}
-const RestoreFromBackup = ({ display, dismiss }: IProps) => {
+import { useContext, useState } from "react";
+import { appContext } from "../../../AppContext";
+
+const RestoreFromBackup = () => {
+  const navigate = useNavigate();
+  const { setModal } = useContext(appContext);
+  const [step, setStep] = useState<0 | 1>(0);
+
+  const handleWarningClick = () => {
+    setModal({
+      display: true,
+      title: (
+        <div>
+          <img alt="error" src="./assets/error.svg" />{" "}
+          <h1 className="text-2xl">Please note</h1>
+        </div>
+      ),
+      subtitle: (
+        <p>
+          Restoring a backup is irreversible. <br /> Consider taking a backup of
+          this node <br /> before restoring.
+        </p>
+      ),
+      buttonTitle: "Continue",
+      dismiss: true,
+      primaryButtonAction: () => setStep(1),
+      primaryButtonDisable: false,
+      cancelAction: () => setModal(false),
+    });
+  };
+
   return (
-    <SlideScreen display={display}>
+    <SlideScreen display={true}>
       <div className="flex flex-col h-full bg-black">
-        <div className="pt-10 px-6 pb-6 flex flex-col h-full">
+        <div className="flex flex-col h-full">
           <div
-            onClick={dismiss}
+            onClick={() => navigate("/dashboard")}
             className="cursor-pointer mb-4 flex items-center"
           >
             <svg
@@ -26,32 +53,26 @@ const RestoreFromBackup = ({ display, dismiss }: IProps) => {
                 fill="#F9F9FA"
               />
             </svg>
-            Settings
+            Security
           </div>
-          <div className="mt-6 text-2xl mb-8">Peer list</div>
+          <div className="mt-6 text-2xl mb-8 text-left">
+            Restore from backup
+          </div>
           <div className="flex flex-col gap-5">
-            <div className="core-black-contrast p-4 rounded">
-              <div>
-                <div className="mb-3">What are peers?</div>
-                <p className="text-core-grey">
-                  Lorem ipsum dolor sit amet consectetur. In diam sem cras
-                  pellentesque luctus leo faucibus ullamcorper venenatis.
-                </p>
-              </div>
-            </div>
             <div className="core-black-contrast-2 p-4 rounded">
-              <div className="mb-6">
-                Lorem ipsum dolor sit amet consectetur. Ipsum leo sagittis
-                mattis egestas mattis pulvinar pulvinar in tempor.
+              <div className="mb-6 text-left">
+                Restoring a backup will wipe this node and import the private
+                keys, coin proofs and chain state provided in the backup. <br />{" "}
+                <br /> Once restored, the node will attempt to sync to the
+                latest block, please be patient.
               </div>
-              <Button>Share peers</Button>
+              <Button onClick={handleWarningClick}>Restore</Button>
             </div>
-            <div className="core-black-contrast-2 p-4 rounded">
-              <div className="mb-6">
-                Lorem ipsum dolor sit amet consectetur. Ipsum leo sagittis
-                mattis egestas mattis pulvinar pulvinar in tempor.
-              </div>
-              <Button>Import peers</Button>
+            <div className="text-left">
+              <p className="text-sm password-label mr-4 ml-4">
+                Once the syncing process has finished, the node will shutdown.
+                Restart the node for the restore to take effect.
+              </p>
             </div>
           </div>
         </div>

@@ -1,10 +1,11 @@
 interface IProps {
-  onChange?: any;
   placeholder: string;
   type: string;
   value: string;
   name: string;
   id: string;
+  onChange?: any;
+  onBlur?: any;
   showPassword?: boolean;
   endIcon?: any;
   startIcon?: any;
@@ -12,6 +13,7 @@ interface IProps {
 }
 const Input = ({
   onChange,
+  onBlur,
   placeholder,
   type,
   name,
@@ -34,6 +36,7 @@ const Input = ({
       <div className="flex flex-row">
         {!!startIcon && <div>{startIcon}</div>}
         <input
+          onBlur={onBlur}
           name={name}
           id={id}
           value={value}
