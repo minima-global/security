@@ -10,6 +10,7 @@ import * as rpc from "../../../__minima__/libs/RPC";
 import * as fileManager from "../../../__minima__/libs/fileManager";
 
 import { appContext } from "../../../AppContext";
+import useIsMinimaBrowser from "../../../hooks/useIsMinimaBrowser";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -40,15 +41,23 @@ const BackupNode = () => {
   const navigate = useNavigate();
   const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
   const [step, setStep] = useState<0 | 1>(0);
-  const [alreadyClickedDownload, setAlreadyClicked] = useState(false);
+
+  const isMinimaBrowser = useIsMinimaBrowser();
   const { setModal } = useContext(appContext);
 
+  const getFileData = async (mdsfile: string) => {
+    try {
+      const hexstring = await fileManager.loadBinaryToHex(mdsfile);
+      const filedata = hexstring;
+      return filedata;
+    } catch (error) {
+      return "";
+    }
+  };
   const createDownloadLink = async (mdsfile: string) => {
     try {
       const hexstring = await fileManager.loadBinaryToHex(mdsfile);
       const filedata = hexstring;
-      console.log(filedata);
-
       const b64 = (window as any).MDS.util.hexToBase64(filedata);
       const binaryData = (window as any).MDS.util.base64ToArrayBuffer(b64);
       const blob = new Blob([binaryData], {
@@ -56,14 +65,13 @@ const BackupNode = () => {
       });
 
       const url = URL.createObjectURL(blob);
-      console.log("url", url);
       return url;
     } catch (error) {
       return "";
     }
   };
 
-  const SomethingWentWrong = (error: string) => {
+  const SomethingWentWrong = () => {
     return {
       content: (
         <div>
@@ -90,20 +98,42 @@ const BackupNode = () => {
       primaryActions: (
         <Button
           onClick={() => {
-            setAlreadyClicked(true);
             if (linkDownload.current) {
               linkDownload.current.click();
             }
           }}
-          extraClass={alreadyClickedDownload ? "core-black-contrast-2" : ""}
         >
-          {!alreadyClickedDownload ? "Download" : "Download again"}
+          Download
           <a
             ref={linkDownload}
             className="hidden"
             href={download}
             download={name}
           ></a>
+        </Button>
+      ),
+      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+    };
+  };
+  const downloadBackupDialogAndroid = (file: string, filedata: string) => {
+    return {
+      content: (
+        <div>
+          <img alt="download" src="./assets/download.svg" />{" "}
+          <h1 className="text-2xl mb-8">Download your backup</h1>
+          <p>
+            Download your backup file and save it in <br />a secure location.
+          </p>
+        </div>
+      ),
+      primaryActions: (
+        <Button
+          onClick={() => {
+            // @ts-ignore
+            Android.blobDownload(file, filedata);
+          }}
+        >
+          Download
         </Button>
       ),
       secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
@@ -125,19 +155,31 @@ const BackupNode = () => {
           formData.password
         );
 
-        const downloadlink = await createDownloadLink("/backups/" + fileName);
+        if (isMinimaBrowser) {
+          const filedata = await getFileData(fileName);
+          const dialog = downloadBackupDialogAndroid(fileName, filedata);
+          setModal({
+            display: true,
+            content: dialog.content,
+            primaryActions: dialog.primaryActions,
+            secondaryActions: dialog.secondaryActions,
+          });
+        }
 
-        const dialog = downloadBackupDialog(downloadlink, fileName);
+        if (!isMinimaBrowser) {
+          const downloadlink = await createDownloadLink("/backups/" + fileName);
+          const dialog = downloadBackupDialog(downloadlink, fileName);
 
-        setModal({
-          display: true,
-          content: dialog.content,
-          primaryActions: dialog.primaryActions,
-          secondaryActions: dialog.secondaryActions,
-        });
+          setModal({
+            display: true,
+            content: dialog.content,
+            primaryActions: dialog.primaryActions,
+            secondaryActions: dialog.secondaryActions,
+          });
+        }
       } catch (error: any) {
         console.error(error);
-        const somethingwrong = SomethingWentWrong(error.message);
+        const somethingwrong = SomethingWentWrong();
         setModal({
           display: true,
           content: somethingwrong.content,

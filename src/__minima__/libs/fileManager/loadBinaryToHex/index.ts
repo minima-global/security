@@ -1,4 +1,4 @@
-export const loadBinaryToHex = (filename: string) => {
+export const loadBinaryToHex = (filename: string): Promise<string> => {
   return new Promise((resolve, reject) => {
     (window as any).MDS.file.loadbinary(filename, (res: any) => {
       if (!res.status) reject(res.error ? res.error : "RPC FAILED");

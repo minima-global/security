@@ -1,7 +1,7 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
-import { useContext, useRef, useState } from "react";
+import { useContext, useState } from "react";
 import { appContext } from "../../../AppContext";
 import Input from "../../UI/Input";
 import { useFormik } from "formik";
@@ -14,7 +14,7 @@ const validationSchema = yup.object().shape({
 const RestoreFromBackup = () => {
   const navigate = useNavigate();
   const { setModal } = useContext(appContext);
-  const [step, setStep] = useState<0 | 1>(0);
+  const [step] = useState<0 | 1>(0);
 
   const formik = useFormik({
     initialValues: {
@@ -140,16 +140,6 @@ const RestoreFromBackup = () => {
               </svg>
             }
           />
-          <Button
-            type="submit"
-            onClick={() => {
-              console.log("submitting form");
-              console.log(formik.values.file);
-              formik.submitForm();
-            }}
-          >
-            Restore
-          </Button>
         </form>
       </div>
     ),

@@ -13,7 +13,6 @@ const AppProvider = ({ children }: IProps) => {
 
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState(false);
-  const [baseFiles, setBaseFiles] = useState([]);
   const [modal, setModal] = useState({
     display: false,
     content: null,
