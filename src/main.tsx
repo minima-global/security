@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard/index.tsx";
 import LockPrivateKeys from "./components/Security/LockPrivateKeys/index.tsx";
 import BackupNode from "./components/Security/BackUpNode/index.tsx";
 import RestoreFromBackup from "./components/Security/RestoreFromBackup/index.tsx";
+import RestoreDialog from "./components/RestoreDialog/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -21,7 +22,9 @@ const router = createHashRouter(
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="lockprivatekeys" element={<LockPrivateKeys />} />
         <Route path="backup" element={<BackupNode />} />
-        <Route path="restore" element={<RestoreFromBackup />} />
+        <Route path="restore" element={<RestoreFromBackup />}>
+          <Route path="frombackup" element={<RestoreDialog />} />
+        </Route>
       </Route>
     </Route>
   )

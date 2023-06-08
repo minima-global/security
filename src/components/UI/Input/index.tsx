@@ -4,6 +4,7 @@ interface IProps {
   value: any;
   name: string;
   id: string;
+  extraClass?: string;
   accept?: string;
   onChange?: any;
   onBlur?: any;
@@ -21,6 +22,7 @@ const Input = ({
   type,
   name,
   id,
+  extraClass,
   showPassword,
   value,
   endIcon,
@@ -31,6 +33,9 @@ const Input = ({
   let base =
     "core-black-contrast w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed";
 
+  if (extraClass) {
+    base += ` ${extraClass};`;
+  }
   if (error) {
     base += " form-error-border";
   }
