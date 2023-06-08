@@ -5,6 +5,7 @@ type ButtonProps = {
   onClick?: any;
   disabled?: boolean;
   type?: "submit" | "button";
+  extraClass?: string;
 };
 
 const Button: React.FC<React.PropsWithChildren<ButtonProps>> = ({
@@ -13,9 +14,14 @@ const Button: React.FC<React.PropsWithChildren<ButtonProps>> = ({
   children,
   disabled,
   type = "button",
+  extraClass,
 }) => {
   let base =
     "w-full px-4 py-3.5 rounded font-bold disabled:opacity-40 disabled:cursor-not-allowed";
+
+  if (extraClass && extraClass.length) {
+    base += ` ${extraClass ? extraClass + "" : ""}`;
+  }
 
   if (variant === "primary") {
     base += " text-black bg-white";

@@ -82,36 +82,14 @@
 .dialog p {
   word-break: break-word!important;
 }
-.dialog div:first-of-type, .button__wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
+.dialog img {
+  display: inline;
 }
+
 .button__wrapper {
   align-items: center;
 }
-.dialog div:first-of-type h6 {
-  margin: 0;
-  padding: 0;
-  line-height: 1.5;
-  letter-spacing: 0.05em;
-  font-weight: 700;
-  font-size: 1.125rem;
-  color: #08090B;
-  text-align: center;
-}
-.dialog div:first-of-type p {
-  margin: 0;
-  padding: 0;
-  color: #E9E9EB;
-  line-height: 1.5;
-  letter-spacing: 0.05em;
-  font-weight: 400;
-  font-size: 1rem;
-  text-align: center;
-  word-break: break-all;
-}
+
 .primaryActions button {
   background-color: #F9F9FA;
   border-radius: 4px;

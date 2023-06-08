@@ -1,6 +1,7 @@
 import { createContext, useRef, useState, useEffect } from "react";
 
 import * as rpc from "./__minima__/libs/RPC";
+import * as fileManager from "./__minima__/libs/fileManager";
 
 export const appContext = createContext({} as any);
 
@@ -12,6 +13,7 @@ const AppProvider = ({ children }: IProps) => {
 
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState(false);
+  const [baseFiles, setBaseFiles] = useState([]);
   const [modal, setModal] = useState({
     display: false,
     content: null,
@@ -22,10 +24,19 @@ const AppProvider = ({ children }: IProps) => {
   useEffect(() => {
     if (!loaded.current) {
       loaded.current = true;
-      (window as any).MDS.init(() => {
-        rpc.isVaultLocked().then((r) => {
-          setVaultLocked(r);
-        });
+      (window as any).MDS.init((msg: any) => {
+        if (msg.event === "inited") {
+          rpc.isVaultLocked().then((r) => {
+            setVaultLocked(r);
+          });
+
+          fileManager.listFiles("/").then((r: any) => {
+            console.log(r);
+          });
+          fileManager.createFolder("backups").then((r) => {
+            console.log(r);
+          });
+        }
       });
     }
   }, [loaded]);

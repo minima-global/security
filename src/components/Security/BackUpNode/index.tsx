@@ -1,11 +1,15 @@
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
+import { RefObject, useContext, useRef, useState } from "react";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
 import Input from "../../UI/Input";
+import * as rpc from "../../../__minima__/libs/RPC";
+import * as fileManager from "../../../__minima__/libs/fileManager";
+
+import { appContext } from "../../../AppContext";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -34,9 +38,77 @@ const validationSchema = yup.object().shape({
 
 const BackupNode = () => {
   const navigate = useNavigate();
+  const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
   const [step, setStep] = useState<0 | 1>(0);
-  const inputFile: any = useRef(null);
-  const [file, setFile] = useState<any>([]);
+  const [alreadyClickedDownload, setAlreadyClicked] = useState(false);
+  const { setModal } = useContext(appContext);
+
+  const createDownloadLink = async (mdsfile: string) => {
+    try {
+      const hexstring = await fileManager.loadBinaryToHex(mdsfile);
+      const filedata = hexstring;
+      console.log(filedata);
+
+      const b64 = (window as any).MDS.util.hexToBase64(filedata);
+      const binaryData = (window as any).MDS.util.base64ToArrayBuffer(b64);
+      const blob = new Blob([binaryData], {
+        type: "application/octet-stream",
+      });
+
+      const url = URL.createObjectURL(blob);
+      console.log("url", url);
+      return url;
+    } catch (error) {
+      return "";
+    }
+  };
+
+  const SomethingWentWrong = (error: string) => {
+    return {
+      content: (
+        <div>
+          <img alt="download" src="./assets/download.svg" />{" "}
+          <h1 className="text-2xl mb-8">Something went wrong!</h1>
+          <p>Please go back and try again.</p>
+        </div>
+      ),
+      primaryActions: null,
+      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+    };
+  };
+  const downloadBackupDialog = (download: string, name: string) => {
+    return {
+      content: (
+        <div>
+          <img alt="download" src="./assets/download.svg" />{" "}
+          <h1 className="text-2xl mb-8">Download your backup</h1>
+          <p>
+            Download your backup file and save it in <br />a secure location.
+          </p>
+        </div>
+      ),
+      primaryActions: (
+        <Button
+          onClick={() => {
+            setAlreadyClicked(true);
+            if (linkDownload.current) {
+              linkDownload.current.click();
+            }
+          }}
+          extraClass={alreadyClickedDownload ? "core-black-contrast-2" : ""}
+        >
+          {!alreadyClickedDownload ? "Download" : "Download again"}
+          <a
+            ref={linkDownload}
+            className="hidden"
+            href={download}
+            download={name}
+          ></a>
+        </Button>
+      ),
+      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+    };
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -44,20 +116,38 @@ const BackupNode = () => {
       confirmPassword: "",
     },
     onSubmit: async (formData) => {
-      console.log("submitting..");
+      try {
+        const minidappPath = await fileManager.getPath();
+
+        const fileName = "minimaBackup_" + new Date().getTime() + ".bak";
+        await rpc.createBackup(
+          minidappPath + "/backups/" + fileName,
+          formData.password
+        );
+
+        const downloadlink = await createDownloadLink("/backups/" + fileName);
+
+        const dialog = downloadBackupDialog(downloadlink, fileName);
+
+        setModal({
+          display: true,
+          content: dialog.content,
+          primaryActions: dialog.primaryActions,
+          secondaryActions: dialog.secondaryActions,
+        });
+      } catch (error: any) {
+        console.error(error);
+        const somethingwrong = SomethingWentWrong(error.message);
+        setModal({
+          display: true,
+          content: somethingwrong.content,
+          primaryActions: null,
+          secondaryActions: somethingwrong.secondaryActions,
+        });
+      }
     },
     validationSchema: validationSchema,
   });
-
-  const handleClick = () => {
-    if (inputFile.current && "click" in inputFile.current) {
-      inputFile.current.click();
-    }
-  };
-  const handleChange = (e) => {
-    console.log(e);
-    setFile([...file, e.target.files[0]]);
-  };
 
   return (
     <>
@@ -105,6 +195,7 @@ const BackupNode = () => {
                     chain and consider locking your private keys so they are not
                     exposed if someone gets hold of your backup.
                   </div>
+
                   <Button onClick={() => setStep(1)}>Backup node</Button>
                 </div>
                 <div className="text-left">
@@ -274,22 +365,7 @@ const BackupNode = () => {
                       }
                     />
                     <div className="flex flex-col">
-                      <input
-                        ref={inputFile}
-                        className="hidden"
-                        type="file"
-                        id="backup"
-                        name="backup"
-                        accept="*"
-                        onChange={handleChange}
-                        directory="true"
-                        webkitdirectory="true"
-                      />
-                      <Button
-                        onClick={handleClick}
-                        type="submit"
-                        disabled={!formik.isValid}
-                      >
+                      <Button type="submit" disabled={!formik.isValid}>
                         Back up node
                       </Button>
                     </div>
