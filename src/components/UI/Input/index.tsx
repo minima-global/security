@@ -4,6 +4,7 @@ interface IProps {
   value?: any;
   name: string;
   id: string;
+  autoComplete?: string;
   extraClass?: string;
   accept?: string;
   onChange?: any;
@@ -19,6 +20,7 @@ const Input = ({
   onChange,
   onBlur,
   placeholder,
+  autoComplete,
   type,
   name,
   id,
@@ -46,6 +48,7 @@ const Input = ({
         {!!startIcon && <div>{startIcon}</div>}
         {webbie && (
           <input
+            autoComplete={autoComplete ? autoComplete : ""}
             directory=""
             webkitdirectory="true"
             onBlur={onBlur}
@@ -61,6 +64,7 @@ const Input = ({
         )}
         {!webbie && (
           <input
+            autoComplete={autoComplete ? autoComplete : ""}
             onBlur={onBlur}
             name={name}
             id={id}

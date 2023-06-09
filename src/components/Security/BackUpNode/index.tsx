@@ -331,10 +331,12 @@ const BackupNode = () => {
                 </div>
                 <div className="core-black-contrast-2 p-4 rounded flex flex-col gap-6">
                   <form
+                    autoComplete="off"
                     onSubmit={formik.handleSubmit}
                     className="flex flex-col gap-4"
                   >
                     <Input
+                      autoComplete="new-password"
                       type="password"
                       placeholder="Enter password"
                       name="password"
@@ -371,6 +373,7 @@ const BackupNode = () => {
                       }
                     />
                     <Input
+                      autoComplete="new-password"
                       type="password"
                       placeholder="Confirm password"
                       name="confirmPassword"

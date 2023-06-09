@@ -39,7 +39,7 @@ const validationSchemaUnlock = yup.object().shape({
 });
 
 const LockPrivateKeys = () => {
-  const { setModal, vaultLocked } = useContext(appContext);
+  const { setModal, vaultLocked, checkVaultLocked } = useContext(appContext);
   const navigate = useNavigate();
 
   const PendingDialog = {
@@ -56,8 +56,17 @@ const LockPrivateKeys = () => {
         </h1>
       </div>
     ),
-    primaryActions: null,
-    secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+    primaryActions: <div></div>,
+    secondaryActions: (
+      <Button
+        onClick={() => {
+          setModal(false);
+          checkVaultLocked();
+        }}
+      >
+        Close
+      </Button>
+    ),
   };
   const LockDialog = {
     content: (
@@ -68,8 +77,17 @@ const LockPrivateKeys = () => {
         </h1>
       </div>
     ),
-    primaryActions: null,
-    secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+    primaryActions: <div></div>,
+    secondaryActions: (
+      <Button
+        onClick={() => {
+          setModal(false);
+          checkVaultLocked();
+        }}
+      >
+        Close
+      </Button>
+    ),
   };
 
   const formik = useFormik({
@@ -84,6 +102,8 @@ const LockPrivateKeys = () => {
         await rpc
           .vaultPasswordLock(formData.password)
           .then((response) => {
+            console.log(response);
+
             const isPending = response === 0;
             const isConfirmed = response === 1;
 
@@ -113,6 +133,7 @@ const LockPrivateKeys = () => {
         await rpc
           .vaultPasswordUnlock(formData.password)
           .then((response) => {
+            console.log(response);
             const isPending = response === 0;
             const isConfirmed = response === 1;
 
@@ -186,10 +207,12 @@ const LockPrivateKeys = () => {
               </div>
               <div className="core-black-contrast-2 p-4 rounded flex flex-col gap-6">
                 <form
+                  autoComplete="off"
                   onSubmit={formik.handleSubmit}
                   className="flex flex-col gap-4"
                 >
                   <Input
+                    autoComplete="new-password"
                     type="password"
                     placeholder="Enter password"
                     name="password"
@@ -225,6 +248,7 @@ const LockPrivateKeys = () => {
                     }
                   />
                   <Input
+                    autoComplete="new-password"
                     type="password"
                     placeholder="Confirm password"
                     name="confirmPassword"
@@ -332,10 +356,12 @@ const LockPrivateKeys = () => {
               </div>
               <div className="core-black-contrast-2 p-4 rounded flex flex-col gap-6">
                 <form
+                  autoComplete="off"
                   onSubmit={formik.handleSubmit}
                   className="flex flex-col gap-4"
                 >
                   <Input
+                    autoComplete="new-password"
                     type="password"
                     placeholder="Enter password"
                     name="password"

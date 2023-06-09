@@ -20,14 +20,18 @@ const AppProvider = ({ children }: IProps) => {
     secondaryActions: null,
   });
 
+  const checkVaultLocked = () => {
+    rpc.isVaultLocked().then((r) => {
+      setVaultLocked(r);
+    });
+  };
+
   useEffect(() => {
     if (!loaded.current) {
       loaded.current = true;
       (window as any).MDS.init((msg: any) => {
         if (msg.event === "inited") {
-          rpc.isVaultLocked().then((r) => {
-            setVaultLocked(r);
-          });
+          checkVaultLocked();
 
           fileManager.listFiles("/").then((r: any) => {
             console.log(r);
@@ -42,7 +46,14 @@ const AppProvider = ({ children }: IProps) => {
 
   return (
     <appContext.Provider
-      value={{ showSecurity, setShowSecurity, modal, setModal, vaultLocked }}
+      value={{
+        showSecurity,
+        setShowSecurity,
+        modal,
+        setModal,
+        vaultLocked,
+        checkVaultLocked,
+      }}
     >
       {children}
     </appContext.Provider>

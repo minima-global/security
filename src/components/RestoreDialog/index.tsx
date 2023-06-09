@@ -19,6 +19,42 @@ const RestoreDialog = () => {
   const navigate = useNavigate();
   const { vaultLocked } = useContext(appContext);
 
+  const { setModal } = useContext(appContext);
+
+  const SomethingWentWrong = () => {
+    return {
+      content: (
+        <div>
+          <img alt="download" src="./assets/download.svg" />{" "}
+          <h1 className="text-2xl mb-8">Something went wrong!</h1>
+          <p>Please go back and try again.</p>
+        </div>
+      ),
+      primaryActions: null,
+      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+    };
+  };
+  const SuccessDialog = {
+    content: (
+      <div>
+        <img alt="informative" src="./assets/error.svg" />{" "}
+        <h1 className="text-2xl mb-4">Good news.</h1>
+        <p>You have restored from backup!</p>
+      </div>
+    ),
+    primaryActions: (
+      <Button
+        onClick={() => {
+          setModal(false);
+          navigate("/dashboard/restore");
+        }}
+      >
+        Continue
+      </Button>
+    ),
+    secondaryActions: null,
+  };
+
   const formik = useFormik({
     initialValues: {
       password: "",
@@ -54,8 +90,23 @@ const RestoreDialog = () => {
           .then((response: any) => {
             console.log(response);
           });
+
+        setModal({
+          display: true,
+          content: SuccessDialog.content,
+          primaryActions: SuccessDialog.primaryActions,
+          secondaryActions: null,
+        });
       } catch (error) {
         console.error(error);
+
+        const dialog = SomethingWentWrong();
+        setModal({
+          display: true,
+          content: dialog.content,
+          primaryActions: dialog.primaryActions,
+          secondaryActions: dialog.secondaryActions,
+        });
       }
     },
     validationSchema: validationSchema,
@@ -76,6 +127,7 @@ const RestoreDialog = () => {
                   latest block, please be patient.
                 </p>
                 <form
+                  autoComplete="off"
                   className="flex flex-col gap-4"
                   onSubmit={formik.handleSubmit}
                 >
@@ -118,6 +170,7 @@ const RestoreDialog = () => {
                     }
                   />
                   <Input
+                    autoComplete="new-password"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     placeholder="Enter password"
