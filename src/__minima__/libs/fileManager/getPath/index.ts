@@ -1,6 +1,6 @@
-export const getPath = (): Promise<string> => {
+export const getPath = (filename: string): Promise<string> => {
   return new Promise((resolve, reject) => {
-    (window as any).MDS.file.getpath("/", (response: any) => {
+    (window as any).MDS.file.getpath(filename, (response: any) => {
       if (response.status) {
         resolve(response.response.getpath.path);
       }

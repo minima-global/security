@@ -1,7 +1,7 @@
 interface IProps {
   placeholder: string;
   type: string;
-  value: any;
+  value?: any;
   name: string;
   id: string;
   extraClass?: string;

@@ -1,28 +1,62 @@
-import { useContext } from "react";
-import styles from "./Dialog.module.css";
-import { appContext } from "../../AppContext";
-import { useFormik } from "formik";
-
-import Input from "../UI/Input";
-
-import * as yup from "yup";
-import Button from "../UI/Button";
 import { useNavigate } from "react-router-dom";
+import styles from "./Dialog.module.css";
+import Input from "../UI/Input";
+import Button from "../UI/Button";
+import { useFormik } from "formik";
+import * as yup from "yup";
+import * as utils from "../../utils";
+import * as fM from "../../__minima__/libs/fileManager";
+import * as rpc from "../../__minima__/libs/RPC";
+import { useContext } from "react";
+import { appContext } from "../../AppContext";
 
 const validationSchema = yup.object().shape({
+  file: yup.mixed().required("Please select a backup file (.bak)"),
   password: yup.string().required("Please enter a password"),
 });
 
 const RestoreDialog = () => {
   const navigate = useNavigate();
+  const { vaultLocked } = useContext(appContext);
 
   const formik = useFormik({
     initialValues: {
       password: "",
       file: undefined,
     },
-    onSubmit: (formData) => {
-      console.log("Restore Form Submit", formData);
+    onSubmit: async (formData) => {
+      try {
+        if (!formData.file) {
+          formik.setFieldError(
+            "file",
+            "Please select a valid (.bak) backup file."
+          );
+        }
+
+        console.log(formData.file);
+        const arrayBuffer = await utils.blobToArrayBuffer(formData.file);
+        const hex = utils.bufferToHex(arrayBuffer);
+        await fM.saveFileAsBinary(
+          "/backups/" + (formData.file as any).name,
+          hex
+        );
+
+        await fM.listFiles("/backups").then((response: any) => {
+          console.log(response);
+        });
+
+        const fullPath = await fM.getPath(
+          "/backups/" + (formData.file as any).name
+        );
+        console.log("fullPath", fullPath);
+        await rpc
+          .restoreFromBackup(fullPath, formData.password)
+          .then((response: any) => {
+            console.log(response);
+          });
+      } catch (error) {
+        console.error(error);
+      }
     },
     validationSchema: validationSchema,
   });
@@ -48,13 +82,14 @@ const RestoreDialog = () => {
                   <Input
                     extraClass="core-grey-20"
                     accept=".bak"
-                    onChange={formik.handleChange}
+                    onChange={(e) => {
+                      formik.setFieldValue("file", e.target.files[0]);
+                    }}
                     onBlur={formik.handleBlur}
                     placeholder="Select file"
                     type="file"
-                    id="restore"
-                    name="restore"
-                    value={formik.values.file}
+                    id="file"
+                    name="file"
                     endIcon={
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -122,12 +157,7 @@ const RestoreDialog = () => {
 
               <div className="flex flex-col gap-3">
                 <div className={`${styles.primaryActions}`}>
-                  <Button
-                    onClick={() => {
-                      console.log(formik);
-                      formik.submitForm();
-                    }}
-                  >
+                  <Button type="submit" onClick={() => formik.submitForm()}>
                     Restore
                   </Button>
                 </div>

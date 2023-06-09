@@ -147,7 +147,7 @@ const BackupNode = () => {
     },
     onSubmit: async (formData) => {
       try {
-        const minidappPath = await fileManager.getPath();
+        const minidappPath = await fileManager.getPath("/");
 
         const fileName = "minimaBackup_" + new Date().getTime() + ".bak";
         await rpc.createBackup(
