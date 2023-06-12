@@ -39,8 +39,10 @@ const validationSchema = yup.object().shape({
 
 const BackupNode = () => {
   const navigate = useNavigate();
-  const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
   const [step, setStep] = useState<0 | 1>(0);
+  const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
+  const [hidePassword, togglePasswordVisibility] = useState(true);
+  const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(true);
 
   const isMinimaBrowser = useIsMinimaBrowser();
   const { setModal } = useContext(appContext);
@@ -337,7 +339,10 @@ const BackupNode = () => {
                   >
                     <Input
                       autoComplete="new-password"
-                      type="password"
+                      handleEndIconClick={() =>
+                        togglePasswordVisibility((prevState) => !prevState)
+                      }
+                      type={hidePassword ? "password" : "text"}
                       placeholder="Enter password"
                       name="password"
                       id="password"
@@ -374,7 +379,12 @@ const BackupNode = () => {
                     />
                     <Input
                       autoComplete="new-password"
-                      type="password"
+                      handleEndIconClick={() =>
+                        toggleConfirmPasswordVisiblity(
+                          (prevState) => !prevState
+                        )
+                      }
+                      type={hideConfirmPassword ? "password" : "text"}
                       placeholder="Confirm password"
                       name="confirmPassword"
                       id="confirmPassword"

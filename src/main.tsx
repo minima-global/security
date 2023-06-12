@@ -16,6 +16,7 @@ import RestoreFromBackup from "./components/Security/RestoreFromBackup/index.tsx
 import RestoreDialog from "./components/RestoreDialog/index.tsx";
 import ChainResync from "./components/Security/ChainResync/index.tsx";
 import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
+import ResyncDialog from "./components/Security/ChainResync/ResyncDialog/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -24,7 +25,9 @@ const router = createHashRouter(
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="lockprivatekeys" element={<LockPrivateKeys />} />
         <Route path="backup" element={<BackupNode />} />
-        <Route path="resync" element={<ChainResync />} />
+        <Route path="resync" element={<ChainResync />}>
+          <Route path="resyncing" element={<ResyncDialog />} />
+        </Route>
         <Route path="manageseedphrase" element={<ManageSeedPhrase />} />
         <Route path="restore" element={<RestoreFromBackup />}>
           <Route path="frombackup" element={<RestoreDialog />} />

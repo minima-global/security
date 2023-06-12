@@ -4,7 +4,7 @@ import { appContext } from "../../AppContext";
 
 const Dialog = () => {
   const { modal } = useContext(appContext);
-  console.log("Rendering modal with properties", modal);
+
   return (
     <div>
       <div className={styles["backdrop"]}></div>

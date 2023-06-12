@@ -7,7 +7,7 @@ import * as yup from "yup";
 import * as utils from "../../utils";
 import * as fM from "../../__minima__/libs/fileManager";
 import * as rpc from "../../__minima__/libs/RPC";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { appContext } from "../../AppContext";
 
 const validationSchema = yup.object().shape({
@@ -17,7 +17,7 @@ const validationSchema = yup.object().shape({
 
 const RestoreDialog = () => {
   const navigate = useNavigate();
-  // const { vaultLocked } = useContext(appContext);
+  const [hidePassword, togglePasswordVisibility] = useState(true);
 
   const { setModal } = useContext(appContext);
 
@@ -174,7 +174,10 @@ const RestoreDialog = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     placeholder="Enter password"
-                    type="password"
+                    handleEndIconClick={() =>
+                      togglePasswordVisibility((prevState) => !prevState)
+                    }
+                    type={hidePassword ? "password" : "text"}
                     id="password"
                     name="password"
                     value={formik.values.password}

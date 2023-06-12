@@ -13,6 +13,7 @@ const AppProvider = ({ children }: IProps) => {
 
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
   const [modal, setModal] = useState({
     display: false,
     content: null,
@@ -30,6 +31,14 @@ const AppProvider = ({ children }: IProps) => {
     if (!loaded.current) {
       loaded.current = true;
       (window as any).MDS.init((msg: any) => {
+        if (msg.event === "MINIMALOG") {
+          console.log("previousMessage,", logs);
+          const log = msg.data.message;
+          console.log(log);
+
+          setLogs((prevState) => [...prevState, log]);
+        }
+
         if (msg.event === "inited") {
           checkVaultLocked();
 
@@ -53,6 +62,8 @@ const AppProvider = ({ children }: IProps) => {
         setModal,
         vaultLocked,
         checkVaultLocked,
+        logs,
+        setLogs,
       }}
     >
       {children}

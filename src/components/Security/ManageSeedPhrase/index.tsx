@@ -7,7 +7,7 @@ import Input from "../../UI/Input";
 
 const ManageSeedPhrase = () => {
   const navigate = useNavigate();
-  const { setModal, vaultLocked } = useContext(appContext);
+  const { setModal, vaultLocked, logs } = useContext(appContext);
 
   const [host, setHost] = useState("");
   const [error, setError] = useState<false | string>(false);
@@ -16,62 +16,23 @@ const ManageSeedPhrase = () => {
 
   const handleImport = () => {
     setLoading(true);
-    setModal({
-      display: true,
-      content: RestoringDialog.content,
-      primaryActions: RestoringDialog.primaryActions,
-      secondaryActions: RestoringDialog.secondaryActions,
-    });
-    (window as any).MDS.cmd(
-      `archive action:resync host:${host.length ? host : "auto"}`,
-      (response: any) => {
-        console.log(response);
 
-        if (!response.status) {
-          const dialog = somethingWentWrongDialog(
-            response.error ? response.error : "RPC Failed"
-          );
-          setModal({
-            display: true,
-            content: dialog.content,
-            primaryActions: dialog.primaryActions,
-            secondaryActions: dialog.secondaryActions,
-          });
-        }
+    // (window as any).MDS.cmd(
+    //   `archive action:resync host:${host.length ? host : "auto"}`,
+    //   (response: any) => {
+    //     console.log(response);
 
-        if (response.status) {
-          setSuccess(true);
-        }
-      }
-    );
-  };
+    //     if (!response.status) {
+    //       const dialog = somethingWentWrongDialog(
+    //         response.error ? response.error : "RPC Failed"
+    //       );
+    //     }
 
-  const somethingWentWrongDialog = (error: string) => {
-    return {
-      content: (
-        <div>
-          <img alt="download" src="./assets/download.svg" />{" "}
-          <h1 className="text-2xl mb-8">Something went wrong!</h1>
-          <p>{error}</p>
-        </div>
-      ),
-      primaryActions: <div></div>,
-      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
-    };
-  };
-  const RestoringDialog = {
-    content: (
-      <div>
-        <img alt="download" src="./assets/download.svg" />{" "}
-        <h1 className="text-2xl mb-8">Feedback message</h1>
-        <p>
-          Please don't leave this screen whilst the <br /> chain is re-syncing.
-          <br /> <br /> Your node will reboot once it is complete.
-        </p>
-      </div>
-    ),
-    primaryActions: <div></div>,
-    secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+    //     if (response.status) {
+    //       setSuccess(true);
+    //     }
+    //   }
+    // );
   };
 
   return (
@@ -178,10 +139,10 @@ const ManageSeedPhrase = () => {
             </div>
             <div className="text-left">
               <p className="text-sm password-label mr-4 ml-4">
-                You should only do this if you have already tried restarting
-                your node and restoring a recent backup. <br /> <br /> You
-                should only re-sync from your own archive node or one from a
-                trusted source.
+                You should only re-sync from your own archive node or one from a
+                trusted source. <br /> <br /> For a successful restore, the
+                archive node used must have been started prior to the date your
+                coins were received.
               </p>
             </div>
           </div>

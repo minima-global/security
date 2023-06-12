@@ -5,7 +5,7 @@ import UnderstandRadio from "../../UI/UnderstandRadio";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import * as rpc from "../../../__minima__/libs/RPC";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { appContext } from "../../../AppContext";
 import { useNavigate } from "react-router-dom";
 
@@ -39,12 +39,14 @@ const validationSchemaUnlock = yup.object().shape({
 });
 
 const LockPrivateKeys = () => {
-  const { setModal, vaultLocked, checkVaultLocked } = useContext(appContext);
   const navigate = useNavigate();
+  const { setModal, vaultLocked, checkVaultLocked } = useContext(appContext);
+  const [hidePassword, togglePasswordVisibility] = useState(true);
+  const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(true);
 
   const PendingDialog = {
     content: <p>Your action is pending.</p>,
-    primaryActions: null,
+    primaryActions: <div></div>,
     secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
   };
   const UnlockDialog = {
@@ -97,13 +99,10 @@ const LockPrivateKeys = () => {
       understand: false,
     },
     onSubmit: async (formData) => {
-      console.log("submitting..");
       if (!vaultLocked) {
         await rpc
           .vaultPasswordLock(formData.password)
           .then((response) => {
-            console.log(response);
-
             const isPending = response === 0;
             const isConfirmed = response === 1;
 
@@ -212,8 +211,11 @@ const LockPrivateKeys = () => {
                   className="flex flex-col gap-4"
                 >
                   <Input
+                    handleEndIconClick={() =>
+                      togglePasswordVisibility((prevState) => !prevState)
+                    }
+                    type={hidePassword ? "password" : "text"}
                     autoComplete="new-password"
-                    type="password"
                     placeholder="Enter password"
                     name="password"
                     id="password"
@@ -248,8 +250,11 @@ const LockPrivateKeys = () => {
                     }
                   />
                   <Input
+                    handleEndIconClick={() =>
+                      toggleConfirmPasswordVisiblity((prevState) => !prevState)
+                    }
+                    type={hideConfirmPassword ? "password" : "text"}
                     autoComplete="new-password"
-                    type="password"
                     placeholder="Confirm password"
                     name="confirmPassword"
                     id="confirmPassword"
@@ -362,7 +367,10 @@ const LockPrivateKeys = () => {
                 >
                   <Input
                     autoComplete="new-password"
-                    type="password"
+                    handleEndIconClick={() =>
+                      togglePasswordVisibility((prevState) => !prevState)
+                    }
+                    type={hidePassword ? "password" : "text"}
                     placeholder="Enter password"
                     name="password"
                     id="password"

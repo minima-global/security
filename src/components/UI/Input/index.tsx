@@ -14,6 +14,7 @@ interface IProps {
   startIcon?: any;
   error?: string;
   webbie?: boolean;
+  handleEndIconClick?: () => void;
 }
 const Input = ({
   accept,
@@ -25,26 +26,28 @@ const Input = ({
   name,
   id,
   extraClass,
-  showPassword,
   value,
   endIcon,
   startIcon,
   error,
   webbie,
+  handleEndIconClick,
 }: IProps) => {
+  let wrapperBase = "flex flex-row";
+
   let base =
-    "core-black-contrast w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed";
+    "core-black-contrast w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none";
 
   if (extraClass) {
     base += ` ${extraClass}`;
   }
   if (error) {
-    base += " form-error-border";
+    wrapperBase += " form-error-border";
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="flex flex-row">
+      <div className={wrapperBase}>
         {!!startIcon && <div>{startIcon}</div>}
         {webbie && (
           <input
@@ -55,7 +58,7 @@ const Input = ({
             name={name}
             id={id}
             value={value}
-            type={showPassword && Boolean(showPassword) ? "text" : type}
+            type={type}
             placeholder={placeholder}
             className={base}
             onChange={onChange}
@@ -69,7 +72,7 @@ const Input = ({
             name={name}
             id={id}
             value={value}
-            type={showPassword && Boolean(showPassword) ? "text" : type}
+            type={type}
             placeholder={placeholder}
             className={base}
             onChange={onChange}
@@ -77,7 +80,10 @@ const Input = ({
           />
         )}
         {!!endIcon && (
-          <div className="core-black-contrast flex flex-col justify-center pr-4">
+          <div
+            onClick={handleEndIconClick}
+            className="core-black-contrast flex flex-col justify-center pr-4"
+          >
             {endIcon}
           </div>
         )}
