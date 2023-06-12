@@ -36,7 +36,7 @@ const Input = ({
     "core-black-contrast w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed";
 
   if (extraClass) {
-    base += ` ${extraClass};`;
+    base += ` ${extraClass}`;
   }
   if (error) {
     base += " form-error-border";

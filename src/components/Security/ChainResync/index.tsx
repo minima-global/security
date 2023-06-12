@@ -1,17 +1,78 @@
+import { useNavigate } from "react-router-dom";
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
+import { useContext, useState } from "react";
+import { appContext } from "../../../AppContext";
+import { useFormik } from "formik";
+import Input from "../../UI/Input";
 
-interface IProps {
-  display: boolean;
-  dismiss: () => void;
-}
-const ChainResync = ({ display, dismiss }: IProps) => {
+const ChainResync = () => {
+  const navigate = useNavigate();
+  const { setModal } = useContext(appContext);
+
+  const [host, setHost] = useState("");
+  const [error, setError] = useState<false | string>(false);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const handleChainResync = () => {
+    setLoading(true);
+    setModal({
+      display: true,
+      content: RestoringDialog.content,
+      primaryActions: RestoringDialog.primaryActions,
+      secondaryActions: RestoringDialog.secondaryActions,
+    });
+    (window as any).MDS.cmd(
+      `archive action:resync host:${host.length ? host : "auto"}`,
+      (response: any) => {
+        console.log(response);
+
+        if (!response.status) {
+          setError(response.error ? response.error : "RPC Failed");
+        }
+
+        if (response.status) {
+          setSuccess(true);
+        }
+      }
+    );
+  };
+
+  const SomethingWentWrong = () => {
+    return {
+      content: (
+        <div>
+          <img alt="download" src="./assets/download.svg" />{" "}
+          <h1 className="text-2xl mb-8">Something went wrong!</h1>
+          <p>Please go back and try again.</p>
+        </div>
+      ),
+      primaryActions: null,
+      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+    };
+  };
+  const RestoringDialog = {
+    content: (
+      <div>
+        <img alt="download" src="./assets/download.svg" />{" "}
+        <h1 className="text-2xl mb-8">Feedback message</h1>
+        <p>
+          Please don't leave this screen whilst the <br /> chain is re-syncing.
+          <br /> <br /> Your node will reboot once it is complete.
+        </p>
+      </div>
+    ),
+    primaryActions: <div></div>,
+    secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+  };
+
   return (
-    <SlideScreen display={display}>
+    <SlideScreen display={true}>
       <div className="flex flex-col h-full bg-black">
-        <div className="pt-10 px-6 pb-6 flex flex-col h-full">
+        <div className="flex flex-col h-full">
           <div
-            onClick={dismiss}
+            onClick={() => navigate("/dashboard")}
             className="cursor-pointer mb-4 flex items-center"
           >
             <svg
@@ -27,32 +88,43 @@ const ChainResync = ({ display, dismiss }: IProps) => {
                 fill="#F9F9FA"
               />
             </svg>
-            Settings
+            Security
           </div>
-          <div className="mt-6 text-2xl mb-8">Peer list</div>
+          <div className="mt-6 text-2xl mb-8 text-left">Chain re-sync</div>
           <div className="flex flex-col gap-5">
-            <div className="core-black-contrast p-4 rounded">
+            <div className="text-left">
               <div>
-                <div className="mb-3">What are peers?</div>
-                <p className="text-core-grey">
-                  Lorem ipsum dolor sit amet consectetur. In diam sem cras
-                  pellentesque luctus leo faucibus ullamcorper venenatis.
-                </p>
+                <div className="mb-3">
+                  If your node has been offline for too long or your node is on
+                  the wrong chain. You can re-sync all blocks from an Archive
+                  node. <br /> <br /> Ensure you have recorded a copy of your
+                  seed phrase before starting a chain re-sync.
+                </div>
               </div>
             </div>
             <div className="core-black-contrast-2 p-4 rounded">
-              <div className="mb-6">
-                Lorem ipsum dolor sit amet consectetur. Ipsum leo sagittis
-                mattis egestas mattis pulvinar pulvinar in tempor.
-              </div>
-              <Button>Share peers</Button>
+              <div className="mb-2 text-left">Archive node host</div>
+
+              <Input
+                extraClass="mb-6"
+                id="host"
+                name="host"
+                placeholder="Auto"
+                type="text"
+                value={host}
+                onChange={(e) => setHost(e.target.value)}
+                autoComplete="off"
+              />
+
+              <Button onClick={handleChainResync}>Re-sync</Button>
             </div>
-            <div className="core-black-contrast-2 p-4 rounded">
-              <div className="mb-6">
-                Lorem ipsum dolor sit amet consectetur. Ipsum leo sagittis
-                mattis egestas mattis pulvinar pulvinar in tempor.
-              </div>
-              <Button>Import peers</Button>
+            <div className="text-left">
+              <p className="text-sm password-label mr-4 ml-4">
+                You should only do this if you have already tried restarting
+                your node and restoring a recent backup. <br /> <br /> You
+                should only re-sync from your own archive node or one from a
+                trusted source.
+              </p>
             </div>
           </div>
         </div>

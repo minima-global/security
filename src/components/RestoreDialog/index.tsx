@@ -17,20 +17,20 @@ const validationSchema = yup.object().shape({
 
 const RestoreDialog = () => {
   const navigate = useNavigate();
-  const { vaultLocked } = useContext(appContext);
+  // const { vaultLocked } = useContext(appContext);
 
   const { setModal } = useContext(appContext);
 
-  const SomethingWentWrong = () => {
+  const SomethingWentWrong = (error: string) => {
     return {
       content: (
         <div>
           <img alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Something went wrong!</h1>
-          <p>Please go back and try again.</p>
+          <p>{error.length ? error : "Please go back and try again."}</p>
         </div>
       ),
-      primaryActions: null,
+      primaryActions: <div></div>,
       secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
     };
   };
@@ -97,10 +97,10 @@ const RestoreDialog = () => {
           primaryActions: SuccessDialog.primaryActions,
           secondaryActions: null,
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error(error);
 
-        const dialog = SomethingWentWrong();
+        const dialog = SomethingWentWrong(error);
         setModal({
           display: true,
           content: dialog.content,

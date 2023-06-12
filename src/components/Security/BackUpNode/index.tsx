@@ -183,7 +183,7 @@ const BackupNode = () => {
         setModal({
           display: true,
           content: somethingwrong.content,
-          primaryActions: null,
+          primaryActions: <div></div>,
           secondaryActions: somethingwrong.secondaryActions,
         });
       }

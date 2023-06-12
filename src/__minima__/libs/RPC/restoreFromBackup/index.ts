@@ -1,14 +1,12 @@
-export const restoreFromBackup = (
-  filepath: string,
-  password: string,
-  host?: string,
-  keyuses?: string
-) => {
+export const restoreFromBackup = (filepath: string, password: string) => {
   return new Promise((resolve, reject) => {
     (window as any).MDS.cmd(
-      `backup file:"${filepath}" password:"${password}"`,
+      `restore file:"${filepath}" password:"${password}"`,
       (response: any) => {
         console.log(response);
+        if (!response.status)
+          reject(response.error ? response.error : "RPC FAILED");
+
         resolve(response);
       }
     );
