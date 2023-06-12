@@ -3,7 +3,6 @@ import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import { useContext, useState } from "react";
 import { appContext } from "../../../AppContext";
-import { useFormik } from "formik";
 import Input from "../../UI/Input";
 
 const ChainResync = () => {
@@ -29,7 +28,15 @@ const ChainResync = () => {
         console.log(response);
 
         if (!response.status) {
-          setError(response.error ? response.error : "RPC Failed");
+          const dialog = somethingWentWrongDialog(
+            response.error ? response.error : "RPC Failed"
+          );
+          setModal({
+            display: true,
+            content: dialog.content,
+            primaryActions: dialog.primaryActions,
+            secondaryActions: dialog.secondaryActions,
+          });
         }
 
         if (response.status) {
@@ -39,16 +46,16 @@ const ChainResync = () => {
     );
   };
 
-  const SomethingWentWrong = () => {
+  const somethingWentWrongDialog = (error: string) => {
     return {
       content: (
         <div>
           <img alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Something went wrong!</h1>
-          <p>Please go back and try again.</p>
+          <p>{error}</p>
         </div>
       ),
-      primaryActions: null,
+      primaryActions: <div></div>,
       secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
     };
   };
@@ -91,6 +98,7 @@ const ChainResync = () => {
             Security
           </div>
           <div className="mt-6 text-2xl mb-8 text-left">Chain re-sync</div>
+
           <div className="flex flex-col gap-5">
             <div className="text-left">
               <div>
@@ -120,10 +128,10 @@ const ChainResync = () => {
             </div>
             <div className="text-left">
               <p className="text-sm password-label mr-4 ml-4">
-                You should only do this if you have already tried restarting
-                your node and restoring a recent backup. <br /> <br /> You
-                should only re-sync from your own archive node or one from a
-                trusted source.
+                You should only re-sync from your own archive node or one from a
+                trusted source. <br /> <br /> For a successful restore, the
+                archive node used must have been started prior to the date your
+                coins were received.
               </p>
             </div>
           </div>

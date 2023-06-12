@@ -28,6 +28,7 @@
   color: var(--status-red);
   font-weight: 600;
 }
+
 .form-success-message {
   color: var(--status-green);
   font-weight: 600;
