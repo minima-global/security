@@ -1,9 +1,9 @@
-.splash {
+.grid {
   display: grid;
-  height: 100vh;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr auto;
 }
-.splash button {
-  align-self: flex-end;
-  justify-self: stretch;
-  margin-bottom: 5vh;
+
+.grid > div {
+  align-self: center;
 }

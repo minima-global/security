@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import Grid from "../UI/Grid";
+import styles from "./Splash.module.css";
 
 const Splash = () => {
   const navigate = useNavigate();
@@ -8,8 +9,8 @@ const Splash = () => {
       fullHeight={true}
       header={<></>}
       content={
-        <div className="grid h-full">
-          <div className="justify-self-center self-center text-center gap-y-6 flex flex-col">
+        <div className={styles["grid"]}>
+          <div>
             <img
               className="self-center inline"
               alt="app-icon"
