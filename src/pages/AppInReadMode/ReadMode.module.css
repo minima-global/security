@@ -1,0 +1,174 @@
+.grid {
+  height: 100vh;
+  display: grid;
+
+  grid-template-columns: 1fr;
+  grid-template-rows: 56px 1fr;
+  grid-template-areas:
+              'header'
+              'main';
+  
+  position: absolute;
+  z-index: 44;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+}
+
+.backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  z-index: 43;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+.grid > header {
+  grid-area: header;
+}
+.grid > main {
+  grid-area: main;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+  overflow-y: overlay;
+  
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr minmax(0, 560px) 1fr;
+}
+.grid main > section {
+  grid-area: 1 / 2 / 1 / 3;
+
+  display: grid;
+  margin: 0 16px;
+  background: none!important;
+
+  grid-template-areas: 
+            'main';
+}
+.grid main > section {
+  grid-template-areas:
+              'main'
+              'actions';
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr;
+}
+
+.grid main > section div:first-of-type {
+  grid-area: main;
+}
+.grid main > section div:last-of-type {
+  grid-area: actions;
+}
+.grid main > section div:first-of-type {
+  grid-area: main;
+}
+.grid main > section.full {
+  grid-area: 1 / 1 / 1 / 4
+}
+.dialog {
+  background-color: #282B2E;
+  border-radius: 4px;
+  padding: 40px 24px;
+
+  align-self: center;
+
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.dialog p {
+  word-break: break-word!important;
+}
+.dialog img {
+  display: inline;
+  width: 100px;
+  height: 100px;
+  align-self: center;
+}
+
+.button__wrapper {
+  align-items: center;
+}
+
+.primaryActions button {
+  background-color: #F9F9FA;
+  border-radius: 4px;
+  padding: 16px!important;
+  color: #282B2E;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  font-weight: 600;
+  border: none;
+  width: 100%;
+  font-size: 1rem;
+  text-align: center;
+}
+.primaryActions button:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+.primaryActions button:disabled {
+  background-color: #D3D3D8;
+  cursor: not-allowed;
+}
+.secondaryActions button {
+  background-color: #464C4F!important;
+  border: none;
+  border-radius: 4px;
+  padding: 16px;
+  color: #F9F9FA;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  font-weight: 600;
+  font-size: 1rem;
+  width: 100%;
+}
+.secondaryActions button:hover {
+  cursor: pointer;
+  color: #91919D;
+  border-color: #91919D;
+}
+
+
+.desktop_only {
+  display: none;
+}
+.mobile_only {
+  display: block;
+  margin-bottom: 2.375em;
+}
+@media screen and (min-width: 560px) {
+  
+  
+  .grid {  
+    grid-template-rows: 56px 1fr auto;
+    
+    grid-template-areas: 
+              'header'
+              'main'
+              'footer';
+  }
+
+  .grid main > section {
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+                'main';
+  }
+
+  .grid > footer {
+    grid-area: footer;
+  }
+
+  .desktop_only {
+    display: block;
+  }
+  .mobile_only {
+    display: none;
+  }
+  
+}
+

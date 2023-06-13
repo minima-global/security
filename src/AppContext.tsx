@@ -2,6 +2,7 @@ import { createContext, useRef, useState, useEffect } from "react";
 
 import * as rpc from "./__minima__/libs/RPC";
 import * as fileManager from "./__minima__/libs/fileManager";
+import { useNavigate } from "react-router-dom";
 
 export const appContext = createContext({} as any);
 
@@ -10,6 +11,7 @@ interface IProps {
 }
 const AppProvider = ({ children }: IProps) => {
   const loaded = useRef(false);
+  const navigate = useNavigate();
 
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState(false);
@@ -20,6 +22,10 @@ const AppProvider = ({ children }: IProps) => {
     primaryActions: null,
     secondaryActions: null,
   });
+
+  const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
+    null
+  );
 
   const checkVaultLocked = () => {
     rpc.isVaultLocked().then((r) => {
@@ -32,15 +38,15 @@ const AppProvider = ({ children }: IProps) => {
       loaded.current = true;
       (window as any).MDS.init((msg: any) => {
         if (msg.event === "MINIMALOG") {
-          console.log("previousMessage,", logs);
           const log = msg.data.message;
-          console.log(log);
 
           setLogs((prevState) => [...prevState, log]);
         }
 
         if (msg.event === "inited") {
-          checkVaultLocked();
+          rpc.isWriteMode().then((appIsInWriteMode) => {
+            setAppIsInWriteMode(appIsInWriteMode);
+          });
 
           fileManager.listFiles("/").then((r: any) => {
             console.log(r);

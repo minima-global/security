@@ -22,6 +22,7 @@ const router = createHashRouter(
   createRoutesFromElements(
     <Route path="/" element={<App />}>
       <Route index element={<Splash />} />
+
       <Route path="/dashboard" element={<Dashboard />}>
         <Route path="lockprivatekeys" element={<LockPrivateKeys />} />
         <Route path="backup" element={<BackupNode />} />

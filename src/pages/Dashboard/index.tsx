@@ -5,6 +5,7 @@ import { appContext } from "../../AppContext";
 import { Outlet, matchPath, useLocation } from "react-router-dom";
 import Security from "../../components/Security";
 import Dialog from "../../components/Dialog";
+import AppIsInReadMode from "../AppInReadMode";
 
 const Dashboard = () => {
   const { modal } = useContext(appContext);
@@ -16,6 +17,7 @@ const Dashboard = () => {
       header={
         <>
           <TitleBar />
+          <AppIsInReadMode />
         </>
       }
       footer={<></>}
