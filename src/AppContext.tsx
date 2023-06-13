@@ -70,6 +70,7 @@ const AppProvider = ({ children }: IProps) => {
         checkVaultLocked,
         logs,
         setLogs,
+        appIsInWriteMode,
       }}
     >
       {children}

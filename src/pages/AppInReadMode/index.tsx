@@ -9,7 +9,7 @@ export function AppIsInReadMode() {
   const display = appIsInWriteMode === false;
 
   return (
-    <SlideScreen display={!display}>
+    <SlideScreen display={display}>
       <div>
         <div className={styles["backdrop"]}></div>
         <div className={styles["grid"]}>
