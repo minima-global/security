@@ -47,7 +47,7 @@
 }
 
 .understand-label {
-  color: #08090B;
+  color: var(--core-grey-5);
 }
 
 .core-grey-100 {
@@ -177,15 +177,15 @@ input:-webkit-autofill,
     -webkit-appearance: none;
     appearance: none;
     /* For iOS < 15 to remove gradient background */
-    background-color: var(--core-grey-100);
+    background-color: var(--core-black-contrast-3);
     /* Not removed via appearance */
     margin: 0;
     font: inherit;
     color: #BDBDC4;
-    width: 16px;
-    height: 16px;
-    border: 2px solid #BDBDC4;
-    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    border: 2px solid  var(--core-black-contrast-3);
+    border-radius: 12px;
     transform: translateY(-0.01em);
   }
   input[type="checkbox"]:disabled {
@@ -198,13 +198,17 @@ input:-webkit-autofill,
     place-content: center;
   }
   input[type="checkbox"]::before {
-    content: "";
-    width: 0.55em;
-    height: 0.55em;
+    content: url(./assets//check_small.svg);
+    width: inherit;
+    height: inherit;
     border-radius: 50%;
     transform: scale(0);
     transition: 120ms transform ease-in-out;
-    box-shadow: inset 1em 1em #08090B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 6px;
+    /* box-shadow: inset 1em 1em #282B2E; */
   }
   input[type="checkbox"]:checked::before {
     transform: scale(1);
@@ -214,11 +218,11 @@ input:-webkit-autofill,
     /* ...existing styles */
   
     /* Windows High Contrast Mode */
-    background-color: #08090B;
+    background-color: #F9F9FA;
   }
   
   input[type="checkbox"]:focus {
-    outline: max(2px, 0.15em) solid #08090B;
+    outline: max(2px, 0.15em) solid #F9F9FA;
     outline-offset: max(2px, 0.15em);
   }
 
