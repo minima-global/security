@@ -18,8 +18,14 @@ export function AppIsInReadMode() {
             <section>
               <div className={styles["dialog"]}>
                 <div>
-                  <img alt="download" src="./assets/read.svg" />{" "}
-                  <h1 className="text-2xl mb-8">App is in read mode</h1>
+                  <img
+                    className="mb-4"
+                    alt="download"
+                    src="./assets/read.svg"
+                  />
+                  <h1 className="text-2xl mb-8">
+                    App is in <br /> read mode
+                  </h1>
                   <p>
                     Please ensure you set the Security minidapp in write mode
                     then reload this page.

@@ -87,6 +87,8 @@
   width: 100px;
   height: 100px;
   align-self: center;
+
+  fill: #E9E9EB;
 }
 
 .button__wrapper {
