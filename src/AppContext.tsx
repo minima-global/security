@@ -1,8 +1,14 @@
-import { createContext, useRef, useState, useEffect } from "react";
+import {
+  createContext,
+  useRef,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 
 import * as rpc from "./__minima__/libs/RPC";
 import * as fileManager from "./__minima__/libs/fileManager";
-import { useNavigate } from "react-router-dom";
 
 export const appContext = createContext({} as any);
 
@@ -11,7 +17,6 @@ interface IProps {
 }
 const AppProvider = ({ children }: IProps) => {
   const loaded = useRef(false);
-  const navigate = useNavigate();
 
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState(false);
@@ -23,9 +28,64 @@ const AppProvider = ({ children }: IProps) => {
     secondaryActions: null,
   });
 
+  // Seed phrase stuff
+  const [_vault, setVault] = useState<{ phrase: string } | null>(null);
+  const [_phrase, setPhrase] = useState({
+    1: "",
+    2: "",
+    3: "",
+    4: "",
+    5: "",
+    6: "",
+    7: "",
+    8: "",
+    9: "",
+    10: "",
+    11: "",
+    12: "",
+    13: "",
+    14: "",
+    15: "",
+    16: "",
+    17: "",
+    18: "",
+    19: "",
+    20: "",
+    21: "",
+    22: "",
+    23: "",
+    24: "",
+  });
+
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
   );
+
+  useEffect(() => {
+    if (appIsInWriteMode) {
+      rpc.vault().then((response) => {
+        setVault(response as any);
+      });
+    }
+  }, [appIsInWriteMode]);
+
+  const fetchVault = useCallback(() => {
+    return rpc.vault().then((response) => {
+      setVault(response as any);
+    });
+  }, []);
+
+  const resetVault = () => {
+    setVault(null);
+  };
+
+  const phraseAsArray = useMemo(() => {
+    if (!_vault) {
+      return [];
+    }
+
+    return _vault.phrase.split(" ");
+  }, [_vault]);
 
   const checkVaultLocked = () => {
     rpc.isVaultLocked().then((r) => {
@@ -71,6 +131,10 @@ const AppProvider = ({ children }: IProps) => {
         logs,
         setLogs,
         appIsInWriteMode,
+        setPhrase,
+        phraseAsArray,
+        resetVault,
+        fetchVault,
       }}
     >
       {children}

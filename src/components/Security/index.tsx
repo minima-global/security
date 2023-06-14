@@ -142,7 +142,7 @@ export function Security() {
               </svg>
             </div>
           </div>
-          <div
+          {/* <div
             onClick={() => navigate("manageseedphrase")}
             className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer"
           >
@@ -161,7 +161,7 @@ export function Security() {
                 />
               </svg>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </SlideScreen>
