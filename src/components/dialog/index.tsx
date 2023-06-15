@@ -1,14 +1,16 @@
 import { useContext } from "react";
 import styles from "./Dialog.module.css";
 import { appContext } from "../../AppContext";
+import useGetInnerHeight from "../../hooks/useGetInnerHeight";
 
 const Dialog = () => {
   const { modal } = useContext(appContext);
+  const height = useGetInnerHeight();
 
   return (
     <div>
       <div className={styles["backdrop"]}></div>
-      <div className={styles["grid"]}>
+      <div className={styles["grid"]} style={{ height: `${height}px` }}>
         <header></header>
         <main>
           <section>

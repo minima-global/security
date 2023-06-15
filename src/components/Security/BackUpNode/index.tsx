@@ -16,7 +16,7 @@ const validationSchema = yup.object().shape({
   password: yup
     .string()
     .required("Please enter a password")
-    .matches(/[?*a-zA-Z0-9!@#=?+<>,.-_ '()]/)
+    .matches(/^[~!@#=?+<>,.-_'()?a-zA-Z0-9-]+$/, "Invalid character")
     .min(12, "Password must be at least 12 characters long"),
   confirmPassword: yup
     .string()

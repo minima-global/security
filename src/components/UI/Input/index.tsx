@@ -14,6 +14,7 @@ interface IProps {
   startIcon?: any;
   error?: string;
   webbie?: boolean;
+  onKeyUp?: any;
   handleEndIconClick?: () => void;
 }
 const Input = ({
@@ -32,6 +33,7 @@ const Input = ({
   error,
   webbie,
   handleEndIconClick,
+  onKeyUp,
 }: IProps) => {
   let wrapperBase = "flex flex-row";
 
@@ -48,7 +50,15 @@ const Input = ({
   return (
     <div className="flex flex-col gap-2">
       <div className={wrapperBase}>
-        {!!startIcon && <div>{startIcon}</div>}
+        {!!startIcon && (
+          <div
+            className={`core-black-contrast flex flex-col justify-center pl-4 color-core-grey font-medium ${
+              error ? "form-error-message" : ""
+            }`}
+          >
+            {startIcon}
+          </div>
+        )}
         {webbie && (
           <input
             autoComplete={autoComplete ? autoComplete : ""}
@@ -63,6 +73,7 @@ const Input = ({
             className={base}
             onChange={onChange}
             accept={accept}
+            onKeyUp={onKeyUp}
           />
         )}
         {!webbie && (
@@ -77,6 +88,7 @@ const Input = ({
             className={base}
             onChange={onChange}
             accept={accept}
+            onKeyUp={onKeyUp}
           />
         )}
         {!!endIcon && (

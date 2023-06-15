@@ -29,6 +29,8 @@ const AppProvider = ({ children }: IProps) => {
   });
 
   // Seed phrase stuff
+  const [_seedResync, setSeedResyncPhrase] = useState("");
+  const [_seedResyncHost, setSeedResyncHost] = useState("auto");
   const [_vault, setVault] = useState<{ phrase: string } | null>(null);
   const [_phrase, setPhrase] = useState({
     1: "",
@@ -135,6 +137,8 @@ const AppProvider = ({ children }: IProps) => {
         phraseAsArray,
         resetVault,
         fetchVault,
+        _seedResync,
+        setSeedResyncPhrase,
       }}
     >
       {children}

@@ -5,3 +5,4 @@ export * from "./createBackup";
 export * from "./restoreFromBackup";
 export * from "./checkMode";
 export * from "./vault";
+export * from "./importSeedPhrase";

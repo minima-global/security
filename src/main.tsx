@@ -18,6 +18,7 @@ import ChainResync from "./components/Security/ChainResync/index.tsx";
 import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
 import ResyncDialog from "./components/Security/ChainResync/ResyncDialog/index.tsx";
 import EnterSeedPhrase from "./components/Security/ManageSeedPhrase/EnterSeedPhrase/index.tsx";
+import WipeThisNode from "./components/Security/ManageSeedPhrase/WipeThisNode/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -31,7 +32,9 @@ const router = createHashRouter(
           <Route path="resyncing" element={<ResyncDialog />} />
         </Route>
         <Route path="manageseedphrase" element={<ManageSeedPhrase />}>
-          <Route path="enterseedphrase" element={<EnterSeedPhrase />} />
+          <Route path="enterseedphrase" element={<EnterSeedPhrase />}>
+            <Route path="wipethisnode" element={<WipeThisNode />} />
+          </Route>
         </Route>
         <Route path="restore" element={<RestoreFromBackup />}>
           <Route path="frombackup" element={<RestoreDialog />} />

@@ -48,7 +48,14 @@ export function AppIsInReadMode() {
               <div
                 className={`${styles.mobile_only} ${styles.secondaryActions}`}
               >
-                <button onClick={() => window.location.reload()}>Reload</button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.location.reload();
+                  }}
+                >
+                  Reload
+                </button>
               </div>
             </section>
           </main>

@@ -8,20 +8,24 @@ import Input from "../../UI/Input";
 const ManageSeedPhrase = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { vaultLocked } = useContext(appContext);
-  const [host, setHost] = useState("");
+  const { vaultLocked, setSeedResyncHost, _seedResyncHost } =
+    useContext(appContext);
 
   const wantsToEnterSeedPhrase = matchPath(
     { path: "/dashboard/manageseedphrase/enterseedphrase" },
     location.pathname
   );
+  const wantsToWipeNode = matchPath(
+    { path: "/dashboard/manageseedphrase/enterseedphrase/wipethisnode" },
+    location.pathname
+  );
 
   return (
     <>
-      <SlideScreen display={!!wantsToEnterSeedPhrase}>
+      <SlideScreen display={!!wantsToEnterSeedPhrase || !!wantsToWipeNode}>
         <Outlet />
       </SlideScreen>
-      <SlideScreen display={!wantsToEnterSeedPhrase}>
+      <SlideScreen display={!wantsToEnterSeedPhrase && !wantsToWipeNode}>
         <div className="flex flex-col h-full bg-black">
           <div className="flex flex-col h-full">
             <div
@@ -117,8 +121,8 @@ const ManageSeedPhrase = () => {
                   name="host"
                   placeholder="Auto"
                   type="text"
-                  value={host}
-                  onChange={(e) => setHost(e.target.value)}
+                  value={_seedResyncHost}
+                  onChange={(e) => setSeedResyncHost(e.target.value)}
                   autoComplete="off"
                 />
 
