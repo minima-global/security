@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import Button from "../../UI/Button";
-import Grid from "../../UI/Grid";
 import SlideScreen from "../../UI/SlideScreen";
 import { useContext, useState } from "react";
 import { appContext } from "../../../AppContext";
@@ -9,7 +8,7 @@ import useLongPress from "../../../hooks/useLongPress";
 
 const ViewSeedPhrase = () => {
   const navigate = useNavigate();
-  const { phraseAsArray, isMobile } = useContext(appContext);
+  const { phraseAsArray } = useContext(appContext);
   const [hide, setHideSeedPhrase] = useState(true);
   const onLongPress = () => {
     setHideSeedPhrase(false);

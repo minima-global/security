@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import { useState } from "react";

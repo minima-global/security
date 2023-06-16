@@ -51,11 +51,15 @@ const BackupNode = () => {
     try {
       const hexstring = await fileManager.loadBinaryToHex(mdsfile);
       const filedata = hexstring;
+
       return filedata;
     } catch (error) {
+      alert("getFileData FAILED");
       return "";
     }
   };
+  // android use hex only
+
   const createDownloadLink = async (mdsfile: string) => {
     try {
       const hexstring = await fileManager.loadBinaryToHex(mdsfile);
@@ -158,7 +162,8 @@ const BackupNode = () => {
         );
 
         if (isMinimaBrowser) {
-          const filedata = await getFileData(fileName);
+          const filedata = await getFileData("/backups/" + fileName);
+
           const dialog = downloadBackupDialogAndroid(fileName, filedata);
           setModal({
             display: true,

@@ -1,7 +1,7 @@
 import styles from "./Dialog.module.css";
 import Input from "../../../UI/Input";
 import Button from "../../../UI/Button";
-import { getIn, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as yup from "yup";
 import * as rpc from "../../../../__minima__/libs/RPC";
 import { useLocation, useNavigate } from "react-router-dom";

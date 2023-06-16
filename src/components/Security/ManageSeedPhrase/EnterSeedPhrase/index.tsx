@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import SlideScreen from "../../../UI/SlideScreen";
 import { matchPath, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useFormik, getIn } from "formik";
@@ -7,7 +7,6 @@ import Input from "../../../UI/Input";
 import bip39 from "../../../../utils/bip39";
 import Button from "../../../UI/Button";
 import styles from "./SeedPhrase.module.css";
-import { appContext } from "../../../../AppContext";
 
 const validationSchema = yup.object().shape({
   seedPhrase: yup.object({

@@ -1,9 +1,6 @@
 import styles from "./Dialog.module.css";
 import Button from "../../UI/Button";
-import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { appContext } from "../../../AppContext";
-import { useEffect, createRef, useCallback } from "react";
 
 import SlideScreen from "../../UI/SlideScreen";
 

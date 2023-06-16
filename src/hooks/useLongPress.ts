@@ -28,7 +28,7 @@ const useLongPress = (
   );
 
   const clear = useCallback(
-    (event, shouldTriggerClick = true) => {
+    (shouldTriggerClick = true) => {
       onFinish();
       timeout.current && clearTimeout(timeout.current);
       shouldTriggerClick && !longPressTriggered && onClick();
@@ -46,7 +46,7 @@ const useLongPress = (
     onMouseDown: (e) => start(e),
     onTouchStart: (e) => start(e),
     onMouseUp: (e) => clear(e),
-    onMouseLeave: (e) => clear(e, false),
+    onMouseLeave: () => clear(false),
     onTouchEnd: (e) => clear(e),
   };
 };
