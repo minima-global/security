@@ -12,7 +12,7 @@ interface IProps {
   showPassword?: boolean;
   endIcon?: any;
   startIcon?: any;
-  error?: string;
+  error?: string | false;
   webbie?: boolean;
   onKeyUp?: any;
   handleEndIconClick?: () => void;

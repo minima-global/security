@@ -3,18 +3,30 @@ import * as React from "react";
 type ButtonProps = {
   variant?: "primary" | "secondary";
   onClick?: any;
+  onContextMenu?: any;
   disabled?: boolean;
   type?: "submit" | "button";
   extraClass?: string;
+  onMouseDown?: (e: any) => void;
+  onTouchStart?: (e: any) => void;
+  onMouseUp?: (e: any) => void;
+  onMouseLeave?: (e: any) => void;
+  onTouchEnd?: (e: any) => void;
 };
 
 const Button: React.FC<React.PropsWithChildren<ButtonProps>> = ({
   variant = "primary",
   onClick = null,
+  onContextMenu = null,
   children,
   disabled,
   type = "button",
   extraClass,
+  onMouseDown,
+  onTouchStart,
+  onMouseUp,
+  onMouseLeave,
+  onTouchEnd,
 }) => {
   let base =
     "w-full px-4 py-3.5 rounded font-bold disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none hover:border-color-transparent hover:outline-none";
@@ -30,7 +42,18 @@ const Button: React.FC<React.PropsWithChildren<ButtonProps>> = ({
   }
 
   return (
-    <button type={type} disabled={disabled} className={base} onClick={onClick}>
+    <button
+      onMouseUp={onMouseUp}
+      onMouseDown={onMouseDown}
+      onTouchStart={onTouchStart}
+      onMouseLeave={onMouseLeave}
+      onTouchEnd={onTouchEnd}
+      onContextMenu={onContextMenu}
+      type={type}
+      disabled={disabled}
+      className={base}
+      onClick={onClick}
+    >
       {children}
     </button>
   );

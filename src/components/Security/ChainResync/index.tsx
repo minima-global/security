@@ -11,36 +11,30 @@ const ChainResync = () => {
   const [host, setHost] = useState("");
   const [error, setError] = useState<false | string>(false);
   const [loading, setLoading] = useState(false);
-  const [resyncStatus, setResyncingStatus] = useState(true);
 
   const handleChainResync = () => {
+    setError(false);
     setLoading(true);
-    navigate("resyncing");
     (window as any).MDS.cmd(
       `archive action:resync host:${host.length ? host : "auto"}`,
       (response: any) => {
         console.log(response);
-
         if (!response.status) {
-          setResyncingStatus(false);
-          setError(response.error ? response.error : "RPC Failed");
+          setLoading(false);
+          return setError(
+            response.error
+              ? response.error
+              : "Something went wrong, please try again."
+          );
         }
+        return navigate("/dashboard/resyncing");
       }
     );
   };
 
   return (
     <>
-      <SlideScreen display={loading}>
-        <Outlet
-          context={{
-            finishLoading: () => setLoading(false),
-            error: error,
-            resyncStatus: resyncStatus,
-          }}
-        />
-      </SlideScreen>
-      <SlideScreen display={!loading}>
+      <SlideScreen display={true}>
         <div className="flex flex-col h-full bg-black">
           <div className="flex flex-col h-full">
             <div
@@ -77,19 +71,22 @@ const ChainResync = () => {
               </div>
               <div className="core-black-contrast-2 p-4 rounded">
                 <div className="mb-2 text-left">Archive node host</div>
+                <div className="mb-6">
+                  <Input
+                    id="host"
+                    name="host"
+                    placeholder="Auto"
+                    type="text"
+                    value={host}
+                    onChange={(e) => setHost(e.target.value)}
+                    autoComplete="off"
+                    error={error}
+                  />
+                </div>
 
-                <Input
-                  extraClass="mb-6"
-                  id="host"
-                  name="host"
-                  placeholder="Auto"
-                  type="text"
-                  value={host}
-                  onChange={(e) => setHost(e.target.value)}
-                  autoComplete="off"
-                />
-
-                <Button onClick={handleChainResync}>Re-sync</Button>
+                <Button disabled={loading} onClick={handleChainResync}>
+                  Re-sync
+                </Button>
               </div>
               <div className="text-left">
                 <p className="text-sm password-label mr-4 ml-4">

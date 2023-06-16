@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Roboto+Mono:wght@400&display=swap');
+
 
 @tailwind base;
 @tailwind components;
@@ -18,6 +19,7 @@
   --core-grey-20: #E9E9EB;
   --core-grey-80: #A7A7B0;
   --core-grey-100: #D9D9D9;
+  --core-grey-150: #D3D3D8;
   --core-black-100: #08090B;
   --core-black-contrast: #17191C;
   --core-black-contrast-2: #282B2E;
@@ -75,6 +77,10 @@
 }
 .core-black-contrast {
   background-color: var(--core-black-contrast);
+}
+
+.core-grey-contrast-3 {
+  color:  var(--core-black-contrast-3);
 }
 
 
@@ -243,14 +249,14 @@ input:-webkit-autofill,
     display: none;
   }
   .mobile-only {
-    display: block;
+    display: flex;
     margin-bottom: 2.375em;
   }
 
   @media screen and (min-width: 560px) {
   
     .desktop-only {
-      display: block;
+      display: flex;
     }
     .mobile-only {
       display: none;
@@ -268,4 +274,11 @@ input:-webkit-autofill,
 * {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+}
+
+code {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 0.875rem;
+  color: var(--core-grey-150);
+  font-weight: 400;
 }

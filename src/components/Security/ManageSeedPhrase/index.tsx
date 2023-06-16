@@ -1,7 +1,7 @@
 import { Outlet, matchPath, useLocation, useNavigate } from "react-router-dom";
 import Button from "../../UI/Button";
 import SlideScreen from "../../UI/SlideScreen";
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { appContext } from "../../../AppContext";
 import Input from "../../UI/Input";
 
@@ -19,13 +19,27 @@ const ManageSeedPhrase = () => {
     { path: "/dashboard/manageseedphrase/enterseedphrase/wipethisnode" },
     location.pathname
   );
+  const wantsToViewSeedPhrase = matchPath(
+    { path: "/dashboard/manageseedphrase/viewseedphrase" },
+    location.pathname
+  );
 
   return (
     <>
-      <SlideScreen display={!!wantsToEnterSeedPhrase || !!wantsToWipeNode}>
+      <SlideScreen
+        display={
+          !!wantsToEnterSeedPhrase ||
+          !!wantsToWipeNode ||
+          !!wantsToViewSeedPhrase
+        }
+      >
         <Outlet />
       </SlideScreen>
-      <SlideScreen display={!wantsToEnterSeedPhrase && !wantsToWipeNode}>
+      <SlideScreen
+        display={
+          !wantsToEnterSeedPhrase && !wantsToWipeNode && !wantsToViewSeedPhrase
+        }
+      >
         <div className="flex flex-col h-full bg-black">
           <div className="flex flex-col h-full">
             <div
@@ -51,7 +65,7 @@ const ManageSeedPhrase = () => {
               Manage seed phrase
             </div>
             <div
-              onClick={() => navigate("seedphrase")}
+              onClick={() => navigate("viewseedphrase")}
               className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer mb-8"
             >
               Show seed phrase

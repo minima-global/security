@@ -18,6 +18,8 @@ interface IProps {
 const AppProvider = ({ children }: IProps) => {
   const loaded = useRef(false);
 
+  const [mode, setMode] = useState("desktop");
+
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
@@ -29,8 +31,6 @@ const AppProvider = ({ children }: IProps) => {
   });
 
   // Seed phrase stuff
-  const [_seedResync, setSeedResyncPhrase] = useState("");
-  const [_seedResyncHost, setSeedResyncHost] = useState("auto");
   const [_vault, setVault] = useState<{ phrase: string } | null>(null);
   const [_phrase, setPhrase] = useState({
     1: "",
@@ -62,6 +62,12 @@ const AppProvider = ({ children }: IProps) => {
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
   );
+
+  useEffect(() => {
+    if (window.innerWidth < 568) {
+      setMode("mobile");
+    }
+  }, []);
 
   useEffect(() => {
     if (appIsInWriteMode) {
@@ -137,8 +143,8 @@ const AppProvider = ({ children }: IProps) => {
         phraseAsArray,
         resetVault,
         fetchVault,
-        _seedResync,
-        setSeedResyncPhrase,
+        mode,
+        isMobile: mode === "mobile",
       }}
     >
       {children}
