@@ -11,6 +11,7 @@ import { useContext, useState } from "react";
 import { appContext } from "../../AppContext";
 
 const validationSchema = yup.object().shape({
+  host: yup.string().required("Please enter an archive host node"),
   file: yup.mixed().required("Please select a backup file (.bak)"),
   password: yup.string().required("Please enter a password"),
 });
@@ -25,9 +26,11 @@ const RestoreDialog = () => {
     return {
       content: (
         <div>
-          <img alt="download" src="./assets/download.svg" />{" "}
-          <h1 className="text-2xl mb-8">Something went wrong!</h1>
-          <p>{error.length ? error : "Please go back and try again."}</p>
+          <img className="mb-3" alt="download" src="./assets/error.svg" />{" "}
+          <h1 className="text-2xl mb-8 font-semibold">Something went wrong!</h1>
+          <p className="font-medium">
+            {error.length ? error : "Please go back and try again."}
+          </p>
         </div>
       ),
       primaryActions: <div></div>,
@@ -37,26 +40,21 @@ const RestoreDialog = () => {
   const SuccessDialog = {
     content: (
       <div>
-        <img alt="informative" src="./assets/error.svg" />{" "}
-        <h1 className="text-2xl mb-4">Good news.</h1>
-        <p>You have restored from backup!</p>
+        <img className="mb-3" alt="informative" src="./assets/success.svg" />{" "}
+        <h1 className="text-2xl mb-4 font-semibold">Restore complete</h1>
+        <p className="font-medium">
+          Your node was successfully restored and will shutdown. Restart Minima
+          for the restore to take effect.
+        </p>
       </div>
     ),
-    primaryActions: (
-      <Button
-        onClick={() => {
-          setModal(false);
-          navigate("/dashboard/restore");
-        }}
-      >
-        Continue
-      </Button>
-    ),
+    primaryActions: <div></div>,
     secondaryActions: null,
   };
 
   const formik = useFormik({
     initialValues: {
+      host: "auto",
       password: "",
       file: undefined,
     },
@@ -69,27 +67,17 @@ const RestoreDialog = () => {
           );
         }
 
-        console.log(formData.file);
         const arrayBuffer = await utils.blobToArrayBuffer(formData.file);
         const hex = utils.bufferToHex(arrayBuffer);
         await fM.saveFileAsBinary(
           "/backups/" + (formData.file as any).name,
           hex
         );
-
-        await fM.listFiles("/backups").then((response: any) => {
-          console.log(response);
-        });
-
         const fullPath = await fM.getPath(
           "/backups/" + (formData.file as any).name
         );
-        console.log("fullPath", fullPath);
-        await rpc
-          .restoreFromBackup(fullPath, formData.password)
-          .then((response: any) => {
-            console.log(response);
-          });
+
+        await rpc.restoreFromBackup(formData.host, fullPath, formData.password);
 
         setModal({
           display: true,
@@ -98,8 +86,6 @@ const RestoreDialog = () => {
           secondaryActions: null,
         });
       } catch (error: any) {
-        console.error(error);
-
         const dialog = SomethingWentWrong(error);
         setModal({
           display: true,
@@ -131,7 +117,22 @@ const RestoreDialog = () => {
                   className="flex flex-col gap-4"
                   onSubmit={formik.handleSubmit}
                 >
+                  <div className="text-left">Archive node host</div>
+                  <div>
+                    <Input
+                      id="host"
+                      name="host"
+                      placeholder="Auto"
+                      type="text"
+                      value={formik.values.host}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      autoComplete="off"
+                      error={formik.errors.host ? formik.errors.host : false}
+                    />
+                  </div>
                   <Input
+                    error={formik.errors.file ? formik.errors.file : false}
                     extraClass="core-grey-20"
                     accept=".bak"
                     onChange={(e) => {
@@ -170,6 +171,9 @@ const RestoreDialog = () => {
                     }
                   />
                   <Input
+                    error={
+                      formik.errors.password ? formik.errors.password : false
+                    }
                     autoComplete="new-password"
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
@@ -213,20 +217,34 @@ const RestoreDialog = () => {
 
               <div className="flex flex-col gap-3">
                 <div className={`${styles.primaryActions}`}>
-                  <Button type="submit" onClick={() => formik.submitForm()}>
+                  <Button
+                    disabled={!formik.isValid || formik.isSubmitting}
+                    type="submit"
+                    onClick={() => formik.submitForm()}
+                  >
                     Restore
                   </Button>
                 </div>
                 <div
                   className={`${styles.desktop_only} ${styles.secondaryActions}`}
                 >
-                  <Button onClick={() => navigate(-1)}>Cancel</Button>
+                  <Button
+                    disabled={formik.isSubmitting}
+                    onClick={() => navigate(-1)}
+                  >
+                    Cancel
+                  </Button>
                 </div>
               </div>
             </div>
 
             <div className={`${styles.mobile_only} ${styles.secondaryActions}`}>
-              <Button onClick={() => navigate(-1)}>Cancel</Button>
+              <Button
+                disabled={formik.isSubmitting}
+                onClick={() => navigate(-1)}
+              >
+                Cancel
+              </Button>
             </div>
           </section>
         </main>

@@ -1,7 +1,11 @@
-export const restoreFromBackup = (filepath: string, password: string) => {
+export const restoreFromBackup = (
+  host: string,
+  filepath: string,
+  password: string
+) => {
   return new Promise((resolve, reject) => {
     (window as any).MDS.cmd(
-      `restore file:"${filepath}" password:"${password}"`,
+      `restoresync host:"${host}" file:"${filepath}" password:"${password}"`,
       (response: any) => {
         console.log(response);
         if (!response.status)
