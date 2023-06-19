@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface IProps {
   placeholder: string;
   type: string;
@@ -35,6 +37,8 @@ const Input = ({
   handleEndIconClick,
   onKeyUp,
 }: IProps) => {
+  const [focus, setFocus] = useState(false);
+
   let wrapperBase = "flex flex-row";
 
   let base =
@@ -47,8 +51,12 @@ const Input = ({
     wrapperBase += " form-error-border";
   }
 
+  if (focus) {
+    wrapperBase += " input-outline";
+  }
+
   return (
-    <div className="flex flex-col gap-2">
+    <div className={`flex flex-col gap-2`}>
       <div className={wrapperBase}>
         {!!startIcon && (
           <div
@@ -74,6 +82,7 @@ const Input = ({
             onChange={onChange}
             accept={accept}
             onKeyUp={onKeyUp}
+            onFocus={() => setFocus(true)}
           />
         )}
         {!webbie && (
@@ -89,6 +98,7 @@ const Input = ({
             onChange={onChange}
             accept={accept}
             onKeyUp={onKeyUp}
+            onFocus={() => setFocus(true)}
           />
         )}
         {!!endIcon && (

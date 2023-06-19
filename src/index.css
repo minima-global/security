@@ -51,6 +51,10 @@
   display: inline;
 }
 
+.input-outline {
+  outline: 1px solid #464C4F;
+}
+
 
 .password-label {
   color: var(--core-grey-80);
