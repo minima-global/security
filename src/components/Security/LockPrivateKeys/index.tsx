@@ -40,15 +40,11 @@ const validationSchemaUnlock = yup.object().shape({
 
 const LockPrivateKeys = () => {
   const navigate = useNavigate();
-  const { setModal, vaultLocked, checkVaultLocked } = useContext(appContext);
+  const { setModal, vaultLocked, checkVaultLocked, clearPhrase } =
+    useContext(appContext);
   const [hidePassword, togglePasswordVisibility] = useState(true);
   const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(true);
 
-  const PendingDialog = {
-    content: <p>Your action is pending.</p>,
-    primaryActions: <div></div>,
-    secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
-  };
   const UnlockDialog = {
     content: (
       <div>
@@ -99,6 +95,7 @@ const LockPrivateKeys = () => {
       understand: false,
     },
     onSubmit: async (formData) => {
+      formik.setStatus(undefined);
       if (!vaultLocked) {
         await rpc
           .vaultPasswordLock(formData.password)
@@ -115,6 +112,7 @@ const LockPrivateKeys = () => {
             //   });
             // }
             if (isConfirmed) {
+              clearPhrase();
               return setModal({
                 display: true,
                 content: LockDialog.content,
@@ -122,9 +120,13 @@ const LockPrivateKeys = () => {
                 secondaryActions: LockDialog.secondaryActions,
               });
             }
+
+            // get rid of phrase if in memory
           })
-          .catch(() => {
-            formik.setStatus("Something went wrong");
+          .catch((error: any) => {
+            const errMessage = error;
+            console.log(errMessage);
+            formik.setStatus(errMessage);
           });
       }
 
@@ -152,8 +154,10 @@ const LockPrivateKeys = () => {
               });
             }
           })
-          .catch(() => {
-            formik.setStatus("Something went wrong");
+          .catch((error: any) => {
+            const errMessage = error;
+            console.log(errMessage);
+            formik.setStatus(errMessage);
           });
       }
     },
@@ -310,6 +314,11 @@ const LockPrivateKeys = () => {
                       Lock private keys
                     </Button>
                   </div>
+                  {formik.status && (
+                    <div className="text-sm form-error-message text-left">
+                      {formik.status}
+                    </div>
+                  )}
                 </form>
               </div>
               <div className="text-left">
@@ -414,6 +423,11 @@ const LockPrivateKeys = () => {
                       Unlock private keys
                     </Button>
                   </div>
+                  {formik.status && (
+                    <div className="text-sm form-error-message text-left">
+                      {formik.status}
+                    </div>
+                  )}
                 </form>
               </div>
             </div>

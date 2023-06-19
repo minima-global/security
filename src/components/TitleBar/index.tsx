@@ -18,7 +18,7 @@ const TitleBar = () => {
                 height="32"
                 rx="4"
                 fill="#FF512F"
-                shape-rendering="crispEdges"
+                shapeRendering="crispEdges"
               />
               <mask
                 id="mask0_1253_122"
@@ -51,9 +51,9 @@ const TitleBar = () => {
                 width="132"
                 height="132"
                 filterUnits="userSpaceOnUse"
-                color-interpolation-filters="sRGB"
+                colorInterpolationFilters="sRGB"
               >
-                <feFlood flood-opacity="0" result="BackgroundImageFix" />
+                <feFlood floodOpacity="0" result="BackgroundImageFix" />
                 <feGaussianBlur in="BackgroundImageFix" stdDeviation="25" />
                 <feComposite
                   in2="SourceAlpha"

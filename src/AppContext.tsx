@@ -95,6 +95,35 @@ const AppProvider = ({ children }: IProps) => {
     return _vault.phrase.split(" ");
   }, [_vault]);
 
+  const clearPhrase = () => {
+    setPhrase({
+      1: "",
+      2: "",
+      3: "",
+      4: "",
+      5: "",
+      6: "",
+      7: "",
+      8: "",
+      9: "",
+      10: "",
+      11: "",
+      12: "",
+      13: "",
+      14: "",
+      15: "",
+      16: "",
+      17: "",
+      18: "",
+      19: "",
+      20: "",
+      21: "",
+      22: "",
+      23: "",
+      24: "",
+    });
+  };
+
   const checkVaultLocked = () => {
     rpc.isVaultLocked().then((r) => {
       setVaultLocked(r);
@@ -115,6 +144,8 @@ const AppProvider = ({ children }: IProps) => {
           rpc.isWriteMode().then((appIsInWriteMode) => {
             setAppIsInWriteMode(appIsInWriteMode);
           });
+
+          checkVaultLocked();
         }
       });
     }
@@ -133,6 +164,7 @@ const AppProvider = ({ children }: IProps) => {
         setLogs,
         appIsInWriteMode,
         setPhrase,
+        clearPhrase,
         phraseAsArray,
         resetVault,
         fetchVault,
