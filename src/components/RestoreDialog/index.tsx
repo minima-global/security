@@ -9,6 +9,7 @@ import * as fM from "../../__minima__/libs/fileManager";
 import * as rpc from "../../__minima__/libs/RPC";
 import { useContext, useState } from "react";
 import { appContext } from "../../AppContext";
+import FileChooser from "../UI/FileChooser";
 
 const validationSchema = yup.object().shape({
   host: yup.string().required("Please enter an archive host node"),
@@ -131,7 +132,10 @@ const RestoreDialog = () => {
                       error={formik.errors.host ? formik.errors.host : false}
                     />
                   </div>
-                  <Input
+                  <FileChooser
+                    handleEndIconClick={() => {
+                      formik.setFieldValue("file", undefined);
+                    }}
                     error={formik.errors.file ? formik.errors.file : false}
                     extraClass="core-grey-20"
                     accept=".bak"

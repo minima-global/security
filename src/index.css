@@ -33,6 +33,9 @@
 .color-core-grey {
   color: var(--core-grey);
 }
+.color-black {
+  color: var(--core-black-100);
+}
 
 .form-error-message {
   color: var(--status-red);
@@ -44,7 +47,8 @@
   font-weight: 600;
 }
 .form-error-border {
-  border: 1px solid var(--status-red)
+  border: 1px solid var(--status-red);
+  border-radius: 4px;
 }
 
 .make-svg-inline svg {
@@ -285,4 +289,8 @@ code {
   font-size: 0.875rem;
   color: var(--core-grey-150);
   font-weight: 400;
+}
+
+::file-selector-button {
+  display: none;
 }

@@ -54,7 +54,6 @@ const BackupNode = () => {
 
       return filedata;
     } catch (error) {
-      alert("getFileData FAILED");
       return "";
     }
   };

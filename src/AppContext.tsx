@@ -59,6 +59,9 @@ const AppProvider = ({ children }: IProps) => {
     24: "",
   });
 
+  // backups stuff
+  const [backups, setBackups] = useState<string[]>([]);
+
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
   );
@@ -124,6 +127,12 @@ const AppProvider = ({ children }: IProps) => {
     });
   };
 
+  const getBackups = () => {
+    fileManager.listFiles("/backups").then((response: any) => {
+      setBackups(response.response.list);
+    });
+  };
+
   const checkVaultLocked = () => {
     rpc.isVaultLocked().then((r) => {
       setVaultLocked(r);
@@ -145,8 +154,13 @@ const AppProvider = ({ children }: IProps) => {
             setAppIsInWriteMode(appIsInWriteMode);
           });
 
+          /** create the backups folder */
           fileManager.createFolder("backups");
 
+          /** get and set all current backups */
+          getBackups();
+
+          /** */
           checkVaultLocked();
         }
       });
@@ -171,6 +185,7 @@ const AppProvider = ({ children }: IProps) => {
         resetVault,
         fetchVault,
         mode,
+        backups,
         isMobile: mode === "mobile",
       }}
     >

@@ -2,7 +2,7 @@ import styles from "./Dialog.module.css";
 import Button from "../../UI/Button";
 import { useNavigate } from "react-router-dom";
 
-import SlideScreen from "../../UI/SlideScreen";
+// import SlideScreen from "../../UI/SlideScreen";
 
 import Lottie from "lottie-react";
 import Loading from "../../../assets/loading.json";

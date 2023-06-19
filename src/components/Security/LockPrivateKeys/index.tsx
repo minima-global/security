@@ -100,7 +100,7 @@ const LockPrivateKeys = () => {
         await rpc
           .vaultPasswordLock(formData.password)
           .then((response) => {
-            const isPending = response === 0;
+            // const isPending = response === 0;
             const isConfirmed = response === 1;
 
             // if (isPending) {
@@ -134,7 +134,7 @@ const LockPrivateKeys = () => {
         await rpc
           .vaultPasswordUnlock(formData.password)
           .then((response) => {
-            const isPending = response === 0;
+            // const isPending = response === 0;
             const isConfirmed = response === 1;
 
             // if (isPending) {
