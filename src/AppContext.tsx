@@ -145,6 +145,8 @@ const AppProvider = ({ children }: IProps) => {
             setAppIsInWriteMode(appIsInWriteMode);
           });
 
+          fileManager.createFolder("backups");
+
           checkVaultLocked();
         }
       });
