@@ -19,9 +19,9 @@ const RestoreFromBackup = () => {
   const InformativeDialog = {
     content: (
       <div>
-        <img alt="informative" src="./assets/error.svg" />{" "}
-        <h1 className="text-2xl mb-4">Please note</h1>
-        <p>
+        <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
+        <h1 className="text-2xl mb-8">Please note</h1>
+        <p className="mb-6">
           Restoring a backup is irreversible. <br /> Consider taking a backup of
           this node before restoring.
         </p>
