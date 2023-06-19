@@ -12,8 +12,8 @@ const ResyncDialog = () => {
   const navigate = useNavigate();
 
   return (
-    <SlideScreen display={true}>
-      <div className={styles["backdrop"]}></div>
+    <>
+      <div className={styles["backdrop"]} />
       <div className={styles["grid"]}>
         <header></header>
         <main>
@@ -64,7 +64,7 @@ const ResyncDialog = () => {
         </main>
         <footer></footer>
       </div>
-    </SlideScreen>
+    </>
   );
 };
 

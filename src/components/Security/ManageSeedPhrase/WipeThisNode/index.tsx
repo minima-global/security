@@ -5,6 +5,8 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import * as rpc from "../../../../__minima__/libs/RPC";
 import { useLocation, useNavigate } from "react-router-dom";
+import PERMISSIONS from "../../../../permissions";
+import { useAuth } from "../../../../providers/authProvider";
 
 const validationSchema = yup.object().shape({
   keyuses: yup
@@ -17,6 +19,7 @@ const validationSchema = yup.object().shape({
 const WipeThisNode = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { authNavigate } = useAuth();
   const formik = useFormik({
     initialValues: {
       keyuses: 1000,
@@ -29,7 +32,7 @@ const WipeThisNode = () => {
         .catch(() => {
           return formik.setStatus("Something went wrong, please try again.");
         });
-      navigate("/dashboard/resyncing");
+      authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
     },
     validationSchema: validationSchema,
   });

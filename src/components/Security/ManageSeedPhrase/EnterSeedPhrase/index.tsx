@@ -7,6 +7,8 @@ import Input from "../../../UI/Input";
 import bip39 from "../../../../utils/bip39";
 import Button from "../../../UI/Button";
 import styles from "./SeedPhrase.module.css";
+import { useAuth } from "../../../../providers/authProvider";
+import PERMISSIONS from "../../../../permissions";
 
 const validationSchema = yup.object().shape({
   seedPhrase: yup.object({
@@ -135,6 +137,7 @@ const validationSchema = yup.object().shape({
 
 const EnterSeedPhrase = () => {
   const navigate = useNavigate();
+  const { authNavigate } = useAuth();
   const location = useLocation();
   const wipeThisNode = matchPath(
     "/dashboard/manageseedphrase/enterseedphrase/wipethisnode",
@@ -193,7 +196,14 @@ const EnterSeedPhrase = () => {
           .toString()
           .replaceAll(",", " ");
 
-        navigate("wipethisnode", { state: { seedPhrase: phraseAsString } });
+        authNavigate(
+          "/dashboard/manageseedphrase/enterseedphrase/wipethisnode",
+          [
+            PERMISSIONS.CAN_VIEW_WIPETHISNODE,
+            PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE,
+          ],
+          { state: { seedPhrase: phraseAsString } }
+        );
       } catch (error) {
         console.error(error);
       }

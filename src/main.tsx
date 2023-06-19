@@ -20,6 +20,8 @@ import ResyncDialog from "./components/Security/ResyncDialog/index.tsx";
 import EnterSeedPhrase from "./components/Security/ManageSeedPhrase/EnterSeedPhrase/index.tsx";
 import WipeThisNode from "./components/Security/ManageSeedPhrase/WipeThisNode/index.tsx";
 import ViewSeedPhrase from "./components/Security/ViewSeedPhrase/index.tsx";
+import Authorisation from "./authorisation/index.tsx";
+import PERMISSIONS from "./permissions.ts";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -27,18 +29,56 @@ const router = createHashRouter(
       <Route index element={<Splash />} />
 
       <Route path="/dashboard" element={<Dashboard />}>
-        <Route path="resyncing" element={<ResyncDialog />} />
+        <Route
+          element={
+            <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESYNCING"]]} />
+          }
+        >
+          <Route path="resyncing" element={<ResyncDialog />} />
+        </Route>
         <Route path="lockprivatekeys" element={<LockPrivateKeys />} />
         <Route path="backup" element={<BackupNode />} />
         <Route path="resync" element={<ChainResync />} />
         <Route path="manageseedphrase" element={<ManageSeedPhrase />}>
-          <Route path="viewseedphrase" element={<ViewSeedPhrase />} />
-          <Route path="enterseedphrase" element={<EnterSeedPhrase />}>
-            <Route path="wipethisnode" element={<WipeThisNode />} />
+          <Route
+            element={
+              <Authorisation
+                permissions={[PERMISSIONS["CAN_VIEW_VIEWSEEDPHRASE"]]}
+              />
+            }
+          >
+            <Route path="viewseedphrase" element={<ViewSeedPhrase />} />
+          </Route>
+          <Route
+            element={
+              <Authorisation
+                permissions={[PERMISSIONS["CAN_VIEW_ENTERSEEDPHRASE"]]}
+              />
+            }
+          >
+            <Route path="enterseedphrase" element={<EnterSeedPhrase />}>
+              <Route
+                element={
+                  <Authorisation
+                    permissions={[PERMISSIONS["CAN_VIEW_WIPETHISNODE"]]}
+                  />
+                }
+              >
+                <Route path="wipethisnode" element={<WipeThisNode />} />
+              </Route>
+            </Route>
           </Route>
         </Route>
         <Route path="restore" element={<RestoreFromBackup />}>
-          <Route path="frombackup" element={<RestoreDialog />} />
+          <Route
+            element={
+              <Authorisation
+                permissions={[PERMISSIONS["CAN_VIEW_RESTOREDIALOG"]]}
+              />
+            }
+          >
+            <Route path="frombackup" element={<RestoreDialog />} />
+          </Route>
         </Route>
       </Route>
     </Route>

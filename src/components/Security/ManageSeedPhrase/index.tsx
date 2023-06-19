@@ -4,10 +4,13 @@ import SlideScreen from "../../UI/SlideScreen";
 import { useContext } from "react";
 import { appContext } from "../../../AppContext";
 import Input from "../../UI/Input";
+import { useAuth } from "../../../providers/authProvider";
+import PERMISSIONS from "../../../permissions";
 
 const ManageSeedPhrase = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { authNavigate } = useAuth();
   const { vaultLocked, setSeedResyncHost, _seedResyncHost } =
     useContext(appContext);
 
@@ -65,7 +68,11 @@ const ManageSeedPhrase = () => {
               Manage seed phrase
             </div>
             <div
-              onClick={() => navigate("viewseedphrase")}
+              onClick={() => {
+                authNavigate("/dashboard/manageseedphrase/viewseedphrase", [
+                  PERMISSIONS.CAN_VIEW_VIEWSEEDPHRASE,
+                ]);
+              }}
               className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer mb-8"
             >
               Show seed phrase
@@ -140,7 +147,14 @@ const ManageSeedPhrase = () => {
                   autoComplete="off"
                 />
 
-                <Button onClick={() => navigate("enterseedphrase")}>
+                <Button
+                  onClick={() =>
+                    authNavigate(
+                      "/dashboard/manageseedphrase/enterseedphrase",
+                      [PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE]
+                    )
+                  }
+                >
                   Import seed phrase
                 </Button>
               </div>
