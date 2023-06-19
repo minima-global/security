@@ -72,9 +72,7 @@ const router = createHashRouter(
         <Route path="restore" element={<RestoreFromBackup />}>
           <Route
             element={
-              <Authorisation
-                permissions={[PERMISSIONS["CAN_VIEW_RESTOREDIALOG"]]}
-              />
+              <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESTORE"]]} />
             }
           >
             <Route path="frombackup" element={<RestoreDialog />} />

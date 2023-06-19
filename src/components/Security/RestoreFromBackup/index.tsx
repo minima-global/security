@@ -3,11 +3,14 @@ import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import { useContext } from "react";
 import { appContext } from "../../../AppContext";
+import { useAuth } from "../../../providers/authProvider";
+import PERMISSIONS from "../../../permissions";
 
 const RestoreFromBackup = () => {
   const navigate = useNavigate();
   const { setModal } = useContext(appContext);
   const location = useLocation();
+  const { authNavigate } = useAuth();
   const isRestoring = matchPath(
     { path: "/dashboard/restore/frombackup" },
     location.pathname
@@ -28,7 +31,9 @@ const RestoreFromBackup = () => {
       <Button
         onClick={() => {
           setModal(false);
-          navigate("frombackup");
+          authNavigate("dashboard/restore/frombackup", [
+            PERMISSIONS.CAN_VIEW_RESTORE,
+          ]);
         }}
       >
         Continue
