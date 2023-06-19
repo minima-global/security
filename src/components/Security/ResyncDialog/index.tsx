@@ -45,7 +45,7 @@ const ResyncDialog = () => {
                       navigate("/dashboard");
                     }}
                   >
-                    Cancel
+                    Run in background
                   </Button>
                 </div>
               </div>
@@ -57,7 +57,7 @@ const ResyncDialog = () => {
                   navigate("/dashboard");
                 }}
               >
-                Cancel
+                Run in background
               </Button>
             </div>
           </section>

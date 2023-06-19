@@ -4,11 +4,14 @@ import Button from "../../UI/Button";
 import { useState } from "react";
 
 import Input from "../../UI/Input";
+import { useAuth } from "../../../providers/authProvider";
+import PERMISSIONS from "../../../permissions";
 
 const ChainResync = () => {
   const navigate = useNavigate();
+  const { authNavigate } = useAuth();
 
-  const [host, setHost] = useState("");
+  const [host, setHost] = useState("auto");
   const [error, setError] = useState<false | string>(false);
   const [loading, setLoading] = useState(false);
 
@@ -18,7 +21,6 @@ const ChainResync = () => {
     (window as any).MDS.cmd(
       `archive action:resync host:${host.length ? host : "auto"}`,
       (response: any) => {
-        console.log(response);
         if (!response.status) {
           setLoading(false);
           return setError(
@@ -27,7 +29,9 @@ const ChainResync = () => {
               : "Something went wrong, please try again."
           );
         }
-        return navigate("/dashboard/resyncing");
+        return authNavigate("/dashboard/resyncing", [
+          PERMISSIONS.CAN_VIEW_RESYNCING,
+        ]);
       }
     );
   };
@@ -84,7 +88,10 @@ const ChainResync = () => {
                   />
                 </div>
 
-                <Button disabled={loading} onClick={handleChainResync}>
+                <Button
+                  disabled={loading || host.length === 0}
+                  onClick={handleChainResync}
+                >
                   Re-sync
                 </Button>
               </div>

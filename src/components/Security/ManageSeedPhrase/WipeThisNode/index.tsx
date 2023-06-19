@@ -1,40 +1,32 @@
 import styles from "./Dialog.module.css";
-import Input from "../../../UI/Input";
 import Button from "../../../UI/Button";
 import { useFormik } from "formik";
-import * as yup from "yup";
+
 import * as rpc from "../../../../__minima__/libs/RPC";
 import { useLocation, useNavigate } from "react-router-dom";
 import PERMISSIONS from "../../../../permissions";
 import { useAuth } from "../../../../providers/authProvider";
-
-const validationSchema = yup.object().shape({
-  keyuses: yup
-    .number()
-    .required(
-      "Please enter the maximum times you have signed a transaction.  Otherwise leave the default 1000 if you think you haven't signed over 1000 transactions."
-    ),
-});
 
 const WipeThisNode = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { authNavigate } = useAuth();
   const formik = useFormik({
-    initialValues: {
-      keyuses: 1000,
-    },
-    onSubmit: (formData) => {
+    initialValues: {},
+    onSubmit: () => {
       formik.setStatus(undefined);
       //  Run RPC..
       rpc
-        .importSeedPhrase(location.state.seedPhrase, "auto", formData.keyuses)
+        .importSeedPhrase(
+          location.state.seedPhrase,
+          location.state.host,
+          location.state.keyuses
+        )
         .catch(() => {
           return formik.setStatus("Something went wrong, please try again.");
         });
       authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
     },
-    validationSchema: validationSchema,
   });
 
   return (
@@ -54,27 +46,6 @@ const WipeThisNode = () => {
                   please connect your device to a power source before you
                   continue.
                 </p>
-                <form
-                  autoComplete="off"
-                  className="flex flex-col gap-4"
-                  onSubmit={formik.handleSubmit}
-                >
-                  <Input
-                    extraClass="core-grey-20"
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    placeholder="Key uses"
-                    type="text"
-                    id="keyuses"
-                    name="keyuses"
-                    value={formik.values.keyuses}
-                    error={
-                      formik.touched.keyuses && formik.errors.keyuses
-                        ? formik.errors.keyuses
-                        : false
-                    }
-                  />
-                </form>
               </div>
 
               <div className="flex flex-col gap-3">
@@ -85,7 +56,7 @@ const WipeThisNode = () => {
                     </div>
                   )}
                   <Button
-                    disabled={!formik.isValid}
+                    disabled={!formik.isValid || formik.isSubmitting}
                     type="submit"
                     onClick={() => formik.submitForm()}
                   >
@@ -96,6 +67,7 @@ const WipeThisNode = () => {
                   className={`${styles.desktop_only} ${styles.secondaryActions}`}
                 >
                   <Button
+                    disabled={formik.isSubmitting}
                     onClick={() =>
                       navigate("/dashboard/manageseedphrase/enterseedphrase")
                     }
@@ -108,6 +80,7 @@ const WipeThisNode = () => {
 
             <div className={`${styles.mobile_only} ${styles.secondaryActions}`}>
               <Button
+                disabled={formik.isSubmitting}
                 onClick={() =>
                   navigate("/dashboard/manageseedphrase/enterseedphrase")
                 }

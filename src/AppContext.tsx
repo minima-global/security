@@ -115,13 +115,6 @@ const AppProvider = ({ children }: IProps) => {
           rpc.isWriteMode().then((appIsInWriteMode) => {
             setAppIsInWriteMode(appIsInWriteMode);
           });
-
-          fileManager.listFiles("/").then((r: any) => {
-            console.log(r);
-          });
-          fileManager.createFolder("backups").then((r) => {
-            console.log(r);
-          });
         }
       });
     }

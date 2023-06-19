@@ -1,18 +1,48 @@
 import { Outlet, matchPath, useLocation, useNavigate } from "react-router-dom";
 import Button from "../../UI/Button";
 import SlideScreen from "../../UI/SlideScreen";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { appContext } from "../../../AppContext";
 import Input from "../../UI/Input";
 import { useAuth } from "../../../providers/authProvider";
 import PERMISSIONS from "../../../permissions";
+import { useFormik } from "formik";
 
+import * as yup from "yup";
+
+const validationSchema = yup.object().shape({
+  host: yup.string().required("Please enter an archive host node"),
+  keyuses: yup
+    .number()
+    .required(
+      "Please enter the maximum times you have signed a transaction.  Otherwise leave the default 1000 if you think you haven't signed over 1000 transactions"
+    ),
+});
 const ManageSeedPhrase = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { authNavigate } = useAuth();
-  const { vaultLocked, setSeedResyncHost, _seedResyncHost } =
-    useContext(appContext);
+  const { vaultLocked } = useContext(appContext);
+
+  const [host, setHost] = useState("auto");
+  const [keyuses, setKeyUses] = useState(1000);
+
+  const formik = useFormik({
+    initialValues: {
+      host: "auto",
+      keyuses: 1000,
+    },
+    onSubmit: (formData) => {
+      console.log(formData);
+
+      authNavigate(
+        "/dashboard/manageseedphrase/wipethisnode",
+        [PERMISSIONS.CAN_VIEW_WIPETHISNODE],
+        { state: { host: formData.host, keyuses: formData.keyuses } }
+      );
+    },
+    validationSchema: validationSchema,
+  });
 
   const wantsToEnterSeedPhrase = matchPath(
     { path: "/dashboard/manageseedphrase/enterseedphrase" },
@@ -134,29 +164,46 @@ const ManageSeedPhrase = () => {
                 </div>
               </div>
               <div className="core-black-contrast-2 p-4 rounded">
-                <div className="mb-2 text-left">Archive node host</div>
+                <form onSubmit={formik.handleSubmit}>
+                  <div className="mb-2 text-left">Archive node host</div>
 
-                <Input
-                  extraClass="mb-6"
-                  id="host"
-                  name="host"
-                  placeholder="Auto"
-                  type="text"
-                  value={_seedResyncHost}
-                  onChange={(e) => setSeedResyncHost(e.target.value)}
-                  autoComplete="off"
-                />
+                  <Input
+                    extraClass="mb-6"
+                    id="host"
+                    name="host"
+                    placeholder="Auto"
+                    type="text"
+                    value={formik.values.host}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    autoComplete="off"
+                  />
+                  <div className="mb-2 text-left">Key uses</div>
 
-                <Button
-                  onClick={() =>
-                    authNavigate(
-                      "/dashboard/manageseedphrase/enterseedphrase",
-                      [PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE]
-                    )
-                  }
-                >
-                  Import seed phrase
-                </Button>
+                  <Input
+                    extraClass="mb-6"
+                    id="keyuses"
+                    name="keyuses"
+                    placeholder="Key uses"
+                    type="number"
+                    value={formik.values.keyuses}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    autoComplete="off"
+                  />
+
+                  <Button
+                    disabled={!formik.isValid || formik.isSubmitting}
+                    onClick={() =>
+                      authNavigate(
+                        "/dashboard/manageseedphrase/enterseedphrase",
+                        [PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE]
+                      )
+                    }
+                  >
+                    Import seed phrase
+                  </Button>
+                </form>
               </div>
               <div className="text-left">
                 <p className="text-sm password-label mr-4 ml-4">
