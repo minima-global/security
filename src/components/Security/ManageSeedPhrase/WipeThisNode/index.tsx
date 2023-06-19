@@ -38,8 +38,8 @@ const WipeThisNode = () => {
           <section>
             <div className={styles["dialog"]}>
               <div>
-                <h1 className="text-2xl mb-4">Wipe this node?</h1>
-                <p className="mb-12">
+                <h1 className="text-2xl mb-8">Wipe this node?</h1>
+                <p>
                   This node will be wiped and recreated <br /> with the given
                   seed phrase.
                   <br /> <br /> This process can take up to 2 hours, <br />{" "}

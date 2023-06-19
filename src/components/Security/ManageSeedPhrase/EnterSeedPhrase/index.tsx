@@ -161,36 +161,34 @@ const EnterSeedPhrase = () => {
   const formik = useFormik({
     initialValues: {
       seedPhrase: {
-        1: "TEST".toUpperCase(),
-        2: "TEST".toUpperCase(),
-        3: "TEST".toUpperCase(),
-        4: "TEST".toUpperCase(),
-        5: "TEST".toUpperCase(),
-        6: "TEST".toUpperCase(),
-        7: "TEST".toUpperCase(),
-        8: "TEST".toUpperCase(),
-        9: "TEST".toUpperCase(),
-        10: "TEST".toUpperCase(),
-        11: "TEST".toUpperCase(),
-        12: "TEST".toUpperCase(),
-        13: "TEST".toUpperCase(),
-        14: "TEST".toUpperCase(),
-        15: "TEST".toUpperCase(),
-        16: "TEST".toUpperCase(),
-        17: "TEST".toUpperCase(),
-        18: "TEST".toUpperCase(),
-        19: "TEST".toUpperCase(),
-        20: "TEST".toUpperCase(),
-        21: "TEST".toUpperCase(),
-        22: "TEST".toUpperCase(),
-        23: "TEST".toUpperCase(),
-        24: "TEST".toUpperCase(),
+        1: "".toUpperCase(),
+        2: "".toUpperCase(),
+        3: "".toUpperCase(),
+        4: "".toUpperCase(),
+        5: "".toUpperCase(),
+        6: "".toUpperCase(),
+        7: "".toUpperCase(),
+        8: "".toUpperCase(),
+        9: "".toUpperCase(),
+        10: "".toUpperCase(),
+        11: "".toUpperCase(),
+        12: "".toUpperCase(),
+        13: "".toUpperCase(),
+        14: "".toUpperCase(),
+        15: "".toUpperCase(),
+        16: "".toUpperCase(),
+        17: "".toUpperCase(),
+        18: "".toUpperCase(),
+        19: "".toUpperCase(),
+        20: "".toUpperCase(),
+        21: "".toUpperCase(),
+        22: "".toUpperCase(),
+        23: "".toUpperCase(),
+        24: "".toUpperCase(),
       },
       keyuses: 1000,
     },
     onSubmit: async (formData) => {
-      console.log("Submitting", formData);
-
       try {
         const phraseAsString = Object.values(formData.seedPhrase)
           .toString()
@@ -205,7 +203,7 @@ const EnterSeedPhrase = () => {
           { state: { seedPhrase: phraseAsString } }
         );
       } catch (error) {
-        console.error(error);
+        formik.setStatus(error);
       }
     },
     validationSchema: validationSchema,
@@ -266,7 +264,6 @@ const EnterSeedPhrase = () => {
                         name={`seedPhrase.${word}`}
                         value={formik.values.seedPhrase[word]}
                         onChange={(e) => {
-                          console.log(e.target.value);
                           formik.handleChange(e);
                         }}
                         onBlur={formik.handleBlur}
@@ -294,12 +291,19 @@ const EnterSeedPhrase = () => {
                       Next
                     </Button>
                   )}
+
                   {!!endOfSeedPhrase && (
                     <Button disabled={currentFormError} type="submit">
                       Finish
                     </Button>
                   )}
                 </div>
+
+                {formik.status && (
+                  <div className="text-sm form-error-message text-left">
+                    {formik.status}
+                  </div>
+                )}
               </form>
             </div>
             <div className="mobile-only">
