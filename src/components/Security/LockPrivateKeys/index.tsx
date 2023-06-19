@@ -12,7 +12,7 @@ import { useNavigate } from "react-router-dom";
 const validationSchema = yup.object().shape({
   password: yup
     .string()
-    .matches(/^[~!@#=?+<>,.-_'()?a-zA-Z0-9-]+$/, "Invalid character")
+    .matches(/^[~!@#=?+<>,._'()?a-zA-Z0-9-]+$/, "Invalid character")
     .required("Please enter a password")
     .min(12, "Password must be at least 12 characters long"),
   confirmPassword: yup
@@ -52,8 +52,8 @@ const LockPrivateKeys = () => {
   const UnlockDialog = {
     content: (
       <div>
-        <img alt="unlock" src="./assets/lock_open.svg" />{" "}
-        <h1 className="text-2xl">
+        <img className="mb-8" alt="unlock" src="./assets/lock_open.svg" />{" "}
+        <h1 className="text-2xl font-semibold">
           You have unlocked <br /> your private keys
         </h1>
       </div>
@@ -73,8 +73,8 @@ const LockPrivateKeys = () => {
   const LockDialog = {
     content: (
       <div>
-        <img alt="unlock" src="./assets/lock.svg" />{" "}
-        <h1 className="text-2xl">
+        <img className="mb-8" alt="unlock" src="./assets/lock.svg" />{" "}
+        <h1 className="text-2xl font-semibold">
           You have locked <br /> your private keys
         </h1>
       </div>
@@ -106,14 +106,14 @@ const LockPrivateKeys = () => {
             const isPending = response === 0;
             const isConfirmed = response === 1;
 
-            if (isPending) {
-              return setModal({
-                display: true,
-                content: PendingDialog.content,
-                primaryActions: PendingDialog.primaryActions,
-                secondaryActions: PendingDialog.secondaryActions,
-              });
-            }
+            // if (isPending) {
+            //   return setModal({
+            //     display: true,
+            //     content: PendingDialog.content,
+            //     primaryActions: PendingDialog.primaryActions,
+            //     secondaryActions: PendingDialog.secondaryActions,
+            //   });
+            // }
             if (isConfirmed) {
               return setModal({
                 display: true,
@@ -132,18 +132,17 @@ const LockPrivateKeys = () => {
         await rpc
           .vaultPasswordUnlock(formData.password)
           .then((response) => {
-            console.log(response);
             const isPending = response === 0;
             const isConfirmed = response === 1;
 
-            if (isPending) {
-              return setModal({
-                display: true,
-                content: PendingDialog.content,
-                primaryActions: PendingDialog.primaryActions,
-                secondaryActions: PendingDialog.secondaryActions,
-              });
-            }
+            // if (isPending) {
+            //   return setModal({
+            //     display: true,
+            //     content: PendingDialog.content,
+            //     primaryActions: PendingDialog.primaryActions,
+            //     secondaryActions: PendingDialog.secondaryActions,
+            //   });
+            // }
             if (isConfirmed) {
               return setModal({
                 display: true,
@@ -303,7 +302,10 @@ const LockPrivateKeys = () => {
                     />
                     <Button
                       type="submit"
-                      disabled={!(formik.isValid && formik.values.understand)}
+                      disabled={
+                        !(formik.isValid && formik.values.understand) ||
+                        formik.isSubmitting
+                      }
                     >
                       Lock private keys
                     </Button>
@@ -405,7 +407,10 @@ const LockPrivateKeys = () => {
                     }
                   />
                   <div className="flex flex-col gap-8">
-                    <Button type="submit" disabled={!formik.isValid}>
+                    <Button
+                      type="submit"
+                      disabled={!formik.isValid || formik.isSubmitting}
+                    >
                       Unlock private keys
                     </Button>
                   </div>
