@@ -9,6 +9,8 @@ import Input from "../../UI/Input";
 import * as rpc from "../../../__minima__/libs/RPC";
 import * as fileManager from "../../../__minima__/libs/fileManager";
 
+import { format } from "date-fns";
+
 import { appContext } from "../../../AppContext";
 import useIsMinimaBrowser from "../../../hooks/useIsMinimaBrowser";
 
@@ -76,13 +78,13 @@ const BackupNode = () => {
     }
   };
 
-  const SomethingWentWrong = () => {
+  const SomethingWentWrong = (error: string) => {
     return {
       content: (
         <div>
           <img alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Something went wrong!</h1>
-          <p>Please go back and try again.</p>
+          <p>{error}</p>
         </div>
       ),
       primaryActions: null,
@@ -154,7 +156,8 @@ const BackupNode = () => {
       try {
         const minidappPath = await fileManager.getPath("/");
 
-        const fileName = "minimaBackup_" + new Date().getTime() + ".bak";
+        const dateCreation = format(new Date(), "_dMMMyyyy_Hmm");
+        const fileName = "minima_backup_" + dateCreation + ".bak";
         await rpc.createBackup(
           minidappPath + "/backups/" + fileName,
           formData.password
@@ -185,7 +188,7 @@ const BackupNode = () => {
         }
       } catch (error: any) {
         console.error(error);
-        const somethingwrong = SomethingWentWrong();
+        const somethingwrong = SomethingWentWrong(error);
         setModal({
           display: true,
           content: somethingwrong.content,

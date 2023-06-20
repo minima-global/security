@@ -63,7 +63,7 @@ const ViewSeedPhrase = () => {
               !hide ? "core-black-contrast core-grey-contrast-3" : ""
             }`}
           >
-            Show{" "}
+            Hold to view{" "}
             <svg
               width="21"
               height="20"
@@ -97,12 +97,17 @@ const ViewSeedPhrase = () => {
         </div>
 
         <Button
-          onContextMenu={() => setHideSeedPhrase(false)}
-          extraClass={`mobile-only p-16 flex gap-2 items-center justify-center mb-8 ${
+          onTouchStart={() => setHideSeedPhrase(false)}
+          onTouchEnd={() => setHideSeedPhrase(true)}
+          // onContextMenu={() => {
+          //   setHideSeedPhrase(false);
+          //   setTimeout(() => setHideSeedPhrase(true), 2500);
+          // }}
+          extraClass={`mobile-only p-16 flex gap-2 items-center justify-center mb-8 mt-4 ${
             !hide ? "core-black-contrast core-grey-contrast-3" : ""
           }`}
         >
-          Show{" "}
+          Hold to view{" "}
           <svg
             width="21"
             height="20"

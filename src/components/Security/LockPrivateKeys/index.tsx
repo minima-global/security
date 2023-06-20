@@ -1,4 +1,3 @@
-import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import Input from "../../UI/Input";
 import UnderstandRadio from "../../UI/UnderstandRadio";
@@ -8,6 +7,10 @@ import * as rpc from "../../../__minima__/libs/RPC";
 import { useContext, useState } from "react";
 import { appContext } from "../../../AppContext";
 import { useNavigate } from "react-router-dom";
+
+import styles from "./LockPrivateKeys.module.css";
+
+import { CSSTransition } from "react-transition-group";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -100,18 +103,10 @@ const LockPrivateKeys = () => {
         await rpc
           .vaultPasswordLock(formData.password)
           .then((response) => {
-            // const isPending = response === 0;
             const isConfirmed = response === 1;
 
-            // if (isPending) {
-            //   return setModal({
-            //     display: true,
-            //     content: PendingDialog.content,
-            //     primaryActions: PendingDialog.primaryActions,
-            //     secondaryActions: PendingDialog.secondaryActions,
-            //   });
-            // }
             if (isConfirmed) {
+              // get rid of phrase if in memory
               clearPhrase();
               return setModal({
                 display: true,
@@ -120,13 +115,11 @@ const LockPrivateKeys = () => {
                 secondaryActions: LockDialog.secondaryActions,
               });
             }
-
-            // get rid of phrase if in memory
           })
           .catch((error: any) => {
-            const errMessage = error;
-            console.log(errMessage);
-            formik.setStatus(errMessage);
+            formik.setStatus(error);
+
+            setTimeout(() => formik.setStatus(undefined), 2500);
           });
       }
 
@@ -134,17 +127,8 @@ const LockPrivateKeys = () => {
         await rpc
           .vaultPasswordUnlock(formData.password)
           .then((response) => {
-            // const isPending = response === 0;
             const isConfirmed = response === 1;
 
-            // if (isPending) {
-            //   return setModal({
-            //     display: true,
-            //     content: PendingDialog.content,
-            //     primaryActions: PendingDialog.primaryActions,
-            //     secondaryActions: PendingDialog.secondaryActions,
-            //   });
-            // }
             if (isConfirmed) {
               return setModal({
                 display: true,
@@ -155,9 +139,9 @@ const LockPrivateKeys = () => {
             }
           })
           .catch((error: any) => {
-            const errMessage = error;
-            console.log(errMessage);
-            formik.setStatus(errMessage);
+            formik.setStatus(error);
+
+            setTimeout(() => formik.setStatus(undefined), 2500);
           });
       }
     },
@@ -166,7 +150,17 @@ const LockPrivateKeys = () => {
 
   return (
     <>
-      <SlideScreen display={!vaultLocked}>
+      <CSSTransition
+        in={!vaultLocked}
+        unmountOnExit
+        timeout={2000}
+        classNames={{
+          enter: styles.slideEnter,
+          enterDone: styles.slideEnterActive,
+          exit: styles.slideExit,
+          exitActive: styles.slideExitActive,
+        }}
+      >
         <div className="flex flex-col h-full bg-black">
           <div className="flex flex-col h-full">
             <div
@@ -332,9 +326,18 @@ const LockPrivateKeys = () => {
             </div>
           </div>
         </div>
-      </SlideScreen>
-
-      <SlideScreen display={!!vaultLocked}>
+      </CSSTransition>
+      <CSSTransition
+        in={!!vaultLocked}
+        unmountOnExit
+        timeout={2000}
+        classNames={{
+          enter: styles.slideEnter,
+          enterDone: styles.slideEnterActive,
+          exit: styles.slideExit,
+          exitActive: styles.slideExitActive,
+        }}
+      >
         <div className="flex flex-col h-full bg-black">
           <div className="flex flex-col h-full">
             <div
@@ -433,7 +436,7 @@ const LockPrivateKeys = () => {
             </div>
           </div>
         </div>
-      </SlideScreen>
+      </CSSTransition>
     </>
   );
 };

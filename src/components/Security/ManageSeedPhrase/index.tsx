@@ -1,7 +1,7 @@
 import { Outlet, matchPath, useLocation, useNavigate } from "react-router-dom";
 import Button from "../../UI/Button";
 import SlideScreen from "../../UI/SlideScreen";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { appContext } from "../../../AppContext";
 import Input from "../../UI/Input";
 import { useAuth } from "../../../providers/authProvider";
@@ -9,6 +9,10 @@ import PERMISSIONS from "../../../permissions";
 import { useFormik } from "formik";
 
 import * as yup from "yup";
+import Tooltip from "../../UI/Tooltip";
+
+import styles from "./ManageSeed.module.css";
+import { CSSTransition } from "react-transition-group";
 
 const validationSchema = yup.object().shape({
   host: yup.string().required("Please enter an archive host node"),
@@ -23,6 +27,8 @@ const ManageSeedPhrase = () => {
   const location = useLocation();
   const { authNavigate } = useAuth();
   const { vaultLocked } = useContext(appContext);
+
+  const [tooltip, setTooltip] = useState({ host: false, keyuses: false });
 
   const formik = useFormik({
     initialValues: {
@@ -164,7 +170,44 @@ const ManageSeedPhrase = () => {
                   className="flex flex-col gap-4"
                 >
                   <div>
-                    <div className="mb-2 text-left">Archive node host</div>
+                    <span className="mb-2 flex gap-2 items-center">
+                      <div className="text-left">Archive node host</div>
+                      {!tooltip.host && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() => setTooltip({ ...tooltip, host: true })}
+                          alt="tooltip"
+                          src="./assets/help_filled.svg"
+                        />
+                      )}
+                      {!!tooltip.host && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() =>
+                            setTooltip({ ...tooltip, host: false })
+                          }
+                          alt="tooltip-dismiss"
+                          src="./assets/cancel_filled.svg"
+                        />
+                      )}
+                    </span>
+                    <CSSTransition
+                      in={tooltip.host}
+                      unmountOnExit
+                      timeout={200}
+                      classNames={{
+                        enter: styles.backdropEnter,
+                        enterDone: styles.backdropEnterActive,
+                        exit: styles.backdropExit,
+                        exitActive: styles.backdropExitActive,
+                      }}
+                    >
+                      <Tooltip
+                        onClick={() => setTooltip({ ...tooltip, host: false })}
+                        content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
+                        position={148}
+                      />
+                    </CSSTransition>
 
                     <Input
                       id="host"
@@ -178,8 +221,49 @@ const ManageSeedPhrase = () => {
                     />
                   </div>
                   <div>
-                    <div className="mb-2 text-left">Key uses</div>
+                    <span className="mb-2 flex gap-2 items-center">
+                      <div className="text-left">Key uses</div>
+                      {!tooltip.keyuses && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() =>
+                            setTooltip({ ...tooltip, keyuses: true })
+                          }
+                          alt="tooltip"
+                          src="./assets/help_filled.svg"
+                        />
+                      )}
+                      {!!tooltip.keyuses && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() =>
+                            setTooltip({ ...tooltip, keyuses: false })
+                          }
+                          alt="tooltip-dismiss"
+                          src="./assets/cancel_filled.svg"
+                        />
+                      )}
+                    </span>
 
+                    <CSSTransition
+                      in={tooltip.keyuses}
+                      unmountOnExit
+                      timeout={200}
+                      classNames={{
+                        enter: styles.backdropEnter,
+                        enterDone: styles.backdropEnterActive,
+                        exit: styles.backdropExit,
+                        exitActive: styles.backdropExitActive,
+                      }}
+                    >
+                      <Tooltip
+                        onClick={() =>
+                          setTooltip({ ...tooltip, keyuses: false })
+                        }
+                        content="How many times at most you used your keys. Your keys are used for signing every transaction you make. Every time you import your seed phrase this needs to be higher."
+                        position={75}
+                      />
+                    </CSSTransition>
                     <Input
                       id="keyuses"
                       name="keyuses"

@@ -1,15 +1,16 @@
-.slideEnter {
+
+.backdropEnter {
   opacity: 0;
 }
-.slideEnterActive {
+.backdropEnterActive {
   opacity: 1;
   transition: opacity 200ms;
 }
 
-.slideExit {
+.backdropExit {
   opacity: 1;
 }
-.slideExitActive {
+.backdropExitActive {
   opacity: 0;
   transition: opacity 200ms;
 }

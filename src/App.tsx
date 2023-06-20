@@ -1,15 +1,15 @@
 import "./App.css";
 import AppProvider from "./AppContext";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import { AuthProvider } from "./providers/authProvider";
 import { useEffect } from "react";
 import * as utils from "./utils";
 
 function App() {
   const navigate = useNavigate();
-  useEffect(() => {
-    const ls = localStorage.getItem(utils.getAppUID());
+  const ls = useLoaderData();
 
+  useEffect(() => {
     if (!ls) {
       return localStorage.setItem(utils.getAppUID(), "1");
     }
@@ -17,7 +17,7 @@ function App() {
     if (ls) {
       navigate("/dashboard");
     }
-  }, []);
+  }, [ls]);
 
   return (
     <AppProvider>

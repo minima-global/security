@@ -11,9 +11,6 @@ const Authorisation = ({ permissions }: IProps) => {
     userPermissions.includes(allowed)
   );
 
-  console.log("userPermiss", userPermissions);
-  console.log("ISALLOWED", isAllowed);
-
   return isAllowed ? <Outlet /> : <Navigate to="/dashboard" replace={true} />;
 };
 

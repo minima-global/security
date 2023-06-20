@@ -23,9 +23,17 @@ import ViewSeedPhrase from "./components/Security/ViewSeedPhrase/index.tsx";
 import Authorisation from "./authorisation/index.tsx";
 import PERMISSIONS from "./permissions.ts";
 
+import * as utils from "./utils";
+
 const router = createHashRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />}>
+    <Route
+      path="/"
+      element={<App />}
+      loader={() => {
+        return localStorage.getItem(utils.getAppUID());
+      }}
+    >
       <Route index element={<Splash />} />
 
       <Route path="/dashboard" element={<Dashboard />}>

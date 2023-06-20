@@ -204,6 +204,8 @@ const EnterSeedPhrase = () => {
         );
       } catch (error) {
         formik.setStatus(error);
+
+        setTimeout(() => formik.setStatus(undefined), 2500);
       }
     },
     validationSchema: validationSchema,

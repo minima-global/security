@@ -23,7 +23,9 @@ const WipeThisNode = () => {
           location.state.keyuses
         )
         .catch(() => {
-          return formik.setStatus("Something went wrong, please try again.");
+          formik.setStatus("Something went wrong, please try again.");
+
+          setTimeout(() => formik.setStatus(undefined), 2500);
         });
       authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
     },
