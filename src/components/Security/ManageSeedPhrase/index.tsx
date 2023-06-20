@@ -159,33 +159,38 @@ const ManageSeedPhrase = () => {
                 </div>
               </div>
               <div className="core-black-contrast-2 p-4 rounded">
-                <form onSubmit={formik.handleSubmit}>
-                  <div className="mb-2 text-left">Archive node host</div>
+                <form
+                  onSubmit={formik.handleSubmit}
+                  className="flex flex-col gap-4"
+                >
+                  <div>
+                    <div className="mb-2 text-left">Archive node host</div>
 
-                  <Input
-                    extraClass="mb-6"
-                    id="host"
-                    name="host"
-                    placeholder="Auto"
-                    type="text"
-                    value={formik.values.host}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    autoComplete="off"
-                  />
-                  <div className="mb-2 text-left">Key uses</div>
+                    <Input
+                      id="host"
+                      name="host"
+                      placeholder="Auto"
+                      type="text"
+                      value={formik.values.host}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      autoComplete="off"
+                    />
+                  </div>
+                  <div>
+                    <div className="mb-2 text-left">Key uses</div>
 
-                  <Input
-                    extraClass="mb-6"
-                    id="keyuses"
-                    name="keyuses"
-                    placeholder="Key uses"
-                    type="number"
-                    value={formik.values.keyuses}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    autoComplete="off"
-                  />
+                    <Input
+                      id="keyuses"
+                      name="keyuses"
+                      placeholder="Key uses"
+                      type="number"
+                      value={formik.values.keyuses}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      autoComplete="off"
+                    />
+                  </div>
                   {formik.status && (
                     <div className="text-sm form-error-message text-left">
                       {formik.status}
