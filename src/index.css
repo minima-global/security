@@ -68,6 +68,10 @@
   color: var(--core-grey-5);
 }
 
+.core-grey-5 {
+  background-color: var(--core-grey-5);
+}
+
 .core-grey-100 {
   background-color: var(--core-grey-100);
 }
@@ -84,11 +88,10 @@
   background-color: var(--core-black-contrast-2);
 }
 .core-black-contrast {
-  background-color: var(--core-black-contrast);
+  background-color: var(--core-black-contrast)!important;
 }
-
 .core-grey-contrast-3 {
-  color:  var(--core-black-contrast-3);
+  color:  var(--core-black-contrast-3)!important;
 }
 
 

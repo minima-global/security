@@ -1,21 +1,22 @@
 import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../AppContext";
-import { useNavigate } from "react-router-dom";
+import { To, useNavigate } from "react-router-dom";
 import SlideScreen from "../UI/SlideScreen";
 export function Security() {
-  const { vaultLocked } = useContext(appContext);
+  const { vaultLocked, setBackButton } = useContext(appContext);
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setBackButton({ display: false, to: -1 as To, title: "Menu" });
+
     setTimeout(() => setLoading(false), 2000);
   }, []);
 
   return (
     <SlideScreen display={true}>
-      <div className="pt-6 px-6 pb-6 flex flex-col h-full">
-        <h1 className="text-2xl mb-4 align-left text-left">Security</h1>
+      <div className="pt-8 px-4 pb-4 flex flex-col h-full">
         <div className=" flex-grow my-4 flex flex-col gap-3">
           <div className="text-left relative core-black-contrast py-4 px-5 rounded cursor-pointer">
             Node status

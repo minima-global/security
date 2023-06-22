@@ -20,7 +20,6 @@ const Dashboard = () => {
           <AppIsInReadMode />
         </>
       }
-      footer={<></>}
       content={
         <>
           {!!modal.display && <Dialog />}

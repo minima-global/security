@@ -1,6 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import SlideScreen from "../../../UI/SlideScreen";
-import { matchPath, Outlet, useLocation, useNavigate } from "react-router-dom";
+import {
+  matchPath,
+  Outlet,
+  To,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import { useFormik, getIn } from "formik";
 import * as yup from "yup";
 import Input from "../../../UI/Input";
@@ -9,6 +15,8 @@ import Button from "../../../UI/Button";
 import styles from "./SeedPhrase.module.css";
 import { useAuth } from "../../../../providers/authProvider";
 import PERMISSIONS from "../../../../permissions";
+import BackButton from "../../../UI/BackButton";
+import { appContext } from "../../../../AppContext";
 
 const validationSchema = yup.object().shape({
   seedPhrase: yup.object({
@@ -136,7 +144,8 @@ const validationSchema = yup.object().shape({
 });
 
 const EnterSeedPhrase = () => {
-  const navigate = useNavigate();
+  const { setBackButton, displayBackButton: displayHeaderBackButton } =
+    useContext(appContext);
   const { authNavigate } = useAuth();
   const location = useLocation();
   const wipeThisNode = matchPath(
@@ -157,6 +166,14 @@ const EnterSeedPhrase = () => {
       prevState.map((ind: number) => (step === 0 ? ind : ind + offset))
     );
   }, [step]);
+
+  useEffect(() => {
+    setBackButton({
+      display: true,
+      to: "/dashboard/manageseedphrase",
+      title: "Security",
+    });
+  }, [location]);
 
   const formik = useFormik({
     initialValues: {
@@ -223,26 +240,10 @@ const EnterSeedPhrase = () => {
         <Outlet />
       </SlideScreen>
       <SlideScreen display={!wipeThisNode}>
-        <div className="h-full bg-black">
-          <div
-            onClick={() => navigate("/dashboard/manageseedphrase")}
-            className="cursor-pointer mb-4 flex items-center"
-          >
-            <svg
-              className="mt-0.5 mr-4"
-              width="8"
-              height="14"
-              viewBox="0 0 8 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6.90017 13.1693L0.730957 7.00009L6.90017 0.830872L7.79631 1.72701L2.52324 7.00009L7.79631 12.2732L6.90017 13.1693Z"
-                fill="#F9F9FA"
-              />
-            </svg>
-            Security
-          </div>
+        <div className="h-full bg-black px-4 pb-4">
+          {!displayHeaderBackButton && (
+            <BackButton to="/dashboard/manageseedphrase" title="Security" />
+          )}
           <div className="mt-6 text-2xl mb-8 text-left">Enter seed phrase</div>
 
           <div className="flex flex-col gap-5">

@@ -3,7 +3,7 @@
   display: grid;
 
   grid-template-columns: 1fr;
-  grid-template-rows: 56px 1fr;
+  grid-template-rows: auto 1fr;
   grid-template-areas:
               'header'
               'main';
@@ -30,7 +30,7 @@
 }
 .grid > main {
   grid-area: main;
-  height: calc(100vh - 56px);
+  height: calc(100vh - 94px);
   overflow: hidden;
   overflow-y: overlay;
   

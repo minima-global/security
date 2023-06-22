@@ -9,6 +9,7 @@ import {
 
 import * as rpc from "./__minima__/libs/RPC";
 import * as fileManager from "./__minima__/libs/fileManager";
+import { To } from "react-router-dom";
 
 export const appContext = createContext({} as any);
 
@@ -16,6 +17,17 @@ interface IProps {
   children: any;
 }
 const AppProvider = ({ children }: IProps) => {
+  const [displayBackButton, setDisplayHeaderBackButton] = useState(false);
+  const [backButton, setBackButton] = useState<{
+    display: boolean;
+    to: To;
+    title: string;
+  }>({
+    display: false,
+    to: -1 as To,
+    title: "Menu",
+  });
+
   const loaded = useRef(false);
 
   const [mode, setMode] = useState("desktop");
@@ -65,6 +77,25 @@ const AppProvider = ({ children }: IProps) => {
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
   );
+
+  useEffect(() => {
+    if (window.innerWidth < 568) {
+      return setDisplayHeaderBackButton(true);
+    }
+
+    if (window.innerWidth > 568) {
+      return setDisplayHeaderBackButton(false);
+    }
+    (window as any).addEventListener("resize", () => {
+      if (window.innerWidth < 568) {
+        return setDisplayHeaderBackButton(true);
+      }
+
+      if (window.innerWidth > 568) {
+        return setDisplayHeaderBackButton(false);
+      }
+    });
+  }, [window]);
 
   useEffect(() => {
     if (window.innerWidth < 568) {
@@ -129,7 +160,7 @@ const AppProvider = ({ children }: IProps) => {
 
   const getBackups = () => {
     fileManager.listFiles("/backups").then((response: any) => {
-      setBackups(response.response.list);
+      setBackups(response.response.list.reverse());
     });
   };
 
@@ -187,6 +218,10 @@ const AppProvider = ({ children }: IProps) => {
         mode,
         backups,
         isMobile: mode === "mobile",
+
+        backButton,
+        setBackButton,
+        displayBackButton,
       }}
     >
       {children}
