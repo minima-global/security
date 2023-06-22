@@ -62,7 +62,6 @@ const ResyncDialog = () => {
             </div>
           </section>
         </main>
-        <footer></footer>
       </div>
     </>
   );

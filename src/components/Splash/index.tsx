@@ -31,7 +31,6 @@ const Splash = () => {
           </button>
         </div>
       }
-      footer={<></>}
     />
   );
 };

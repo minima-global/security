@@ -30,7 +30,4 @@
 .grid header {
   grid-area: header;
 }
-.grid footer {
-  grid-area: footer;
-}
 

@@ -59,7 +59,6 @@ export function AppIsInReadMode() {
               </div>
             </section>
           </main>
-          <footer></footer>
         </div>
       </div>
     </SlideScreen>

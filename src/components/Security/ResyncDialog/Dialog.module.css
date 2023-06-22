@@ -142,12 +142,11 @@
   
   
   .grid {  
-    grid-template-rows: 56px 1fr auto;
+    grid-template-rows: 56px 1fr;
     
     grid-template-areas: 
               'header'
-              'main'
-              'footer';
+              'main';
   }
 
   .grid main > section {
@@ -155,10 +154,6 @@
     grid-template-columns: 1fr;
     grid-template-areas: 
                 'main';
-  }
-
-  .grid > footer {
-    grid-area: footer;
   }
 
   .desktop_only {

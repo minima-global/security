@@ -572,7 +572,6 @@ const RestoreDialog = () => {
             </div>
           </section>
         </main>
-        <footer></footer>
       </div>
     </div>
   );

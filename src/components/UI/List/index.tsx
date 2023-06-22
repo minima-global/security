@@ -48,8 +48,6 @@ const List = ({ options, setForm }: IProps) => {
     handleSelect(options[0].name);
   }, []);
 
-  const base =
-    "core-grey-20 font-medium color-black w-full px-4 py-3.5 rounded rounded-r-none disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none";
   console.log(options);
   return (
     <div className={`${styles.layout} core-grey-20`}>
