@@ -1,12 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import SlideScreen from "../../../UI/SlideScreen";
-import {
-  matchPath,
-  Outlet,
-  To,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { matchPath, Outlet, useLocation } from "react-router-dom";
 import { useFormik, getIn } from "formik";
 import * as yup from "yup";
 import Input from "../../../UI/Input";
@@ -260,6 +254,7 @@ const EnterSeedPhrase = () => {
                   {seedWord.map((word) => (
                     <li key={word}>
                       <Input
+                        extraClass="core-black-contrast-2"
                         type="text"
                         startIcon={<div>{word}</div>}
                         placeholder="Enter phrase"

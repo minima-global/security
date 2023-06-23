@@ -4,8 +4,6 @@
 }
 
 .layout {
-  display: block;
-  /* position: relative; */
   border-radius: 4px;
 }
 
@@ -20,7 +18,6 @@
 
 
 .picker > span {
-
   font-weight: 500;
   justify-self: flex-start;
 }
@@ -34,7 +31,7 @@
   position: absolute;
   background-color: #282B2E;
   border-radius: 4px;
-  padding: 12px 16px;
+  padding: 24px;
   border-top-right-radius: 0;
   border-top-left-radius: 0;
   color: #F9F9FA;
@@ -53,12 +50,16 @@
   right: 0;
   bottom: 0;
   background-color: #08090B;
+  display: grid;
 }
 
 .dd > ul {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 8px;
   text-align: left;
+  overflow-y: scroll;
+  height: 80%;
 }
 
 
@@ -67,3 +68,24 @@
   cursor: pointer;
 }
 
+@media screen and (min-width: 560px) {
+  .dd {
+    position: relative;
+    align-self: center;
+    justify-self: center;
+    overflow: hidden;
+    max-width: 568px;
+    max-height: 568px;
+  }
+
+  .dd ul {
+    height: 368px;
+    overflow-y: scroll;
+  }
+}
+
+
+.no-results {
+  align-self: center;
+  justify-self: center;
+}

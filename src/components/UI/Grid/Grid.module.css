@@ -6,7 +6,7 @@
         'header'
         'content';
 
-  grid-template-rows: auto 1fr;
+  grid-template-rows: 56px 1fr;
   grid-template-columns: 1fr;
 }
 

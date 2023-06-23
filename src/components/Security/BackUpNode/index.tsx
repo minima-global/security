@@ -1,6 +1,6 @@
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
-import { To, useNavigate } from "react-router-dom";
+import { To } from "react-router-dom";
 import { RefObject, useContext, useEffect, useRef, useState } from "react";
 
 import { useFormik } from "formik";
@@ -41,7 +41,6 @@ const validationSchema = yup.object().shape({
 });
 
 const BackupNode = () => {
-  const navigate = useNavigate();
   const [step, setStep] = useState<0 | 1>(0);
   const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
   const [hidePassword, togglePasswordVisibility] = useState(true);

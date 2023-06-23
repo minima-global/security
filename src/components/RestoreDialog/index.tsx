@@ -7,7 +7,7 @@ import * as yup from "yup";
 import * as utils from "../../utils";
 import * as fM from "../../__minima__/libs/fileManager";
 import * as rpc from "../../__minima__/libs/RPC";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../AppContext";
 import FileChooser from "../UI/FileChooser";
 
@@ -33,6 +33,7 @@ const RestoreDialog = () => {
     console.log("looking for file w/ name", mdsFilename);
     const fullPath = await fM.getPath("/backups/" + mdsFilename);
     console.log("fullPath", fullPath);
+    formik.setFieldValue("file", fullPath);
   };
 
   const SomethingWentWrong = (error: string) => {
@@ -52,39 +53,42 @@ const RestoreDialog = () => {
   };
   const SuccessDialog = {
     content: (
-      <div>
-        <svg
-          className="mb-3 inline"
-          width="64"
-          height="64"
-          viewBox="0 0 64 64"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <mask
-            id="mask0_1102_25908"
-            maskUnits="userSpaceOnUse"
-            x="0"
-            y="0"
+      <div className="flex h-100 flex-col justify-between">
+        <div>
+          <svg
+            className="mb-3 inline"
             width="64"
             height="64"
+            viewBox="0 0 64 64"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
           >
-            <rect width="64" height="64" fill="#D9D9D9" />
-          </mask>
-          <g mask="url(#mask0_1102_25908)">
-            <path
-              d="M28.2157 43.3436L46.1438 25.4154L43.3336 22.6052L28.2157 37.7232L20.6157 30.1232L17.8055 32.9334L28.2157 43.3436ZM32.0047 57.3333C28.5009 57.3333 25.2075 56.6684 22.1245 55.3386C19.0414 54.0088 16.3596 52.2042 14.079 49.9246C11.7984 47.645 9.99288 44.9644 8.66253 41.8827C7.33217 38.801 6.66699 35.5083 6.66699 32.0045C6.66699 28.5007 7.33188 25.2072 8.66166 22.1242C9.99144 19.0411 11.7961 16.3593 14.0757 14.0788C16.3553 11.7981 19.0359 9.99264 22.1176 8.66228C25.1992 7.33193 28.492 6.66675 31.9958 6.66675C35.4996 6.66675 38.793 7.33164 41.8761 8.66142C44.9591 9.9912 47.641 11.7959 49.9215 14.0754C52.2022 16.355 54.0076 19.0357 55.338 22.1174C56.6684 25.199 57.3335 28.4917 57.3335 31.9956C57.3335 35.4994 56.6686 38.7928 55.3389 41.8758C54.0091 44.9589 52.2044 47.6407 49.9249 49.9213C47.6453 52.2019 44.9646 54.0074 41.8829 55.3378C38.8013 56.6681 35.5085 57.3333 32.0047 57.3333Z"
-              fill="#F4F4F5"
-            />
-          </g>
-        </svg>
+            <mask
+              id="mask0_1102_25908"
+              maskUnits="userSpaceOnUse"
+              x="0"
+              y="0"
+              width="64"
+              height="64"
+            >
+              <rect width="64" height="64" fill="#D9D9D9" />
+            </mask>
+            <g mask="url(#mask0_1102_25908)">
+              <path
+                d="M28.2157 43.3436L46.1438 25.4154L43.3336 22.6052L28.2157 37.7232L20.6157 30.1232L17.8055 32.9334L28.2157 43.3436ZM32.0047 57.3333C28.5009 57.3333 25.2075 56.6684 22.1245 55.3386C19.0414 54.0088 16.3596 52.2042 14.079 49.9246C11.7984 47.645 9.99288 44.9644 8.66253 41.8827C7.33217 38.801 6.66699 35.5083 6.66699 32.0045C6.66699 28.5007 7.33188 25.2072 8.66166 22.1242C9.99144 19.0411 11.7961 16.3593 14.0757 14.0788C16.3553 11.7981 19.0359 9.99264 22.1176 8.66228C25.1992 7.33193 28.492 6.66675 31.9958 6.66675C35.4996 6.66675 38.793 7.33164 41.8761 8.66142C44.9591 9.9912 47.641 11.7959 49.9215 14.0754C52.2022 16.355 54.0076 19.0357 55.338 22.1174C56.6684 25.199 57.3335 28.4917 57.3335 31.9956C57.3335 35.4994 56.6686 38.7928 55.3389 41.8758C54.0091 44.9589 52.2044 47.6407 49.9249 49.9213C47.6453 52.2019 44.9646 54.0074 41.8829 55.3378C38.8013 56.6681 35.5085 57.3333 32.0047 57.3333Z"
+                fill="#F4F4F5"
+              />
+            </g>
+          </svg>
 
-        <h1 className="text-2xl mb-4 font-semibold">Restore complete</h1>
-        <p className="font-medium mb-6">
-          Your node was successfully restored and will shutdown. Restart Minima
-          for the restore to take effect.
-        </p>
+          <h1 className="text-2xl mb-4 font-semibold">Restore complete</h1>
+          <p className="font-medium mb-6">
+            Your node was successfully restored and will shutdown. Restart
+            Minima for the restore to take effect.
+          </p>
+        </div>
         <Button
+          extraClass="!bg-transparent text-core-grey-5 rounded !border-white hover:!border-white hover:opacity-80"
           onClick={() => {
             if (isMobile) {
               // @ts-ignore
@@ -115,19 +119,23 @@ const RestoreDialog = () => {
             "Please select a valid (.bak) backup file."
           );
         }
+        let fullPath = "";
+        if (mode === "files") {
+          const arrayBuffer = await utils.blobToArrayBuffer(formData.file);
+          const hex = utils.bufferToHex(arrayBuffer);
+          await fM.saveFileAsBinary(
+            "/backups/" + (formData.file as any).name,
+            hex
+          );
+          fullPath = await fM.getPath(
+            "/backups/" + (formData.file as any).name
+          );
+        }
 
-        const arrayBuffer = await utils.blobToArrayBuffer(formData.file);
-        const hex = utils.bufferToHex(arrayBuffer);
-        await fM.saveFileAsBinary(
-          "/backups/" + (formData.file as any).name,
-          hex
-        );
-        const fullPath = await fM.getPath(
-          "/backups/" + (formData.file as any).name
-        );
-
+        if (mode === "backups") {
+          fullPath = formData.file || "";
+        }
         await rpc.restoreFromBackup(formData.host, fullPath, formData.password);
-
         setModal({
           display: true,
           content: SuccessDialog.content,
@@ -146,6 +154,15 @@ const RestoreDialog = () => {
     },
     validationSchema: validationSchema,
   });
+
+  useEffect(() => {
+    setModal({
+      display: true,
+      content: SuccessDialog.content,
+      primaryActions: SuccessDialog.primaryActions,
+      secondaryActions: null,
+    });
+  }, []);
 
   return (
     <div>
@@ -327,7 +344,7 @@ const RestoreDialog = () => {
                   >
                     <Button
                       disabled={formik.isSubmitting}
-                      onClick={() => navigate(-1)}
+                      onClick={() => setMode(false)}
                     >
                       Cancel
                     </Button>
@@ -355,54 +372,6 @@ const RestoreDialog = () => {
                         console.log("selected option -> ", option);
                         handleSelectedBackupFromList(option);
                       }}
-                    />
-
-                    <FileChooser
-                      handleEndIconClick={() => {
-                        formik.setFieldValue("file", undefined);
-                      }}
-                      error={formik.errors.file ? formik.errors.file : false}
-                      extraClass="core-grey-20"
-                      accept=".bak"
-                      onChange={(e) => {
-                        formik.setFieldValue("file", e.target.files[0]);
-                      }}
-                      onBlur={formik.handleBlur}
-                      placeholder="Select file"
-                      type="file"
-                      id="file"
-                      name="file"
-                      endIcon={
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="25"
-                          height="24"
-                          viewBox="0 0 25 24"
-                          fill="none"
-                        >
-                          <mask
-                            id="mask0_645_17003"
-                            maskUnits="userSpaceOnUse"
-                            x="0"
-                            y="0"
-                            width="25"
-                            height="24"
-                          >
-                            <rect
-                              x="0.5"
-                              width="24"
-                              height="24"
-                              fill="#D9D9D9"
-                            />
-                          </mask>
-                          <g mask="url(#mask0_645_17003)">
-                            <path
-                              d="M9.89997 16.1539L12.5 13.5539L15.1 16.1539L16.1538 15.1001L13.5538 12.5001L16.1538 9.90005L15.1 8.84623L12.5 11.4462L9.89997 8.84623L8.84615 9.90005L11.4461 12.5001L8.84615 15.1001L9.89997 16.1539ZM7.8077 20.5C7.30257 20.5 6.875 20.325 6.525 19.975C6.175 19.625 6 19.1975 6 18.6923V6.00005H5V4.50008H9.49997V3.61548H15.5V4.50008H20V6.00005H19V18.6923C19 19.1975 18.825 19.625 18.475 19.975C18.125 20.325 17.6974 20.5 17.1922 20.5H7.8077ZM17.5 6.00005H7.49997V18.6923C7.49997 18.7693 7.53203 18.8398 7.59613 18.9039C7.66024 18.968 7.73077 19.0001 7.8077 19.0001H17.1922C17.2692 19.0001 17.3397 18.968 17.4038 18.9039C17.4679 18.8398 17.5 18.7693 17.5 18.6923V6.00005Z"
-                              fill="#91919D"
-                            />
-                          </g>
-                        </svg>
-                      }
                     />
 
                     <Input
@@ -517,7 +486,7 @@ const RestoreDialog = () => {
                   >
                     <Button
                       disabled={formik.isSubmitting}
-                      onClick={() => navigate(-1)}
+                      onClick={() => setMode(false)}
                     >
                       Cancel
                     </Button>
@@ -562,10 +531,12 @@ const RestoreDialog = () => {
               </div>
             )}
 
-            <div className={`${styles.mobile_only} ${styles.secondaryActions}`}>
+            <div
+              className={`${styles.actions} ${styles.mobile_only} ${styles.secondaryActions}`}
+            >
               <Button
                 disabled={formik.isSubmitting}
-                onClick={() => navigate(-1)}
+                onClick={() => (!mode ? navigate(-1) : setMode(false))}
               >
                 Cancel
               </Button>

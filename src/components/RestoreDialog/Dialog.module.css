@@ -3,7 +3,7 @@
   display: grid;
 
   grid-template-columns: 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: 56px 1fr;
   grid-template-areas:
               'header'
               'main';
@@ -56,13 +56,13 @@
   grid-template-columns: 1fr;
 }
 
-.grid main > section div:first-of-type {
+.grid main > section .dialog {
   grid-area: main;
 }
-.grid main > section div:last-of-type {
+.grid main > section .actions {
   grid-area: actions;
 }
-.grid main > section div:first-of-type {
+.grid main > section .dialog {
   grid-area: main;
 }
 .grid main > section.full {

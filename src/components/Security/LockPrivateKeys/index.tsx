@@ -6,7 +6,7 @@ import * as yup from "yup";
 import * as rpc from "../../../__minima__/libs/RPC";
 import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../../AppContext";
-import { To, useLocation, useNavigate } from "react-router-dom";
+import { To, useLocation } from "react-router-dom";
 
 import styles from "./LockPrivateKeys.module.css";
 

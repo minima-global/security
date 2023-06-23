@@ -1,4 +1,4 @@
-import { Outlet, To, matchPath, useLocation } from "react-router-dom";
+import { Outlet, matchPath, useLocation } from "react-router-dom";
 import Button from "../../UI/Button";
 import SlideScreen from "../../UI/SlideScreen";
 import { useContext, useEffect, useState } from "react";

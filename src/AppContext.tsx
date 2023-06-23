@@ -27,11 +27,8 @@ const AppProvider = ({ children }: IProps) => {
     to: -1 as To,
     title: "Menu",
   });
-
   const loaded = useRef(false);
-
   const [mode, setMode] = useState("desktop");
-
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
@@ -42,6 +39,8 @@ const AppProvider = ({ children }: IProps) => {
     secondaryActions: null,
   });
 
+  // MDS SHUTDOWN should tell us when Minima is about to shut down for this to know when re-sync finishes..
+  const [restoreFinished, setRestoreFinished] = useState(false);
   // Seed phrase stuff
   const [_vault, setVault] = useState<{ phrase: string } | null>(null);
   const [_phrase, setPhrase] = useState({
@@ -70,10 +69,8 @@ const AppProvider = ({ children }: IProps) => {
     23: "",
     24: "",
   });
-
   // backups stuff
   const [backups, setBackups] = useState<string[]>([]);
-
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
   );
@@ -180,6 +177,10 @@ const AppProvider = ({ children }: IProps) => {
           setLogs((prevState) => [...prevState, log]);
         }
 
+        if (msg.event === "MDS_SHUTDOWN") {
+          setRestoreFinished(true);
+        }
+
         if (msg.event === "inited") {
           rpc.isWriteMode().then((appIsInWriteMode) => {
             setAppIsInWriteMode(appIsInWriteMode);
@@ -222,6 +223,8 @@ const AppProvider = ({ children }: IProps) => {
         backButton,
         setBackButton,
         displayBackButton,
+
+        restoreFinished,
       }}
     >
       {children}
