@@ -7,3 +7,38 @@
 .grid > div {
   align-self: center;
 }
+
+
+.grid-layout {
+  display: grid;
+
+  grid-template-areas: 
+
+        'header'
+        'content';
+
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
+}
+
+.grid-layout main {
+  grid-area: content;
+  overflow-x: hidden;
+  overflow-y: overlay;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: 1fr minmax(0, 560px) 1fr;
+}
+.grid-layout main section {
+  grid-area: 1 / 2 / 1 / 3;
+
+  display: grid;
+  height: calc(100vh - 56px);
+}
+.grid-layout main section.full {
+  grid-area: 1 / 1 / 1 / 4;
+}
+.grid-layout header {
+  grid-area: header;
+}
+

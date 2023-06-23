@@ -4,10 +4,9 @@
   grid-template-areas: 
 
         'header'
-        'content'
-        'footer';
+        'content';
 
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: 56px 1fr;
   grid-template-columns: 1fr;
 }
 
@@ -24,15 +23,11 @@
 
   display: grid;
   height: calc(100vh - 56px);
-  margin: 0 1rem;
 }
 .grid main section.full {
   grid-area: 1 / 1 / 1 / 4;
 }
 .grid header {
   grid-area: header;
-}
-.grid footer {
-  grid-area: footer;
 }
 

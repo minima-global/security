@@ -30,7 +30,7 @@
 }
 .grid > main {
   grid-area: main;
-  height: calc(100vh - 56px);
+  height: calc(100vh - 94px);
   overflow: hidden;
   overflow-y: overlay;
   
@@ -56,13 +56,13 @@
   grid-template-columns: 1fr;
 }
 
-.grid main > section div:first-of-type {
+.grid main > section .dialog {
   grid-area: main;
 }
-.grid main > section div:last-of-type {
+.grid main > section .actions {
   grid-area: actions;
 }
-.grid main > section div:first-of-type {
+.grid main > section .dialog {
   grid-area: main;
 }
 .grid main > section.full {
@@ -141,12 +141,11 @@
   
   
   .grid {  
-    grid-template-rows: 56px 1fr auto;
+    grid-template-rows: 56px 1fr;
     
     grid-template-areas: 
               'header'
-              'main'
-              'footer';
+              'main';
   }
 
   .grid main > section {
@@ -156,9 +155,7 @@
                 'main';
   }
 
-  .grid > footer {
-    grid-area: footer;
-  }
+
 
   .desktop_only {
     display: block;

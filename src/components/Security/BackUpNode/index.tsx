@@ -1,7 +1,7 @@
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
-import { useNavigate } from "react-router-dom";
-import { RefObject, useContext, useRef, useState } from "react";
+import { To } from "react-router-dom";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 
 import { useFormik } from "formik";
 import * as yup from "yup";
@@ -13,6 +13,7 @@ import { format } from "date-fns";
 
 import { appContext } from "../../../AppContext";
 import useIsMinimaBrowser from "../../../hooks/useIsMinimaBrowser";
+import BackButton from "../../UI/BackButton";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -40,14 +41,31 @@ const validationSchema = yup.object().shape({
 });
 
 const BackupNode = () => {
-  const navigate = useNavigate();
   const [step, setStep] = useState<0 | 1>(0);
   const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
   const [hidePassword, togglePasswordVisibility] = useState(true);
   const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(true);
 
   const isMinimaBrowser = useIsMinimaBrowser();
-  const { setModal } = useContext(appContext);
+  const {
+    setModal,
+    setBackButton,
+    displayBackButton: displayHeaderBackButton,
+  } = useContext(appContext);
+
+  useEffect(() => {
+    if (step === 0) {
+      return setBackButton({ display: true, to: -1 as To, title: "Menu" });
+    }
+
+    if (step === 1) {
+      return setBackButton({
+        display: true,
+        onClickHandler: () => setStep(0),
+        title: "Back",
+      });
+    }
+  }, [step]);
 
   const getFileData = async (mdsfile: string) => {
     try {
@@ -64,6 +82,7 @@ const BackupNode = () => {
   const createDownloadLink = async (mdsfile: string) => {
     try {
       const hexstring = await fileManager.loadBinaryToHex(mdsfile);
+      await fileManager.saveFileAsBinary(mdsfile, hexstring);
       const filedata = hexstring;
       const b64 = (window as any).MDS.util.hexToBase64(filedata);
       const binaryData = (window as any).MDS.util.base64ToArrayBuffer(b64);
@@ -204,27 +223,11 @@ const BackupNode = () => {
     <>
       {step === 0 && (
         <SlideScreen display={true}>
-          <div className="flex flex-col h-full bg-black">
+          <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
-              <div
-                onClick={() => navigate("/dashboard")}
-                className="cursor-pointer mb-4 flex items-center"
-              >
-                <svg
-                  className="mt-0.5 mr-4"
-                  width="8"
-                  height="14"
-                  viewBox="0 0 8 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6.90017 13.1693L0.730957 7.00009L6.90017 0.830872L7.79631 1.72701L2.52324 7.00009L7.79631 12.2732L6.90017 13.1693Z"
-                    fill="#F9F9FA"
-                  />
-                </svg>
-                Security
-              </div>
+              {!displayHeaderBackButton && (
+                <BackButton to={-1 as To} title="Security" />
+              )}
               <div className="mt-6 text-2xl mb-8 text-left">Backup node</div>
               <div className="flex flex-col gap-5">
                 <div className="text-left">
@@ -302,27 +305,11 @@ const BackupNode = () => {
 
       {step === 1 && (
         <SlideScreen display={true}>
-          <div className="flex flex-col h-full bg-black">
+          <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
-              <div
-                onClick={() => setStep(0)}
-                className="cursor-pointer mb-4 flex items-center"
-              >
-                <svg
-                  className="mt-0.5 mr-4"
-                  width="8"
-                  height="14"
-                  viewBox="0 0 8 14"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M6.90017 13.1693L0.730957 7.00009L6.90017 0.830872L7.79631 1.72701L2.52324 7.00009L7.79631 12.2732L6.90017 13.1693Z"
-                    fill="#F9F9FA"
-                  />
-                </svg>
-                Security
-              </div>
+              {!displayHeaderBackButton && (
+                <BackButton onClickHandler={() => setStep(0)} title="Back" />
+              )}
               <div className="mt-6 text-2xl mb-8 text-left">
                 Create password
               </div>

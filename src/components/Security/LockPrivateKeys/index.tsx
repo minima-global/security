@@ -4,13 +4,14 @@ import UnderstandRadio from "../../UI/UnderstandRadio";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import * as rpc from "../../../__minima__/libs/RPC";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../../AppContext";
-import { useNavigate } from "react-router-dom";
+import { To, useLocation } from "react-router-dom";
 
 import styles from "./LockPrivateKeys.module.css";
 
 import { CSSTransition } from "react-transition-group";
+import BackButton from "../../UI/BackButton";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -42,11 +43,21 @@ const validationSchemaUnlock = yup.object().shape({
 });
 
 const LockPrivateKeys = () => {
-  const navigate = useNavigate();
-  const { setModal, vaultLocked, checkVaultLocked, clearPhrase } =
-    useContext(appContext);
+  const {
+    setModal,
+    vaultLocked,
+    checkVaultLocked,
+    clearPhrase,
+    setBackButton,
+    displayBackButton: displayHeaderBackButton,
+  } = useContext(appContext);
+  const location = useLocation();
   const [hidePassword, togglePasswordVisibility] = useState(true);
   const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(true);
+
+  useEffect(() => {
+    setBackButton({ display: true, to: -1 as To, title: "Security" });
+  }, [location]);
 
   const UnlockDialog = {
     content: (
@@ -161,27 +172,12 @@ const LockPrivateKeys = () => {
           exitActive: styles.slideExitActive,
         }}
       >
-        <div className="flex flex-col h-full bg-black">
+        <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
-            <div
-              onClick={() => navigate(-1)}
-              className="cursor-pointer mb-4 flex items-center"
-            >
-              <svg
-                className="mt-0.5 mr-4"
-                width="8"
-                height="14"
-                viewBox="0 0 8 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.90017 13.1693L0.730957 7.00009L6.90017 0.830872L7.79631 1.72701L2.52324 7.00009L7.79631 12.2732L6.90017 13.1693Z"
-                  fill="#F9F9FA"
-                />
-              </svg>
-              Security
-            </div>
+            {!displayHeaderBackButton && (
+              <BackButton to={-1 as To} title="Security" />
+            )}
+
             <div className="mt-6 text-2xl mb-8 text-left bg-inherit">
               Lock private keys
             </div>
@@ -190,10 +186,12 @@ const LockPrivateKeys = () => {
                 <div>
                   <div className="mb-3 text-left pb-2">
                     Locking your private keys prevents unauthorised access to
-                    your wallet and seed phrase. Your private keys will be
-                    encrypted with a password which you will be required to
-                    enter when transacting. You will still be able to receive
-                    funds as usual.
+                    your wallet and seed phrase. <br />
+                    <br /> Your private keys will be encrypted with a password
+                    which you will be required to enter when transacting. You
+                    will still be able to receive funds as usual. Before
+                    locking, ensure you have a copy of your seed phrase written
+                    down.
                   </div>
                   <p className="text-core-grey-80 text-left">
                     Before locking, ensure you have a copy of your seed phrase
@@ -338,27 +336,11 @@ const LockPrivateKeys = () => {
           exitActive: styles.slideExitActive,
         }}
       >
-        <div className="flex flex-col h-full bg-black">
+        <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
-            <div
-              onClick={() => navigate(-1)}
-              className="cursor-pointer mb-4 flex items-center"
-            >
-              <svg
-                className="mt-0.5 mr-4"
-                width="8"
-                height="14"
-                viewBox="0 0 8 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.90017 13.1693L0.730957 7.00009L6.90017 0.830872L7.79631 1.72701L2.52324 7.00009L7.79631 12.2732L6.90017 13.1693Z"
-                  fill="#F9F9FA"
-                />
-              </svg>
-              Security
-            </div>
+            {!displayHeaderBackButton && (
+              <BackButton to={-1 as To} title="Security" />
+            )}
             <div className="mt-6 text-2xl mb-8 text-left bg-inherit">
               Unlock private keys
             </div>

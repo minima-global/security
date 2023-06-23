@@ -92,7 +92,6 @@ const WipeThisNode = () => {
             </div>
           </section>
         </main>
-        <footer></footer>
       </div>
     </div>
   );

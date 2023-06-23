@@ -1,18 +1,27 @@
-import { useNavigate } from "react-router-dom";
+import { To, useLocation } from "react-router-dom";
 import Button from "../../UI/Button";
 import SlideScreen from "../../UI/SlideScreen";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../../AppContext";
 import styles from "./ViewSeedPhrase.module.css";
 import useLongPress from "../../../hooks/useLongPress";
+import BackButton from "../../UI/BackButton";
 
 const ViewSeedPhrase = () => {
-  const navigate = useNavigate();
-  const { phraseAsArray } = useContext(appContext);
+  const location = useLocation();
+  const {
+    phraseAsArray,
+    setBackButton,
+    displayBackButton: displayHeaderBackButton,
+  } = useContext(appContext);
   const [hide, setHideSeedPhrase] = useState(true);
   const onLongPress = () => {
     setHideSeedPhrase(false);
   };
+
+  useEffect(() => {
+    setBackButton({ display: true, to: -1 as To, title: "Back" });
+  }, [location]);
 
   const defaultOptions = {
     shouldPreventDefault: true,
@@ -24,27 +33,11 @@ const ViewSeedPhrase = () => {
 
   return (
     <SlideScreen display={true}>
-      <div className="h-full flex flex-col justify-between">
+      <div className="h-full flex flex-col justify-between px-4 pb-4">
         <div>
-          <div
-            onClick={() => navigate("/dashboard/manageseedphrase")}
-            className="cursor-pointer mb-4 flex items-center"
-          >
-            <svg
-              className="mt-0.5 mr-4"
-              width="8"
-              height="14"
-              viewBox="0 0 8 14"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M6.90017 13.1693L0.730957 7.00009L6.90017 0.830872L7.79631 1.72701L2.52324 7.00009L7.79631 12.2732L6.90017 13.1693Z"
-                fill="#F9F9FA"
-              />
-            </svg>
-            Back
-          </div>
+          {!displayHeaderBackButton && (
+            <BackButton to={-1 as To} title="Back" />
+          )}
           <div className="mt-6 text-2xl mb-8 text-left bg-inherit">
             Your seed phrase
           </div>

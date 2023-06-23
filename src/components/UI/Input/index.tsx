@@ -104,7 +104,7 @@ const Input = ({
         {!!endIcon && (
           <div
             onClick={handleEndIconClick}
-            className="core-black-contrast flex flex-col justify-center pr-4"
+            className="core-black-contrast flex flex-col justify-center pr-4 rounded-r"
           >
             {endIcon}
           </div>

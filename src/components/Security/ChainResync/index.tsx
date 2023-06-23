@@ -1,19 +1,30 @@
-import { useNavigate } from "react-router-dom";
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import Input from "../../UI/Input";
 import { useAuth } from "../../../providers/authProvider";
 import PERMISSIONS from "../../../permissions";
+import { appContext } from "../../../AppContext";
+import { To } from "react-router-dom";
+import BackButton from "../../UI/BackButton";
 
 const ChainResync = () => {
-  const navigate = useNavigate();
+  const { setBackButton, displayBackButton: displayHeaderBackButton } =
+    useContext(appContext);
   const { authNavigate } = useAuth();
 
   const [host, setHost] = useState("auto");
   const [error, setError] = useState<false | string>(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setBackButton({ display: true, to: -1 as To, title: "Security" });
+
+    return () => {
+      setBackButton({ display: false, to: -1 as To, title: "Security" });
+    };
+  }, []);
 
   const handleChainResync = () => {
     setError(false);
@@ -39,27 +50,11 @@ const ChainResync = () => {
   return (
     <>
       <SlideScreen display={true}>
-        <div className="flex flex-col h-full bg-black">
+        <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
-            <div
-              onClick={() => navigate("/dashboard")}
-              className="cursor-pointer mb-4 flex items-center"
-            >
-              <svg
-                className="mt-0.5 mr-4"
-                width="8"
-                height="14"
-                viewBox="0 0 8 14"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M6.90017 13.1693L0.730957 7.00009L6.90017 0.830872L7.79631 1.72701L2.52324 7.00009L7.79631 12.2732L6.90017 13.1693Z"
-                  fill="#F9F9FA"
-                />
-              </svg>
-              Security
-            </div>
+            {!displayHeaderBackButton && (
+              <BackButton to={-1 as To} title="Security" />
+            )}
             <div className="mt-6 text-2xl mb-8 text-left">Chain re-sync</div>
 
             <div className="flex flex-col gap-5">

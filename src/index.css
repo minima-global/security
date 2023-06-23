@@ -26,6 +26,10 @@
   --core-black-contrast-3: #464C4F;
 }
 
+.core-black-contrast-2 {
+  background-color: var(--core-black-contrast-2);
+}
+
 .bg-black {
   background-color: var(--core-black-100);
 }
@@ -68,6 +72,10 @@
   color: var(--core-grey-5);
 }
 
+.core-grey-5 {
+  background-color: var(--core-grey-5);
+}
+
 .core-grey-100 {
   background-color: var(--core-grey-100);
 }
@@ -79,6 +87,14 @@
 .text-core-grey-80 {
   color: var(--core-grey-80);
 }
+.text-core-grey-5 {
+  color: var(--core-grey-5);
+}
+
+.border-white {
+  border: 1px solid var(--core-grey-5);
+  border-radius: 4px;
+}
 
 .core-black-contrast-2 {
   background-color: var(--core-black-contrast-2);
@@ -86,7 +102,6 @@
 .core-black-contrast {
   background-color: var(--core-black-contrast);
 }
-
 .core-grey-contrast-3 {
   color:  var(--core-black-contrast-3);
 }

@@ -44,7 +44,6 @@ const Dialog = () => {
             )}
           </section>
         </main>
-        <footer></footer>
       </div>
     </div>
   );
