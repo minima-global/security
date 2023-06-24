@@ -7,7 +7,7 @@ import * as yup from "yup";
 import * as utils from "../../utils";
 import * as fM from "../../__minima__/libs/fileManager";
 import * as rpc from "../../__minima__/libs/RPC";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { appContext } from "../../AppContext";
 import FileChooser from "../UI/FileChooser";
 
@@ -30,9 +30,7 @@ const RestoreDialog = () => {
   const [tooltip, setTooltip] = useState({ host: false });
 
   const handleSelectedBackupFromList = async (mdsFilename: string) => {
-    console.log("looking for file w/ name", mdsFilename);
     const fullPath = await fM.getPath("/backups/" + mdsFilename);
-    console.log("fullPath", fullPath);
     formik.setFieldValue("file", fullPath);
   };
 
@@ -154,15 +152,6 @@ const RestoreDialog = () => {
     },
     validationSchema: validationSchema,
   });
-
-  useEffect(() => {
-    setModal({
-      display: true,
-      content: SuccessDialog.content,
-      primaryActions: SuccessDialog.primaryActions,
-      secondaryActions: null,
-    });
-  }, []);
 
   return (
     <div>

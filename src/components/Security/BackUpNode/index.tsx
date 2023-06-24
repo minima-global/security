@@ -14,6 +14,7 @@ import { format } from "date-fns";
 import { appContext } from "../../../AppContext";
 import useIsMinimaBrowser from "../../../hooks/useIsMinimaBrowser";
 import BackButton from "../../UI/BackButton";
+import Toggle from "../../UI/Toggle";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -45,9 +46,11 @@ const BackupNode = () => {
   const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
   const [hidePassword, togglePasswordVisibility] = useState(true);
   const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(true);
+  const [autoBackupStatus, setAutoBackupStatus] = useState(false);
 
   const isMinimaBrowser = useIsMinimaBrowser();
   const {
+    vaultLocked,
     setModal,
     setBackButton,
     displayBackButton: displayHeaderBackButton,
@@ -77,7 +80,6 @@ const BackupNode = () => {
       return "";
     }
   };
-  // android use hex only
 
   const createDownloadLink = async (mdsfile: string) => {
     try {
@@ -95,6 +97,29 @@ const BackupNode = () => {
     } catch (error) {
       return "";
     }
+  };
+
+  const getBackupStatus = async () => {
+    await fileManager.getBackupStatus().then((response: any) => {
+      if (response.status) {
+        console.log(response);
+        const backupStatus = JSON.parse(response.value);
+        return setAutoBackupStatus(backupStatus.active);
+      }
+
+      return setAutoBackupStatus(false);
+    });
+  };
+
+  useEffect(() => {
+    getBackupStatus();
+  }, []);
+
+  const toggleBackupStatus = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Toggling backup status", e.target.checked);
+    await fileManager.toggleBackupStatus(e.target.checked);
+
+    getBackupStatus();
   };
 
   const SomethingWentWrong = (error: string) => {
@@ -246,9 +271,19 @@ const BackupNode = () => {
                 <div className="core-black-contrast-2 p-4 rounded">
                   <div className="mb-6 text-left">
                     Before taking a backup, check that you are in sync with the
-                    chain and consider locking your private keys so they are not
-                    exposed if someone gets hold of your backup.
+                    chain.
                   </div>
+                  {!vaultLocked && (
+                    <div className="form-error-border p-4 text-left mb-6">
+                      <h1 className="text-base text-error pb-4 font-bold">
+                        Your node is unlocked.
+                      </h1>
+                      <p className="text-base text-error font-medium">
+                        Consider locking your private keys so they are not
+                        exposed if someone gets hold of your backup.
+                      </p>
+                    </div>
+                  )}
 
                   <Button onClick={() => setStep(1)}>Backup node</Button>
                 </div>
@@ -258,7 +293,7 @@ const BackupNode = () => {
                     never share your backup with anyone.
                   </p>
                 </div>
-                {/* <div className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer">
+                <div className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer">
                   <span className="make-svg-inline">
                     Auto-backup{" "}
                     <svg
@@ -289,14 +324,17 @@ const BackupNode = () => {
                   </span>
 
                   <div className="absolute right-0 top-0 h-full px-5 flex items-center">
-                    <Toggle />
+                    <Toggle
+                      checkedStatus={autoBackupStatus}
+                      onChange={toggleBackupStatus}
+                    />
                   </div>
                 </div>
                 <div className="text-left">
                   <p className="text-sm password-label mr-4 ml-4">
                     Active daily backups. Please add more description
                   </p>
-                </div> */}
+                </div>
               </div>
             </div>
           </div>

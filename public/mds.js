@@ -51,19 +51,19 @@ var MDS = {
     //Get ther MiniDAPP UID
     MDS.minidappuid = MDS.form.getParams("uid");
 
+    // env overrides
+    if (window.DEBUG) {
+      host = window.DEBUG_HOST;
+      port = Math.floor(window.DEBUG_PORT);
+      MDS.minidappuid = window.DEBUG_UID;
+    }
+
     //HARD SET if debug mode - running from a file
     if (MDS.DEBUG_HOST != null) {
       MDS.log("DEBUG Settings Found..");
 
       host = MDS.DEBUG_HOST;
       port = MDS.DEBUG_PORT;
-    }
-
-    // env overrides
-    if (window.DEBUG) {
-      host = window.DEBUG_HOST;
-      port = Math.floor(window.DEBUG_PORT);
-      MDS.minidappuid = window.DEBUG_UID;
     }
 
     if (MDS.minidappuid == null) {
@@ -202,6 +202,41 @@ var MDS = {
       httpPostAsync(
         MDS.mainhost + "netpost?" + "uid=" + MDS.minidappuid,
         postline,
+        callback
+      );
+    },
+  },
+
+  /**
+   *  Simple GET and SET key value pairs that are saved persistently
+   */
+  keypair: {
+    /**
+     * GET a value
+     */
+    get: function (key, callback) {
+      //Create the single line
+      var commsline = "get&" + key;
+
+      //Send via POST
+      httpPostAsync(
+        MDS.mainhost + "keypair?" + "uid=" + MDS.minidappuid,
+        commsline,
+        callback
+      );
+    },
+
+    /**
+     * SET a value
+     */
+    set: function (key, value, callback) {
+      //Create the single line
+      var commsline = "set&" + key + "&" + value;
+
+      //Send via POST
+      httpPostAsync(
+        MDS.mainhost + "keypair?" + "uid=" + MDS.minidappuid,
+        commsline,
         callback
       );
     },

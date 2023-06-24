@@ -41,6 +41,10 @@
   color: var(--core-black-100);
 }
 
+.text-error {
+  color: var(--status-red);
+}
+
 .form-error-message {
   color: var(--status-red);
   font-weight: 600;
