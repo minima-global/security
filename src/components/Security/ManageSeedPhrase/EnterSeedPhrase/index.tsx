@@ -6,7 +6,6 @@ import * as yup from "yup";
 import Input from "../../../UI/Input";
 import bip39 from "../../../../utils/bip39";
 import Button from "../../../UI/Button";
-import styles from "./SeedPhrase.module.css";
 import { useAuth } from "../../../../providers/authProvider";
 import PERMISSIONS from "../../../../permissions";
 import BackButton from "../../../UI/BackButton";
@@ -248,7 +247,7 @@ const EnterSeedPhrase = () => {
               <img alt="tooltip" src="./assets/info.svg" />
             </div>
 
-            <div className={styles["grid"]}>
+            <div>
               <form onSubmit={formik.handleSubmit}>
                 <ul className="flex flex-col gap-2">
                   {seedWord.map((word) => (

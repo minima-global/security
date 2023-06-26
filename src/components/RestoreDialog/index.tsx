@@ -89,6 +89,7 @@ const RestoreDialog = () => {
           extraClass="!bg-transparent text-core-grey-5 rounded !border-white hover:!border-white hover:opacity-80"
           onClick={() => {
             if (isMobile) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
               return Android.closeWindow();
             }

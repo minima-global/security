@@ -3,20 +3,37 @@ import Button from "../../UI/Button";
 import { useContext, useEffect, useState } from "react";
 
 import Input from "../../UI/Input";
-import { useAuth } from "../../../providers/authProvider";
-import PERMISSIONS from "../../../permissions";
 import { appContext } from "../../../AppContext";
 import { To } from "react-router-dom";
 import BackButton from "../../UI/BackButton";
+import ConfirmationDialog from "./Confirmation/ConfirmationDialog";
 
 const ChainResync = () => {
   const { setBackButton, displayBackButton: displayHeaderBackButton } =
     useContext(appContext);
-  const { authNavigate } = useAuth();
+
+  const [confirmation, setConfirmation] = useState(false);
 
   const [host, setHost] = useState("auto");
   const [error, setError] = useState<false | string>(false);
-  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHost(e.target.value);
+
+    const regexp = new RegExp(
+      /([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}):?([0-9]{1,5})?/
+    );
+
+    if (e.target.value.length === 0) {
+      return setError("Please enter an archive host");
+    }
+
+    if (!regexp.test(e.target.value) && e.target.value !== "auto") {
+      return setError("Please enter an appropriate ip:host format");
+    }
+
+    setError(false);
+  };
 
   useEffect(() => {
     setBackButton({ display: true, to: -1 as To, title: "Security" });
@@ -26,30 +43,13 @@ const ChainResync = () => {
     };
   }, []);
 
-  const handleChainResync = () => {
-    setError(false);
-    setLoading(true);
-    (window as any).MDS.cmd(
-      `archive action:resync host:${host.length ? host : "auto"}`,
-      (response: any) => {
-        if (!response.status) {
-          setLoading(false);
-          return setError(
-            response.error
-              ? response.error
-              : "Something went wrong, please try again."
-          );
-        }
-        return authNavigate("/dashboard/resyncing", [
-          PERMISSIONS.CAN_VIEW_RESYNCING,
-        ]);
-      }
-    );
-  };
-
   return (
     <>
-      <SlideScreen display={true}>
+      <SlideScreen display={confirmation}>
+        <ConfirmationDialog cancel={() => setConfirmation(false)} host={host} />
+      </SlideScreen>
+
+      <SlideScreen display={!confirmation}>
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
@@ -77,15 +77,17 @@ const ChainResync = () => {
                     placeholder="Auto"
                     type="text"
                     value={host}
-                    onChange={(e) => setHost(e.target.value)}
+                    onChange={handleChange}
                     autoComplete="off"
                     error={error}
                   />
                 </div>
 
                 <Button
-                  disabled={loading || host.length === 0}
-                  onClick={handleChainResync}
+                  disabled={host.length === 0 || !!error}
+                  onClick={() => {
+                    setConfirmation(true);
+                  }}
                 >
                   Re-sync
                 </Button>

@@ -26,10 +26,6 @@
   --core-black-contrast-3: #464C4F;
 }
 
-.core-black-contrast-2 {
-  background-color: var(--core-black-contrast-2);
-}
-
 .bg-black {
   background-color: var(--core-black-100);
 }

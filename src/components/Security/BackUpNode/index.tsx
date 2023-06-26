@@ -181,6 +181,7 @@ const BackupNode = () => {
       primaryActions: (
         <Button
           onClick={() => {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             Android.blobDownload(file, filedata);
           }}

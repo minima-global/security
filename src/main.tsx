@@ -24,6 +24,7 @@ import Authorisation from "./authorisation/index.tsx";
 import PERMISSIONS from "./permissions.ts";
 
 import * as utils from "./utils";
+import ImportSeedPhrase from "./components/Security/ManageSeedPhrase/ImportSeedPhrase/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -48,6 +49,15 @@ const router = createHashRouter(
         <Route path="backup" element={<BackupNode />} />
         <Route path="resync" element={<ChainResync />} />
         <Route path="manageseedphrase" element={<ManageSeedPhrase />}>
+          <Route
+            element={
+              <Authorisation
+                permissions={[PERMISSIONS["CAN_VIEW_IMPORTSEEDPHRASE"]]}
+              />
+            }
+          >
+            <Route path="importseedphrase" element={<ImportSeedPhrase />} />
+          </Route>
           <Route
             element={
               <Authorisation
