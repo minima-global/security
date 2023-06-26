@@ -54,6 +54,7 @@ const BackupNode = () => {
     setModal,
     setBackButton,
     displayBackButton: displayHeaderBackButton,
+    latestBackup,
   } = useContext(appContext);
 
   useEffect(() => {
@@ -332,7 +333,17 @@ const BackupNode = () => {
                 </div>
                 <div className="text-left">
                   <p className="text-sm password-label mr-4 ml-4">
-                    Active daily backups. Please add more description
+                    Active daily backups. The latest backup was created on{" "}
+                    {latestBackup
+                      ? `${format(
+                          new Date(latestBackup.TIMESTAMP),
+                          "d MMMM, yyyy"
+                        )} at ${format(
+                          new Date(latestBackup.TIMESTAMP),
+                          "H:mm"
+                        )}`
+                      : "N/A"}
+                    .
                   </p>
                 </div>
               </div>

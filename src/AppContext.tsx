@@ -70,6 +70,12 @@ const AppProvider = ({ children }: IProps) => {
     24: "",
   });
   // backups stuff
+  const [latestBackup, setLatestBackup] = useState<{
+    BLOCK: string;
+    FILENAME: string;
+    ID: string;
+    TIMESTAMP: string;
+  } | null>(null);
   const [backups, setBackups] = useState<string[]>([]);
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
@@ -155,6 +161,15 @@ const AppProvider = ({ children }: IProps) => {
     });
   };
 
+  const getLatestBackup = () => {
+    (window as any).MDS.sql("SELECT * FROM BACKUPS", (response: any) => {
+      console.log(response);
+      if (response.status) {
+        setLatestBackup(response.rows[0]);
+      }
+    });
+  };
+
   const getBackups = () => {
     fileManager.listFiles("/backups").then((response: any) => {
       setBackups(response.response.list.reverse());
@@ -191,6 +206,8 @@ const AppProvider = ({ children }: IProps) => {
 
           /** get and set all current backups */
           getBackups();
+          /** get latest backup for display reasons */
+          getLatestBackup();
 
           /** */
           checkVaultLocked();
@@ -217,14 +234,19 @@ const AppProvider = ({ children }: IProps) => {
         resetVault,
         fetchVault,
         mode,
-        backups,
         isMobile: mode === "mobile",
 
+        // heading back button stuff
         backButton,
         setBackButton,
         displayBackButton,
 
         restoreFinished,
+
+        //backups
+        backups,
+        getBackups,
+        latestBackup,
       }}
     >
       {children}

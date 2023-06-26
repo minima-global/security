@@ -25,7 +25,7 @@ const RestoreDialog = () => {
   const navigate = useNavigate();
   const [hidePassword, togglePasswordVisibility] = useState(true);
 
-  const { setModal, isMobile, backups } = useContext(appContext);
+  const { setModal, isMobile, backups, getBackups } = useContext(appContext);
   const [mode, setMode] = useState<"files" | "backups" | false>(false);
   const [tooltip, setTooltip] = useState({ host: false });
 
@@ -498,7 +498,10 @@ const RestoreDialog = () => {
                   <div className={`${styles.primaryActions}`}>
                     <Button
                       extraClass="mb-4"
-                      onClick={() => setMode("backups")}
+                      onClick={() => {
+                        getBackups();
+                        setMode("backups");
+                      }}
                     >
                       Browse in backups
                     </Button>
