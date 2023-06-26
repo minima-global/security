@@ -16,7 +16,34 @@ import Tooltip from "../UI/Tooltip";
 import List from "../UI/List";
 
 const validationSchema = yup.object().shape({
-  host: yup.string().required("Please enter an archive host node"),
+  host: yup
+    .string()
+    .required("Please enter an archive host node")
+    .test("test-host", function (val) {
+      const { createError, path } = this;
+      if (val === undefined) {
+        return createError({
+          path,
+          message: "Please enter an archive host node",
+        });
+      }
+
+      if (val === "auto") {
+        return true;
+      }
+
+      const regexp = new RegExp(
+        /([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}):?([0-9]{1,5})?/
+      );
+      if (!regexp.test(val)) {
+        return createError({
+          path,
+          message: "Please enter a valid archive host node",
+        });
+      }
+
+      return true;
+    }),
   file: yup.mixed().required("Please select a backup file (.bak)"),
   password: yup.string().required("Please enter a password"),
 });
@@ -313,7 +340,11 @@ const RestoreDialog = () => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         autoComplete="off"
-                        error={formik.errors.host ? formik.errors.host : false}
+                        error={
+                          formik.touched.host && formik.errors.host
+                            ? formik.errors.host
+                            : false
+                        }
                       />
                     </div>
                   </form>
@@ -455,7 +486,11 @@ const RestoreDialog = () => {
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         autoComplete="off"
-                        error={formik.errors.host ? formik.errors.host : false}
+                        error={
+                          formik.touched.host && formik.errors.host
+                            ? formik.errors.host
+                            : false
+                        }
                       />
                     </div>
                   </form>

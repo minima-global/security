@@ -37,6 +37,10 @@
   color: var(--core-black-100);
 }
 
+.text-disabled {
+  color: var(--core-black-contrast-3);
+}
+
 .text-error {
   color: var(--status-red);
 }

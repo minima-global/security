@@ -34,6 +34,22 @@ MDS.init(function (msg) {
       return;
     }
 
+    // do we need to prune any backups?
+    MDS.file.list("/backups", function (response) {
+      if (response.status) {
+        const myBackups = response.response.list.reverse();
+
+        MDS.log(`Total backups: ${myBackups.length}`);
+
+        if (myBackups.length > 14) {
+          // time to delete the backups
+          for (var i = 15; i <= myBackups.length - 1; i++) {
+            deleteFile("/backups/" + myBackups[i].name);
+          }
+        }
+      }
+    });
+
     createBackup();
   }
 });
@@ -118,5 +134,13 @@ function createBackup() {
 function getAutomaticBackupStatus() {
   MDS.file.load("/backups/status.txt", function (response) {
     MDS.log(JSON.stringify(response));
+  });
+}
+
+function deleteFile(filepath) {
+  MDS.file.delete(filepath, function (response) {
+    if (response.status) {
+      MDS.log(`Deleted backup ${filepath}`);
+    }
   });
 }

@@ -21,7 +21,7 @@ const validationSchema = yup.object().shape({
     .string()
     .required("Please enter an archive host node")
     .test("test-host", function (val) {
-      const { createError, path, parent } = this;
+      const { createError, path } = this;
       if (val === undefined) {
         return createError({
           path,
