@@ -11,6 +11,8 @@ import * as rpc from "./__minima__/libs/RPC";
 import * as fileManager from "./__minima__/libs/fileManager";
 import { To } from "react-router-dom";
 import Button from "./components/UI/Button";
+import { useAuth } from "./providers/authProvider";
+import PERMISSIONS from "./permissions";
 
 export const appContext = createContext({} as any);
 
@@ -18,6 +20,8 @@ interface IProps {
   children: any;
 }
 const AppProvider = ({ children }: IProps) => {
+  const { authNavigate } = useAuth();
+
   const [displayBackButton, setDisplayHeaderBackButton] = useState(false);
   const [backButton, setBackButton] = useState<{
     display: boolean;
@@ -79,6 +83,17 @@ const AppProvider = ({ children }: IProps) => {
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
   );
+
+  // apply these whenever vault is locked or unlocked
+  useEffect(() => {
+    if (vaultLocked) {
+      resetVault();
+    }
+
+    if (!vaultLocked) {
+      fetchVault();
+    }
+  }, [vaultLocked]);
 
   useEffect(() => {
     if (window.innerWidth < 568) {
@@ -245,10 +260,12 @@ const AppProvider = ({ children }: IProps) => {
         }
 
         if (msg.event === "MDS_SHUTDOWN") {
+          authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({
-            display: true,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             content: SuccessDialog.content,
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore
             primaryActions: SuccessDialog.primaryActions,
             secondaryActions: null,

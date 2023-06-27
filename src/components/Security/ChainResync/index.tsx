@@ -1,4 +1,3 @@
-import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import { useContext, useEffect, useState } from "react";
 
@@ -45,11 +44,11 @@ const ChainResync = () => {
 
   return (
     <>
-      <SlideScreen display={confirmation}>
+      {!!confirmation && (
         <ConfirmationDialog cancel={() => setConfirmation(false)} host={host} />
-      </SlideScreen>
+      )}
 
-      <SlideScreen display={!confirmation}>
+      {!confirmation && (
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
@@ -103,7 +102,7 @@ const ChainResync = () => {
             </div>
           </div>
         </div>
-      </SlideScreen>
+      )}
     </>
   );
 };

@@ -120,12 +120,10 @@ const ManageSeedPhrase = () => {
 
                 <div
                   onClick={() => {
-                    if (!vaultLocked) {
-                      return authNavigate(
-                        "/dashboard/manageseedphrase/importseedphrase",
-                        [PERMISSIONS.CAN_VIEW_IMPORTSEEDPHRASE]
-                      );
-                    }
+                    return authNavigate(
+                      "/dashboard/manageseedphrase/importseedphrase",
+                      [PERMISSIONS.CAN_VIEW_IMPORTSEEDPHRASE]
+                    );
                   }}
                   className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer"
                 >

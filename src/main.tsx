@@ -25,6 +25,9 @@ import PERMISSIONS from "./permissions.ts";
 
 import * as utils from "./utils";
 import ImportSeedPhrase from "./components/Security/ManageSeedPhrase/ImportSeedPhrase/index.tsx";
+import Backups from "./components/Security/BackUpNode/Backups/index.tsx";
+import Security from "./components/Security/index.tsx";
+import Dialog from "./components/Dialog/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -38,6 +41,7 @@ const router = createHashRouter(
       <Route index element={<Splash />} />
 
       <Route path="/dashboard" element={<Dashboard />}>
+        <Route index element={<Security />} />
         <Route
           element={
             <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESYNCING"]]} />
@@ -46,7 +50,10 @@ const router = createHashRouter(
           <Route path="resyncing" element={<ResyncDialog />} />
         </Route>
         <Route path="lockprivatekeys" element={<LockPrivateKeys />} />
-        <Route path="backup" element={<BackupNode />} />
+        <Route path="backup">
+          <Route index element={<BackupNode />} />
+          <Route path="backups" element={<Backups />} />
+        </Route>
         <Route path="resync" element={<ChainResync />} />
         <Route path="manageseedphrase">
           <Route index element={<ManageSeedPhrase />} />
@@ -75,7 +82,8 @@ const router = createHashRouter(
               />
             }
           >
-            <Route path="enterseedphrase" element={<EnterSeedPhrase />}>
+            <Route path="enterseedphrase">
+              <Route index element={<EnterSeedPhrase />} />
               <Route
                 element={
                   <Authorisation
@@ -97,6 +105,14 @@ const router = createHashRouter(
           >
             <Route path="frombackup" element={<RestoreDialog />} />
           </Route>
+        </Route>
+
+        <Route
+          element={
+            <Authorisation permissions={[PERMISSIONS["CAN_VIEW_MODAL"]]} />
+          }
+        >
+          <Route path="modal" element={<Dialog />} />
         </Route>
       </Route>
     </Route>

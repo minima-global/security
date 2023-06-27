@@ -1,17 +1,10 @@
-import { useContext } from "react";
 import Grid from "../../components/UI/Grid";
 import TitleBar from "../../components/TitleBar";
-import { appContext } from "../../AppContext";
-import { Outlet, matchPath, useLocation } from "react-router-dom";
-import Security from "../../components/Security";
-import Dialog from "../../components/Dialog";
+import { Outlet } from "react-router-dom";
 import AppIsInReadMode from "../AppInReadMode";
+import SlideScreen from "../../components/UI/SlideScreen";
 
 const Dashboard = () => {
-  const { modal } = useContext(appContext);
-  const location = useLocation();
-  const index = matchPath({ path: "/dashboard" }, location.pathname);
-
   return (
     <Grid
       header={
@@ -22,11 +15,9 @@ const Dashboard = () => {
       }
       content={
         <>
-          {!!modal.display && <Dialog />}
-
-          {!!index && !modal.display && <Security />}
-
-          {!index && !modal.display && <Outlet />}
+          <SlideScreen display={true}>
+            <Outlet />
+          </SlideScreen>
         </>
       }
     />

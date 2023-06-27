@@ -1,4 +1,3 @@
-import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import { To } from "react-router-dom";
 import { RefObject, useContext, useEffect, useRef, useState } from "react";
@@ -15,6 +14,8 @@ import { appContext } from "../../../AppContext";
 import useIsMinimaBrowser from "../../../hooks/useIsMinimaBrowser";
 import BackButton from "../../UI/BackButton";
 import Toggle from "../../UI/Toggle";
+import PERMISSIONS from "../../../permissions";
+import { useAuth } from "../../../providers/authProvider";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -48,6 +49,7 @@ const BackupNode = () => {
   const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(true);
   const [autoBackupStatus, setAutoBackupStatus] = useState(false);
 
+  const { authNavigate } = useAuth();
   const isMinimaBrowser = useIsMinimaBrowser();
   const {
     vaultLocked,
@@ -133,7 +135,9 @@ const BackupNode = () => {
         </div>
       ),
       primaryActions: null,
-      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+      secondaryActions: (
+        <Button onClick={() => authNavigate(-1, [])}>Close</Button>
+      ),
     };
   };
   const downloadBackupDialog = (download: string, name: string) => {
@@ -164,7 +168,9 @@ const BackupNode = () => {
           ></a>
         </Button>
       ),
-      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+      secondaryActions: (
+        <Button onClick={() => authNavigate(-1, [])}>Close</Button>
+      ),
     };
   };
   const downloadBackupDialogAndroid = (file: string, filedata: string) => {
@@ -189,7 +195,9 @@ const BackupNode = () => {
           Download
         </Button>
       ),
-      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+      secondaryActions: (
+        <Button onClick={() => authNavigate(-1, [])}>Close</Button>
+      ),
     };
   };
 
@@ -213,8 +221,9 @@ const BackupNode = () => {
           const filedata = await getFileData("/backups/" + fileName);
 
           const dialog = downloadBackupDialogAndroid(fileName, filedata);
+
+          authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({
-            display: true,
             content: dialog.content,
             primaryActions: dialog.primaryActions,
             secondaryActions: dialog.secondaryActions,
@@ -225,8 +234,8 @@ const BackupNode = () => {
           const downloadlink = await createDownloadLink("/backups/" + fileName);
           const dialog = downloadBackupDialog(downloadlink, fileName);
 
+          authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({
-            display: true,
             content: dialog.content,
             primaryActions: dialog.primaryActions,
             secondaryActions: dialog.secondaryActions,
@@ -235,8 +244,9 @@ const BackupNode = () => {
       } catch (error: any) {
         console.error(error);
         const somethingwrong = SomethingWentWrong(error);
+
+        authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({
-          display: true,
           content: somethingwrong.content,
           primaryActions: <div></div>,
           secondaryActions: somethingwrong.secondaryActions,
@@ -249,7 +259,7 @@ const BackupNode = () => {
   return (
     <>
       {step === 0 && (
-        <SlideScreen display={true}>
+        <>
           <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
               {!displayHeaderBackButton && (
@@ -368,11 +378,11 @@ const BackupNode = () => {
               </div>
             </div>
           </div>
-        </SlideScreen>
+        </>
       )}
 
       {step === 1 && (
-        <SlideScreen display={true}>
+        <>
           <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
               {!displayHeaderBackButton && (
@@ -501,7 +511,7 @@ const BackupNode = () => {
               </div>
             </div>
           </div>
-        </SlideScreen>
+        </>
       )}
     </>
   );

@@ -1,6 +1,6 @@
 import styles from "./Dialog.module.css";
 import Button from "../../UI/Button";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Lottie from "lottie-react";
 import Loading from "../../../assets/loading.json";
@@ -8,9 +8,6 @@ import Logs from "../../Logs";
 
 const ResyncDialog = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  console.log(location);
 
   return (
     <>

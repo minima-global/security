@@ -163,7 +163,6 @@ const RestoreDialog = () => {
         }
         await rpc.restoreFromBackup(formData.host, fullPath, formData.password);
         setModal({
-          display: true,
           content: SuccessDialog.content,
           primaryActions: SuccessDialog.primaryActions,
           secondaryActions: null,
@@ -171,7 +170,6 @@ const RestoreDialog = () => {
       } catch (error: any) {
         const dialog = SomethingWentWrong(error);
         setModal({
-          display: true,
           content: dialog.content,
           primaryActions: dialog.primaryActions,
           secondaryActions: dialog.secondaryActions,

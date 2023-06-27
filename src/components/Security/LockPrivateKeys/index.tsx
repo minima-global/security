@@ -7,11 +7,9 @@ import * as rpc from "../../../__minima__/libs/RPC";
 import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../../AppContext";
 import { To, useLocation } from "react-router-dom";
-
-import styles from "./LockPrivateKeys.module.css";
-
-import { CSSTransition } from "react-transition-group";
 import BackButton from "../../UI/BackButton";
+import { useAuth } from "../../../providers/authProvider";
+import PERMISSIONS from "../../../permissions";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -47,16 +45,18 @@ const LockPrivateKeys = () => {
     setModal,
     vaultLocked,
     checkVaultLocked,
-    clearPhrase,
+
     setBackButton,
     displayBackButton: displayHeaderBackButton,
   } = useContext(appContext);
   const location = useLocation();
+
+  const { authNavigate } = useAuth();
   const [hidePassword, togglePasswordVisibility] = useState(true);
   const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(true);
 
   useEffect(() => {
-    setBackButton({ display: true, to: -1 as To, title: "Security" });
+    setBackButton({ display: true, to: "/dashboard", title: "Security" });
   }, [location]);
 
   const UnlockDialog = {
@@ -72,7 +72,7 @@ const LockPrivateKeys = () => {
     secondaryActions: (
       <Button
         onClick={() => {
-          setModal(false);
+          authNavigate("/dashboard/lockprivatekeys", []);
           checkVaultLocked();
         }}
       >
@@ -93,7 +93,7 @@ const LockPrivateKeys = () => {
     secondaryActions: (
       <Button
         onClick={() => {
-          setModal(false);
+          authNavigate("/dashboard/lockprivatekeys", []);
           checkVaultLocked();
         }}
       >
@@ -117,10 +117,8 @@ const LockPrivateKeys = () => {
             const isConfirmed = response === 1;
 
             if (isConfirmed) {
-              // get rid of phrase if in memory
-              clearPhrase();
-              return setModal({
-                display: true,
+              authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
+              setModal({
                 content: LockDialog.content,
                 primaryActions: LockDialog.primaryActions,
                 secondaryActions: LockDialog.secondaryActions,
@@ -141,8 +139,8 @@ const LockPrivateKeys = () => {
             const isConfirmed = response === 1;
 
             if (isConfirmed) {
-              return setModal({
-                display: true,
+              authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
+              setModal({
                 content: UnlockDialog.content,
                 primaryActions: UnlockDialog.primaryActions,
                 secondaryActions: UnlockDialog.secondaryActions,
@@ -161,17 +159,7 @@ const LockPrivateKeys = () => {
 
   return (
     <>
-      <CSSTransition
-        in={!vaultLocked}
-        unmountOnExit
-        timeout={2000}
-        classNames={{
-          enter: styles.slideEnter,
-          enterDone: styles.slideEnterActive,
-          exit: styles.slideExit,
-          exitActive: styles.slideExitActive,
-        }}
-      >
+      {!vaultLocked && (
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
@@ -324,18 +312,9 @@ const LockPrivateKeys = () => {
             </div>
           </div>
         </div>
-      </CSSTransition>
-      <CSSTransition
-        in={!!vaultLocked}
-        unmountOnExit
-        timeout={2000}
-        classNames={{
-          enter: styles.slideEnter,
-          enterDone: styles.slideEnterActive,
-          exit: styles.slideExit,
-          exitActive: styles.slideExitActive,
-        }}
-      >
+      )}
+
+      {!!vaultLocked && (
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
@@ -418,7 +397,7 @@ const LockPrivateKeys = () => {
             </div>
           </div>
         </div>
-      </CSSTransition>
+      )}
     </>
   );
 };

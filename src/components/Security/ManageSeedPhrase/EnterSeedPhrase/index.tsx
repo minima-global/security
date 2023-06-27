@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import SlideScreen from "../../../UI/SlideScreen";
-import { matchPath, Outlet, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useFormik, getIn } from "formik";
 import * as yup from "yup";
 import Input from "../../../UI/Input";
@@ -141,10 +140,6 @@ const EnterSeedPhrase = () => {
     useContext(appContext);
   const { authNavigate } = useAuth();
   const location = useLocation();
-  const wipeThisNode = matchPath(
-    "/dashboard/manageseedphrase/enterseedphrase/wipethisnode",
-    location.pathname
-  );
 
   const offset = 6;
   const [step, setStep] = useState<number>(0);
@@ -225,109 +220,105 @@ const EnterSeedPhrase = () => {
     seedWord
       .map((i) => getIn(formik.errors, `seedPhrase.${i}`))
       .filter((i) => i).length > 0;
+
   const endOfSeedPhrase = step === 18;
 
   return (
     <>
-      <SlideScreen display={!!wipeThisNode}>
-        <Outlet />
-      </SlideScreen>
-      <SlideScreen display={!wipeThisNode}>
-        <div className="h-full bg-black px-4 pb-4">
-          {!displayHeaderBackButton && (
-            <BackButton to="/dashboard/manageseedphrase" title="Security" />
-          )}
-          <div className="mt-6 text-2xl mb-8 text-left">Enter seed phrase</div>
+      <div className="h-full bg-black px-4 pb-4">
+        {!displayHeaderBackButton && (
+          <BackButton to="/dashboard/manageseedphrase" title="Security" />
+        )}
+        <div className="mt-6 text-2xl mb-8 text-left">Enter seed phrase</div>
 
-          <div className="flex flex-col gap-5">
-            <div className="flex justify-between items-center">
-              <h1 className="mt-6 text-base mb-6 text-left">
-                Enter words {1 + step} to {6 + step}
-              </h1>
-              <img alt="tooltip" src="./assets/info.svg" />
-            </div>
+        <div className="flex flex-col gap-5">
+          <div className="flex justify-between items-center">
+            <h1 className="mt-6 text-base mb-6 text-left">
+              Enter words {1 + step} to {6 + step}
+            </h1>
+            <img alt="tooltip" src="./assets/info.svg" />
+          </div>
 
-            <div>
-              <form onSubmit={formik.handleSubmit}>
-                <ul className="flex flex-col gap-2">
-                  {seedWord.map((word) => (
-                    <li key={word}>
-                      <Input
-                        extraClass="core-black-contrast-2"
-                        type="text"
-                        startIcon={<div>{word}</div>}
-                        placeholder="Enter phrase"
-                        id={`seedPhrase.${word}`}
-                        name={`seedPhrase.${word}`}
-                        value={formik.values.seedPhrase[word]}
-                        onChange={(e) => {
-                          formik.handleChange(e);
-                        }}
-                        onBlur={formik.handleBlur}
-                        error={
-                          getIn(formik.touched, `seedPhrase.${word}`) &&
-                          formik.errors &&
-                          formik.errors.seedPhrase
-                            ? formik.errors.seedPhrase[word]
-                            : false
-                        }
-                      />
-                    </li>
-                  ))}
-                </ul>
-                <div className="mt-6 desktop-only">
-                  {!endOfSeedPhrase && (
-                    <Button
-                      disabled={currentFormError}
-                      onClick={() =>
-                        setStep((prevState) =>
-                          prevState !== 18 ? prevState + 6 : prevState
-                        )
+          <div>
+            <form onSubmit={formik.handleSubmit}>
+              <ul className="flex flex-col gap-2">
+                {seedWord.map((word) => (
+                  <li key={word}>
+                    <Input
+                      extraClass="core-black-contrast-2"
+                      type="text"
+                      startIcon={<div>{word}</div>}
+                      placeholder="Enter phrase"
+                      id={`seedPhrase.${word}`}
+                      name={`seedPhrase.${word}`}
+                      value={formik.values.seedPhrase[word]}
+                      onChange={(e) => {
+                        formik.handleChange(e);
+                      }}
+                      onBlur={formik.handleBlur}
+                      error={
+                        getIn(formik.touched, `seedPhrase.${word}`) &&
+                        formik.errors &&
+                        formik.errors.seedPhrase
+                          ? formik.errors.seedPhrase[word]
+                          : false
                       }
-                    >
-                      Next
-                    </Button>
-                  )}
-
-                  {!!endOfSeedPhrase && (
-                    <Button disabled={currentFormError} type="submit">
-                      Finish
-                    </Button>
-                  )}
-                </div>
-
-                {formik.status && (
-                  <div className="text-sm form-error-message text-left">
-                    {formik.status}
-                  </div>
+                    />
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-6 desktop-only">
+                {!endOfSeedPhrase && (
+                  <Button
+                    disabled={currentFormError || !formik.dirty}
+                    onClick={() =>
+                      setStep((prevState) =>
+                        prevState !== 18 ? prevState + 6 : prevState
+                      )
+                    }
+                  >
+                    Next
+                  </Button>
                 )}
-              </form>
-            </div>
-            <div className="mobile-only">
-              {!endOfSeedPhrase && (
-                <Button
-                  disabled={currentFormError}
-                  onClick={() =>
-                    setStep((prevState) =>
-                      prevState !== 18 ? prevState + 6 : prevState
-                    )
-                  }
-                >
-                  Next
-                </Button>
+
+                {!!endOfSeedPhrase && (
+                  <Button disabled={currentFormError} type="submit">
+                    Finish
+                  </Button>
+                )}
+              </div>
+
+              {formik.status && (
+                <div className="text-sm form-error-message text-left">
+                  {formik.status}
+                </div>
               )}
-              {!!endOfSeedPhrase && (
-                <Button
-                  disabled={currentFormError}
-                  onClick={() => formik.submitForm()}
-                >
-                  Finish
-                </Button>
-              )}
-            </div>
+            </form>
+          </div>
+          <div className="mobile-only">
+            {!endOfSeedPhrase && (
+              <Button
+                disabled={currentFormError}
+                onClick={() =>
+                  setStep((prevState) =>
+                    prevState !== 18 ? prevState + 6 : prevState
+                  )
+                }
+              >
+                Next
+              </Button>
+            )}
+            {!!endOfSeedPhrase && (
+              <Button
+                disabled={currentFormError && !formik.isValid}
+                onClick={() => formik.submitForm()}
+              >
+                Finish
+              </Button>
+            )}
           </div>
         </div>
-      </SlideScreen>
+      </div>
     </>
   );
 };
