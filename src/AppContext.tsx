@@ -88,6 +88,10 @@ const AppProvider = ({ children }: IProps) => {
     null
   );
 
+  const [backgroundProcess, setBackgroundProcess] = useState<
+    "Restoring" | "Resyncing" | null
+  >(null);
+
   // apply these whenever vault is locked or unlocked
   useEffect(() => {
     if (vaultLocked) {
@@ -229,10 +233,15 @@ const AppProvider = ({ children }: IProps) => {
           </g>
         </svg>
 
-        <h1 className="text-2xl mb-4 font-semibold">Re-sync complete</h1>
+        <h1 className="text-2xl mb-4 font-semibold">
+          {backgroundProcess === "Restoring" ? "Restore" : "Re-sync"} complete
+        </h1>
         <p className="font-medium mb-6 mt-6">
-          Your node was successfully re-synced and will shutdown. Restart Minima
-          for the re-sync to take effect.
+          Your node was successfully{" "}
+          {backgroundProcess === "Restoring" ? "restored" : "re-synced"} and
+          will shutdown. Restart Minima for the{" "}
+          {backgroundProcess === "Restoring" ? "restore" : "re-sync"} to take
+          effect.
         </p>
       </div>
     ),
@@ -323,6 +332,10 @@ const AppProvider = ({ children }: IProps) => {
         backups,
         getBackups,
         latestBackup,
+
+        // current background process
+        backgroundProcess,
+        setBackgroundProcess,
       }}
     >
       {children}

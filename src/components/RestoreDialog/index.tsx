@@ -55,7 +55,8 @@ const RestoreDialog = () => {
   const [hidePassword, togglePasswordVisibility] = useState(true);
   const { authNavigate } = useAuth();
 
-  const { setModal, isMobile, backups, getBackups } = useContext(appContext);
+  const { setModal, isMobile, backups, getBackups, setBackgroundProcess } =
+    useContext(appContext);
   const [mode, setMode] = useState<"files" | "backups" | false>(false);
   const [tooltip, setTooltip] = useState({ host: false });
 
@@ -169,6 +170,7 @@ const RestoreDialog = () => {
           fullPath = formData.file || "";
         }
         await rpc.restoreFromBackup(formData.host, fullPath, formData.password);
+        setBackgroundProcess("Restoring");
         authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({
           content: SuccessDialog.content,
