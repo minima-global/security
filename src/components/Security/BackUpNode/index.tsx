@@ -131,7 +131,7 @@ const BackupNode = () => {
         <div>
           <img alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Something went wrong!</h1>
-          <p>{error}</p>
+          <p className="mb-8">{error}</p>
         </div>
       ),
       primaryActions: null,
@@ -146,7 +146,7 @@ const BackupNode = () => {
         <div>
           <img alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Download your backup</h1>
-          <p>
+          <p className="mb-8">
             Download your backup file and save it in <br />a secure location.
           </p>
         </div>

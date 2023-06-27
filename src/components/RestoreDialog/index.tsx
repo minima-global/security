@@ -14,6 +14,8 @@ import FileChooser from "../UI/FileChooser";
 import { CSSTransition } from "react-transition-group";
 import Tooltip from "../UI/Tooltip";
 import List from "../UI/List";
+import PERMISSIONS from "../../permissions";
+import { useAuth } from "../../providers/authProvider";
 
 const validationSchema = yup.object().shape({
   host: yup
@@ -51,6 +53,7 @@ const validationSchema = yup.object().shape({
 const RestoreDialog = () => {
   const navigate = useNavigate();
   const [hidePassword, togglePasswordVisibility] = useState(true);
+  const { authNavigate } = useAuth();
 
   const { setModal, isMobile, backups, getBackups } = useContext(appContext);
   const [mode, setMode] = useState<"files" | "backups" | false>(false);
@@ -73,7 +76,11 @@ const RestoreDialog = () => {
         </div>
       ),
       primaryActions: <div></div>,
-      secondaryActions: <Button onClick={() => setModal(false)}>Close</Button>,
+      secondaryActions: (
+        <Button onClick={() => authNavigate("/dashboard/restore", [])}>
+          Close
+        </Button>
+      ),
     };
   };
   const SuccessDialog = {
@@ -162,6 +169,7 @@ const RestoreDialog = () => {
           fullPath = formData.file || "";
         }
         await rpc.restoreFromBackup(formData.host, fullPath, formData.password);
+        authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({
           content: SuccessDialog.content,
           primaryActions: SuccessDialog.primaryActions,
@@ -169,6 +177,7 @@ const RestoreDialog = () => {
         });
       } catch (error: any) {
         const dialog = SomethingWentWrong(error);
+        authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({
           content: dialog.content,
           primaryActions: dialog.primaryActions,
@@ -503,14 +512,14 @@ const RestoreDialog = () => {
         <div className={styles["dialog"]}>
           <div>
             <h1 className="text-2xl mb-4">Restore from backup</h1>
-            <p className="mb-12">
-              Choose a backup file from your <br /> already existing backups, or
-              upload a new backup file from an external location.
+            <p className="mb-8">
+              Choose a previous backup, or upload a new backup file from an
+              external location.
             </p>
           </div>
 
           <div className="flex flex-col gap-3">
-            <div className={`${styles.primaryActions}`}>
+            <div className={`${styles.primaryActions} mb-1`}>
               <Button
                 extraClass="mb-4"
                 onClick={() => {

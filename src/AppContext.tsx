@@ -5,6 +5,7 @@ import {
   useEffect,
   useCallback,
   useMemo,
+  ReactElement,
 } from "react";
 
 import * as rpc from "./__minima__/libs/RPC";
@@ -37,8 +38,11 @@ const AppProvider = ({ children }: IProps) => {
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
-  const [modal, setModal] = useState({
-    display: false,
+  const [modal, setModal] = useState<{
+    content: ReactElement<any, any> | null;
+    primaryActions: ReactElement<any, any> | null;
+    secondaryActions: ReactElement<any, any> | null;
+  }>({
     content: null,
     primaryActions: null,
     secondaryActions: null,
@@ -226,27 +230,28 @@ const AppProvider = ({ children }: IProps) => {
         </svg>
 
         <h1 className="text-2xl mb-4 font-semibold">Re-sync complete</h1>
-        <p className="font-medium mb-6">
+        <p className="font-medium mb-6 mt-6">
           Your node was successfully re-synced and will shutdown. Restart Minima
           for the re-sync to take effect.
         </p>
-        <Button
-          onClick={() => {
-            if (mode === "mobile") {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              return Android.shutdownMinima();
-            }
-
-            return window.close();
-          }}
-        >
-          Close application
-        </Button>
       </div>
     ),
-    primaryActions: <div></div>,
-    secondaryActions: null,
+    primaryActions: <div />,
+    secondaryActions: (
+      <Button
+        onClick={() => {
+          if (mode === "mobile") {
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            return Android.shutdownMinima();
+          }
+
+          return window.close();
+        }}
+      >
+        Close application
+      </Button>
+    ),
   };
 
   useEffect(() => {
@@ -263,11 +268,7 @@ const AppProvider = ({ children }: IProps) => {
           console.log("MDS SHUTTING DONW");
           authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             content: SuccessDialog.content,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             primaryActions: SuccessDialog.primaryActions,
             secondaryActions: null,
           });
