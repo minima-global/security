@@ -1,69 +1,65 @@
 import styles from "./Dialog.module.css";
 import Button from "../../UI/Button";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Lottie from "lottie-react";
 import Loading from "../../../assets/loading.json";
 import Logs from "../../Logs";
+import { useEffect } from "react";
 
 const ResyncDialog = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    console.log(location.state);
+  }, [location]);
 
   return (
-    <>
-      <div className={styles["backdrop"]} />
-      <div className={styles["grid"]}>
-        <header></header>
-        <main>
-          <section>
-            <div className={styles["dialog"]}>
-              <div className="flex flex-col align-center">
-                <Lottie
-                  className="mb-4"
-                  style={{ width: 40, height: 40, alignSelf: "center" }}
-                  animationData={Loading}
-                />
-                <h1 className="text-2xl mb-8">Re-syncing</h1>
+    <div className="grid">
+      <div className={styles["dialog"]}>
+        <div className="flex flex-col align-center">
+          <Lottie
+            className="mb-4"
+            style={{ width: 40, height: 40, alignSelf: "center" }}
+            animationData={Loading}
+          />
+          <h1 className="text-2xl mb-8">Re-syncing</h1>
 
-                <p className="mb-8">
-                  Please don’t leave this screen whilst the chain is re-syncing.
-                  <br /> <br />
-                  Your node will reboot once it is complete.
-                </p>
+          <p className="mb-8">
+            Please don’t leave this screen whilst the chain is re-syncing.
+            <br /> <br />
+            Your node will reboot once it is complete.
+          </p>
 
-                <Logs />
-              </div>
+          <Logs />
+        </div>
 
-              <div className="flex flex-col gap-3">
-                <div
-                  className={`${styles.desktop_only} ${styles.secondaryActions}`}
-                >
-                  <Button
-                    onClick={() => {
-                      navigate("/dashboard");
-                    }}
-                  >
-                    Run in background
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <div
-              className={`${styles.actions} ${styles.mobile_only} ${styles.secondaryActions}`}
+        <div className="flex flex-col gap-3">
+          <div className={`${styles.desktop_only} ${styles.secondaryActions}`}>
+            <Button
+              onClick={() => {
+                navigate("/dashboard");
+              }}
             >
-              <Button
-                onClick={() => {
-                  navigate("/dashboard");
-                }}
-              >
-                Run in background
-              </Button>
-            </div>
-          </section>
-        </main>
+              Run in background
+            </Button>
+          </div>
+        </div>
       </div>
-    </>
+
+      <div
+        className={`${styles.actions} ${styles.mobile_only} ${styles.secondaryActions}`}
+      >
+        <Button
+          onClick={() => {
+            navigate("/dashboard");
+          }}
+        >
+          Run in background
+        </Button>
+      </div>
+    </div>
   );
 };
 

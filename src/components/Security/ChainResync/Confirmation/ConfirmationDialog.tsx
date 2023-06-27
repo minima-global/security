@@ -11,30 +11,22 @@ const ConfirmationDialog = ({ host, cancel }: IProps) => {
   const { authNavigate } = useAuth();
 
   const handleResync = () => {
-    let rpcResponse = false;
-
     try {
-      setTimeout(() => {
-        if (!rpcResponse) {
-          return authNavigate("/dashboard/resyncing", [
-            PERMISSIONS.CAN_VIEW_RESYNCING,
-          ]);
-        }
-      }, 3000);
-
       (window as any).MDS.cmd(
         `archive action:resync host:${host.length ? host : "auto"}`,
         (response: any) => {
           console.log(response);
           if (!response.status) {
-            rpcResponse = true;
-
             throw new Error(
               response.error
                 ? response.error
                 : "Something went wrong, please try again."
             );
           }
+
+          return authNavigate("/dashboard/resyncing", [
+            PERMISSIONS.CAN_VIEW_RESYNCING,
+          ]);
         }
       );
     } catch (error: any) {
@@ -42,7 +34,7 @@ const ConfirmationDialog = ({ host, cancel }: IProps) => {
       return authNavigate("/dashboard/resyncing", [
         PERMISSIONS.CAN_VIEW_RESYNCING,
         {
-          error: error.message,
+          state: { error: error.message },
         },
       ]);
     }

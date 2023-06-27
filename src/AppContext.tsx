@@ -260,6 +260,7 @@ const AppProvider = ({ children }: IProps) => {
         }
 
         if (msg.event === "MDS_SHUTDOWN") {
+          console.log("MDS SHUTTING DONW");
           authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
