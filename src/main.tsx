@@ -48,7 +48,8 @@ const router = createHashRouter(
         <Route path="lockprivatekeys" element={<LockPrivateKeys />} />
         <Route path="backup" element={<BackupNode />} />
         <Route path="resync" element={<ChainResync />} />
-        <Route path="manageseedphrase" element={<ManageSeedPhrase />}>
+        <Route path="manageseedphrase">
+          <Route index element={<ManageSeedPhrase />} />
           <Route
             element={
               <Authorisation
@@ -87,7 +88,8 @@ const router = createHashRouter(
             </Route>
           </Route>
         </Route>
-        <Route path="restore" element={<RestoreFromBackup />}>
+        <Route path="restore">
+          <Route index element={<RestoreFromBackup />} />
           <Route
             element={
               <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESTORE"]]} />

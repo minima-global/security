@@ -1,4 +1,4 @@
-import { Outlet, matchPath, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import SlideScreen from "../../UI/SlideScreen";
 import { useContext, useEffect } from "react";
@@ -21,43 +21,9 @@ const ManageSeedPhrase = () => {
     setBackButton({ display: true, to: "/dashboard", title: "Security" });
   }, [location]);
 
-  const wantsToEnterSeedPhrase = matchPath(
-    { path: "/dashboard/manageseedphrase/enterseedphrase" },
-    location.pathname
-  );
-  const wantsToWipeNode = matchPath(
-    { path: "/dashboard/manageseedphrase/enterseedphrase/wipethisnode" },
-    location.pathname
-  );
-  const wantsToViewSeedPhrase = matchPath(
-    { path: "/dashboard/manageseedphrase/viewseedphrase" },
-    location.pathname
-  );
-  const wantsToImportSeedPhrase = matchPath(
-    { path: "/dashboard/manageseedphrase/importseedphrase" },
-    location.pathname
-  );
-
   return (
     <>
-      <SlideScreen
-        display={
-          !!wantsToEnterSeedPhrase ||
-          !!wantsToWipeNode ||
-          !!wantsToViewSeedPhrase ||
-          !!wantsToImportSeedPhrase
-        }
-      >
-        <Outlet />
-      </SlideScreen>
-      <SlideScreen
-        display={
-          !wantsToEnterSeedPhrase &&
-          !wantsToWipeNode &&
-          !wantsToViewSeedPhrase &&
-          !wantsToImportSeedPhrase
-        }
-      >
+      <SlideScreen display={true}>
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
@@ -180,144 +146,6 @@ const ManageSeedPhrase = () => {
                   </div>
                 </div>
               </div>
-
-              {/* <div className="core-black-contrast-2 p-4 rounded">
-                <form
-                  onSubmit={formik.handleSubmit}
-                  className="flex flex-col gap-4"
-                >
-                  <div>
-                    <span className="mb-2 flex gap-2 items-center">
-                      <div className="text-left">Archive node host</div>
-                      {!tooltip.host && (
-                        <img
-                          className="w-4 h-4"
-                          onClick={() => setTooltip({ ...tooltip, host: true })}
-                          alt="tooltip"
-                          src="./assets/help_filled.svg"
-                        />
-                      )}
-                      {!!tooltip.host && (
-                        <img
-                          className="w-4 h-4"
-                          onClick={() =>
-                            setTooltip({ ...tooltip, host: false })
-                          }
-                          alt="tooltip-dismiss"
-                          src="./assets/cancel_filled.svg"
-                        />
-                      )}
-                    </span>
-                    <CSSTransition
-                      in={tooltip.host}
-                      unmountOnExit
-                      timeout={200}
-                      classNames={{
-                        enter: styles.backdropEnter,
-                        enterDone: styles.backdropEnterActive,
-                        exit: styles.backdropExit,
-                        exitActive: styles.backdropExitActive,
-                      }}
-                    >
-                      <Tooltip
-                        onClick={() => setTooltip({ ...tooltip, host: false })}
-                        content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
-                        position={148}
-                      />
-                    </CSSTransition>
-
-                    <Input
-                      id="host"
-                      name="host"
-                      placeholder="Auto"
-                      type="text"
-                      value={formik.values.host}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      autoComplete="off"
-                    />
-                  </div>
-                  <div>
-                    <span className="mb-2 flex gap-2 items-center">
-                      <div className="text-left">Key uses</div>
-                      {!tooltip.keyuses && (
-                        <img
-                          className="w-4 h-4"
-                          onClick={() =>
-                            setTooltip({ ...tooltip, keyuses: true })
-                          }
-                          alt="tooltip"
-                          src="./assets/help_filled.svg"
-                        />
-                      )}
-                      {!!tooltip.keyuses && (
-                        <img
-                          className="w-4 h-4"
-                          onClick={() =>
-                            setTooltip({ ...tooltip, keyuses: false })
-                          }
-                          alt="tooltip-dismiss"
-                          src="./assets/cancel_filled.svg"
-                        />
-                      )}
-                    </span>
-
-                    <CSSTransition
-                      in={tooltip.keyuses}
-                      unmountOnExit
-                      timeout={200}
-                      classNames={{
-                        enter: styles.backdropEnter,
-                        enterDone: styles.backdropEnterActive,
-                        exit: styles.backdropExit,
-                        exitActive: styles.backdropExitActive,
-                      }}
-                    >
-                      <Tooltip
-                        onClick={() =>
-                          setTooltip({ ...tooltip, keyuses: false })
-                        }
-                        content="How many times at most you used your keys. Your keys are used for signing every transaction you make. Every time you import your seed phrase this needs to be higher."
-                        position={75}
-                      />
-                    </CSSTransition>
-                    <Input
-                      id="keyuses"
-                      name="keyuses"
-                      placeholder="Key uses"
-                      type="number"
-                      value={formik.values.keyuses}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      autoComplete="off"
-                    />
-                  </div>
-                  {formik.status && (
-                    <div className="text-sm form-error-message text-left">
-                      {formik.status}
-                    </div>
-                  )}
-                  <Button
-                    disabled={!formik.isValid || formik.isSubmitting}
-                    onClick={() =>
-                      authNavigate(
-                        "/dashboard/manageseedphrase/enterseedphrase",
-                        [PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE]
-                      )
-                    }
-                  >
-                    Import seed phrase
-                  </Button>
-                </form>
-              </div> */}
-              {/* <div className="text-left">
-                <p className="text-sm password-label mr-4 ml-4">
-                  You should only re-sync from your own archive node or one from
-                  a trusted source. <br /> <br /> For a successful restore, the
-                  archive node used must have been started prior to the date
-                  your coins were received.
-                </p>
-              </div> */}
             </div>
           </div>
         </div>

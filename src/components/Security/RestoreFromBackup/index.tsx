@@ -1,4 +1,4 @@
-import { Outlet, To, matchPath, useLocation } from "react-router-dom";
+import { To, useLocation } from "react-router-dom";
 import SlideScreen from "../../UI/SlideScreen";
 import Button from "../../UI/Button";
 import { useContext, useEffect } from "react";
@@ -15,10 +15,6 @@ const RestoreFromBackup = () => {
   } = useContext(appContext);
   const location = useLocation();
   const { authNavigate } = useAuth();
-  const isRestoring = matchPath(
-    { path: "/dashboard/restore/frombackup" },
-    location.pathname
-  );
 
   useEffect(() => {
     setBackButton({ display: true, to: -1 as To, title: "Security" });
@@ -61,8 +57,7 @@ const RestoreFromBackup = () => {
 
   return (
     <>
-      {isRestoring && <Outlet />}
-      <SlideScreen display={!isRestoring}>
+      <SlideScreen display={true}>
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
