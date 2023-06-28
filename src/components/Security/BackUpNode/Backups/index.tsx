@@ -7,12 +7,13 @@ import * as fileManager from "../../../../__minima__/libs/fileManager";
 import AsyncLink from "../../../UI/AsyncLink";
 import PERMISSIONS from "../../../../permissions";
 import Button from "../../../UI/Button";
+import useIsMinimaBrowser from "../../../../hooks/useIsMinimaBrowser";
 
 const Backups = () => {
   const [searchText, setSearchText] = useState("");
-  const { getBackups, backups, isMinimaBrowser, setModal } =
-    useContext(appContext);
+  const { getBackups, backups, setModal } = useContext(appContext);
   const { authNavigate } = useAuth();
+  const isMinimaBrowser = useIsMinimaBrowser();
 
   useEffect(() => {
     getBackups();
@@ -35,7 +36,8 @@ const Backups = () => {
 
   const handleDownload = async (backupFile: string) => {
     if (isMinimaBrowser) {
-      const filedata = await getFileData("/backups/" + backupFile);
+      const filedata = await getFileData(backupFile);
+
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return Android.blobDownload(backupFile, filedata);
@@ -177,7 +179,12 @@ const Backups = () => {
                         <AsyncLink
                           file={"/backups/" + b.name}
                           name={b.name}
-                          onClick={() => handleDownload("/backups/" + b.name)}
+                          onClick={(e) => {
+                            if (isMinimaBrowser) {
+                              e.stopPropagation();
+                              handleDownload("/backups/" + b.name);
+                            }
+                          }}
                         >
                           <svg
                             onClick={() => handleDownload(backups.name)}
@@ -262,7 +269,12 @@ const Backups = () => {
                       <AsyncLink
                         file={"/backups/" + b.name}
                         name={b.name}
-                        onClick={() => handleDownload("/backups/" + b.name)}
+                        onClick={(e) => {
+                          if (isMinimaBrowser) {
+                            e.stopPropagation();
+                            handleDownload("/backups/" + b.name);
+                          }
+                        }}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"

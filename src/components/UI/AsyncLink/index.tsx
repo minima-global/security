@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import * as fileManager from "../../../__minima__/libs/fileManager";
+import useIsMinimaBrowser from "../../../hooks/useIsMinimaBrowser";
 
 interface IProps {
   // ref: RefObject<HTMLAnchorElement>;
   file: string;
   children: any;
-  onClick: () => void;
+  onClick: (e: any) => void;
   name: string;
 }
 const AsyncLink = ({ file, name, children, onClick }: IProps) => {
   const [href, setHref] = useState("");
+  const isMinimaBrowser = useIsMinimaBrowser();
 
   const createDownloadLink = async (mdsfile: string) => {
     try {
@@ -34,6 +36,10 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
       setHref(url);
     });
   }, [file]);
+
+  if (isMinimaBrowser) {
+    return <div onClick={onClick}>{children}</div>;
+  }
 
   return (
     <a onClick={onClick} download={name} href={href}>
