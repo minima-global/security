@@ -143,10 +143,10 @@ const BackupNode = () => {
   const downloadBackupDialog = (download: string, name: string) => {
     return {
       content: (
-        <div>
+        <div className="mb-8">
           <img alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Download your backup</h1>
-          <p className="mb-8">
+          <p>
             Download your backup file and save it in <br />a secure location.
           </p>
         </div>
@@ -176,7 +176,7 @@ const BackupNode = () => {
   const downloadBackupDialogAndroid = (file: string, filedata: string) => {
     return {
       content: (
-        <div>
+        <div className="mb-8">
           <img alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Download your backup</h1>
           <p>

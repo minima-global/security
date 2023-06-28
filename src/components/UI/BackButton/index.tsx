@@ -10,9 +10,11 @@ const BackButton = ({ title, to, onClickHandler }: IProps) => {
 
   return (
     <div
-      onClick={() =>
-        to ? navigate(to) : onClickHandler ? onClickHandler() : null
-      }
+      onClick={(e) => {
+        e.stopPropagation();
+
+        to ? navigate(to) : onClickHandler ? onClickHandler() : null;
+      }}
       className={`flex cursor-pointer items-center`}
     >
       <svg
