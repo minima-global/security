@@ -61,7 +61,7 @@ const BackupNode = () => {
 
   useEffect(() => {
     if (step === 0) {
-      return setBackButton({ display: true, to: -1 as To, title: "Menu" });
+      return setBackButton({ display: true, to: -1 as To, title: "Security" });
     }
 
     if (step === 1) {
@@ -119,8 +119,66 @@ const BackupNode = () => {
   }, []);
 
   const toggleBackupStatus = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("Toggling backup status", e.target.checked);
-    await fileManager.toggleBackupStatus(e.target.checked);
+    alert(e.target.checked);
+    const togglingOff = e.target.checked === false;
+    const togglingOn = e.target.checked === true;
+    if (togglingOff) {
+      authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
+      setModal({
+        content: (
+          <div>
+            <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
+            <h1 className="text-2xl mb-8">Deactivate auto backup?</h1>
+            <p className="mb-6">Daily backups help protect your node.</p>
+          </div>
+        ),
+        primaryActions: (
+          <Button
+            onClick={async () => {
+              // toggle off
+              await fileManager.toggleBackupStatus(e.target.checked);
+
+              setModal({
+                content: (
+                  <div>
+                    <img
+                      className="mb-4"
+                      alt="informative"
+                      src="./assets/error.svg"
+                    />{" "}
+                    <h1 className="text-2xl mb-8">Auto-backup deactivated</h1>
+                    <p className="mb-6">
+                      To re-activate auto-backup, go to Backup Node in the
+                      Settings menu.
+                    </p>
+                  </div>
+                ),
+                primaryActions: <div></div>,
+                secondaryActions: (
+                  <Button onClick={() => authNavigate("/dashboard/backup", [])}>
+                    Cancel
+                  </Button>
+                ),
+              });
+            }}
+          >
+            Turn off auto-backup
+          </Button>
+        ),
+        secondaryActions: (
+          <Button onClick={() => authNavigate("/dashboard/backup", [])}>
+            Cancel
+          </Button>
+        ),
+      });
+    }
+
+    if (togglingOn) {
+      authNavigate(
+        "/dashboard/backup/autocreatepassword",
+        PERMISSIONS.CAN_VIEW_AUTOCREATEPASSWORD
+      );
+    }
 
     getBackupStatus();
   };

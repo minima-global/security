@@ -1,6 +1,7 @@
 /* eslint-disable no-undef */
 
 var backupStatus; // {active: boolean}
+var keyPairPassword = "autopassword";
 
 MDS.init(function (msg) {
   if (msg.event === "inited") {
@@ -75,19 +76,17 @@ function createBackup() {
   MDS.sql("select * from BACKUPS", function (response) {
     MDS.log(JSON.stringify(response));
   });
-  // is it time for a new backup?
-  MDS.sql(
-    "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '1' SECOND <= CURRENT_TIMESTAMP",
-    function (response) {
-      MDS.log(JSON.stringify(response));
+  MDS.sql("SELECT COUNT(*) FROM BACKUPS", function (response) {
+    var tableEmpty = response.rows[0]["COUNT(*)"] === "0";
+    // is it time for a new backup?
+    MDS.sql(
+      "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '1' SECOND <= CURRENT_TIMESTAMP",
+      function (response) {
+        MDS.log(JSON.stringify(response));
 
-      const timeForNewBackup = response.count > 0;
-      // it is time for  a new backup
-      if (timeForNewBackup) {
-        // let's check if the table is empty or not
-        MDS.sql("SELECT COUNT(*) FROM BACKUPS", function (response) {
-          var tableEmpty = response.rows[0]["COUNT(*)"] === "0";
-
+        const timeForNewBackup = response.count > 0 || tableEmpty;
+        // it is time for  a new backup
+        if (timeForNewBackup) {
           // get full path for minidapp
           MDS.file.getpath("/", function (response) {
             if (response.status) {
@@ -106,44 +105,52 @@ function createBackup() {
                   minidappPath + fileName
                 }`
               );
-              // create the backup
-              MDS.cmd(
-                `backup file:${
-                  minidappPath + "/backups/" + fileName
-                } password:"auto"`,
-                function (response) {
-                  // something went wrong
-                  if (!response.status) {
-                    MDS.log("Backup halted!");
-                    MDS.log(response.error);
-                  }
-                  // backup success
-                  if (response.status) {
-                    // if the table is fresh let's insert our first row
-                    if (tableEmpty) {
+
+              // get the auto password
+              MDS.keypair.get(keyPairPassword, function (response) {
+                var backupPassword = "auto";
+                if (response.status) {
+                  backupPassword = response.value;
+                }
+                // create the backup
+                MDS.cmd(
+                  `backup file:${
+                    minidappPath + "/backups/" + fileName
+                  } password:"${backupPassword}"`,
+                  function (response) {
+                    // something went wrong
+                    if (!response.status) {
+                      MDS.log("Backup halted!");
+                      MDS.log(response.error);
+                    }
+                    // backup success
+                    if (response.status) {
+                      // if the table is fresh let's insert our first row
+                      if (tableEmpty) {
+                        return MDS.sql(
+                          `INSERT INTO BACKUPS (filename, block, timestamp) VALUES('${fileName}', '${response.backup.block}', CURRENT_TIMESTAMP)`,
+                          function (response) {
+                            MDS.log(JSON.stringify(response));
+                          }
+                        );
+                      }
+                      // already existing row, let's update it with the latest backup
                       return MDS.sql(
-                        `INSERT INTO BACKUPS (filename, block, timestamp) VALUES('${fileName}', '${response.backup.block}', CURRENT_TIMESTAMP)`,
+                        `UPDATE backups SET filename='${fileName}', block='${response.backup.block}', timestamp=CURRENT_TIMESTAMP WHERE id=1`,
                         function (response) {
                           MDS.log(JSON.stringify(response));
                         }
                       );
                     }
-                    // already existing row, let's update it with the latest backup
-                    return MDS.sql(
-                      `UPDATE backups SET filename='${fileName}', block='${response.backup.block}', timestamp=CURRENT_TIMESTAMP WHERE id=1`,
-                      function (response) {
-                        MDS.log(JSON.stringify(response));
-                      }
-                    );
                   }
-                }
-              );
+                );
+              });
             }
           });
-        });
+        }
       }
-    }
-  );
+    );
+  });
 }
 
 function getAutomaticBackupStatus() {

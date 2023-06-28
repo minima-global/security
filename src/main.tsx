@@ -28,6 +28,7 @@ import ImportSeedPhrase from "./components/Security/ManageSeedPhrase/ImportSeedP
 import Backups from "./components/Security/BackUpNode/Backups/index.tsx";
 import Security from "./components/Security/index.tsx";
 import Dialog from "./components/Dialog/index.tsx";
+import AutoCreatePassword from "./components/Security/BackUpNode/AutoCreatePassword/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -53,6 +54,15 @@ const router = createHashRouter(
         <Route path="backup">
           <Route index element={<BackupNode />} />
           <Route path="backups" element={<Backups />} />
+          <Route
+            element={
+              <Authorisation
+                permissions={[PERMISSIONS["CAN_VIEW_AUTOCREATEPASSWORD"]]}
+              />
+            }
+          >
+            <Route path="autocreatepassword" element={<AutoCreatePassword />} />
+          </Route>
         </Route>
         <Route path="resync" element={<ChainResync />} />
         <Route path="manageseedphrase">
