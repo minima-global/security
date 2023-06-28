@@ -1,4 +1,4 @@
-import { To, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Button from "../../UI/Button";
 import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../../AppContext";
@@ -19,7 +19,7 @@ const ViewSeedPhrase = () => {
   };
 
   useEffect(() => {
-    setBackButton({ display: true, to: -1 as To, title: "Back" });
+    setBackButton({ display: true, to: "/dashboard", title: "Back" });
   }, [location]);
 
   const defaultOptions = {
@@ -33,7 +33,9 @@ const ViewSeedPhrase = () => {
   return (
     <div className="h-full flex flex-col justify-between px-4 pb-4">
       <div>
-        {!displayHeaderBackButton && <BackButton to={-1 as To} title="Back" />}
+        {!displayHeaderBackButton && (
+          <BackButton to="/dashboard" title="Back" />
+        )}
         <div className="mt-6 text-2xl mb-8 text-left bg-inherit">
           Your seed phrase
         </div>

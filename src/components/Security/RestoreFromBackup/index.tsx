@@ -1,4 +1,4 @@
-import { To, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import Button from "../../UI/Button";
 import { useContext, useEffect } from "react";
 import { appContext } from "../../../AppContext";
@@ -16,7 +16,7 @@ const RestoreFromBackup = () => {
   const { authNavigate } = useAuth();
 
   useEffect(() => {
-    setBackButton({ display: true, to: -1 as To, title: "Security" });
+    setBackButton({ display: true, to: "/dashboard", title: "Security" });
   }, [location]);
 
   const InformativeDialog = {
@@ -62,7 +62,7 @@ const RestoreFromBackup = () => {
       <div className="flex flex-col h-full bg-black px-4 pb-4">
         <div className="flex flex-col h-full">
           {!displayHeaderBackButton && (
-            <BackButton to={-1 as To} title="Security" />
+            <BackButton to="/dashboard" title="Security" />
           )}
           <div className="mt-6 text-2xl mb-8 text-left">
             Restore from backup

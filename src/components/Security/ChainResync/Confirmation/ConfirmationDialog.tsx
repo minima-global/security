@@ -18,7 +18,7 @@ const ConfirmationDialog = ({ host, cancel }: IProps) => {
       (window as any).MDS.cmd(
         `archive action:resync host:${host.length ? host : "auto"}`,
         (response: any) => {
-          console.log(response);
+          // console.log(response);
           if (!response.status) {
             throw new Error(
               response.error

@@ -7,7 +7,7 @@ export const toggleBackupStatus = (status: boolean) => {
       "backupStatus",
       JSON.stringify(backupStatus),
       (response: any) => {
-        console.log(response);
+        // console.log(response);
         resolve(response.status);
       }
     );

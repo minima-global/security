@@ -5,3 +5,4 @@ export * from "./loadBinaryToHex";
 export * from "./moveFileToBackups";
 export * from "./getPath";
 export * from "./toggleBackupStatus";
+export * from "./deleteFile";

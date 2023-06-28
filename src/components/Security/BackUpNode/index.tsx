@@ -1,5 +1,4 @@
 import Button from "../../UI/Button";
-import { To } from "react-router-dom";
 import { RefObject, useContext, useEffect, useRef, useState } from "react";
 
 import { useFormik } from "formik";
@@ -56,12 +55,15 @@ const BackupNode = () => {
     setModal,
     setBackButton,
     displayBackButton: displayHeaderBackButton,
-    latestBackup,
   } = useContext(appContext);
 
   useEffect(() => {
     if (step === 0) {
-      return setBackButton({ display: true, to: -1 as To, title: "Security" });
+      return setBackButton({
+        display: true,
+        to: "/dashboard",
+        title: "Security",
+      });
     }
 
     if (step === 1) {
@@ -105,7 +107,7 @@ const BackupNode = () => {
   const getBackupStatus = async () => {
     await fileManager.getBackupStatus().then((response: any) => {
       if (response.status) {
-        console.log(response);
+        // console.log(response);
         const backupStatus = JSON.parse(response.value);
         return setAutoBackupStatus(backupStatus.active);
       }
@@ -119,7 +121,6 @@ const BackupNode = () => {
   }, []);
 
   const toggleBackupStatus = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    alert(e.target.checked);
     const togglingOff = e.target.checked === false;
     const togglingOn = e.target.checked === true;
     if (togglingOff) {
@@ -321,7 +322,7 @@ const BackupNode = () => {
           <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
               {!displayHeaderBackButton && (
-                <BackButton to={-1 as To} title="Security" />
+                <BackButton to="/dashboard" title="Security" />
               )}
               <div className="mt-6 text-2xl mb-8 text-left">Backup node</div>
               <div className="flex flex-col gap-5">
@@ -363,7 +364,10 @@ const BackupNode = () => {
                     never share your backup with anyone.
                   </p>
                 </div>
-                <div className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer">
+                <div
+                  onClick={() => authNavigate("/dashboard/backup/backups", [])}
+                  className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer"
+                >
                   View backups{" "}
                   <div className="absolute right-0 top-0 h-full px-5 flex items-center">
                     <svg
@@ -420,17 +424,12 @@ const BackupNode = () => {
 
                 <div className="text-left">
                   <p className="text-sm password-label mr-4 ml-4">
-                    Active daily backups. The latest backup was created on{" "}
-                    {latestBackup
-                      ? `${format(
-                          new Date(latestBackup.TIMESTAMP),
-                          "d MMMM, yyyy"
-                        )} at ${format(
-                          new Date(latestBackup.TIMESTAMP),
-                          "H:mm"
-                        )}`
-                      : "N/A"}
-                    .
+                    Auto backups will be taken every 24 hours. <br />
+                    <br />
+                    Only the most recent 14 backups will be stored (including
+                    manual backups), so you should download and move them to an
+                    offline device. The password provided will be required if
+                    you need to restore the backup.
                   </p>
                 </div>
               </div>

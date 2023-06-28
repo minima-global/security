@@ -6,7 +6,7 @@ import * as yup from "yup";
 import * as rpc from "../../../__minima__/libs/RPC";
 import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../../AppContext";
-import { To, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import BackButton from "../../UI/BackButton";
 import { useAuth } from "../../../providers/authProvider";
 import PERMISSIONS from "../../../permissions";
@@ -163,7 +163,7 @@ const LockPrivateKeys = () => {
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
-              <BackButton to={-1 as To} title="Security" />
+              <BackButton to="/dashboard" title="Security" />
             )}
 
             <div className="mt-6 text-2xl mb-8 text-left bg-inherit">
@@ -318,7 +318,7 @@ const LockPrivateKeys = () => {
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
-              <BackButton to={-1 as To} title="Security" />
+              <BackButton to="/dashboard" title="Security" />
             )}
             <div className="mt-6 text-2xl mb-8 text-left bg-inherit">
               Unlock private keys

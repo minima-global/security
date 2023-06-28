@@ -236,7 +236,7 @@ const EnterSeedPhrase = () => {
             <h1 className="mt-6 text-base mb-6 text-left">
               Enter words {1 + step} to {6 + step}
             </h1>
-            <img alt="tooltip" src="./assets/info.svg" />
+            {/* <img alt="tooltip" src="./assets/info.svg" /> */}
           </div>
 
           <div>

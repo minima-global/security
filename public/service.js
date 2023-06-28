@@ -2,6 +2,7 @@
 
 var backupStatus; // {active: boolean}
 var keyPairPassword = "autopassword";
+var debugLogs = false;
 
 MDS.init(function (msg) {
   if (msg.event === "inited") {
@@ -25,13 +26,14 @@ MDS.init(function (msg) {
         backupStatus = status;
       }
     });
-    MDS.log("MDS 1 hour time in play.");
-    MDS.log(`BackupStatus ${JSON.stringify(backupStatus)}`);
+
+    log("MDS 1 hour time in play.");
+    log(`BackupStatus ${JSON.stringify(backupStatus)}`);
     var autoBackupDisabled =
       !backupStatus ||
       (backupStatus && "active" in backupStatus && !backupStatus.active);
     if (autoBackupDisabled) {
-      MDS.log("Backup is currently disabled.");
+      log("Backup is currently disabled.");
       return;
     }
 
@@ -40,7 +42,7 @@ MDS.init(function (msg) {
       if (response.status) {
         const myBackups = response.response.list.reverse();
 
-        MDS.log(`Total backups: ${myBackups.length}`);
+        log(`Total backups: ${myBackups.length}`);
 
         if (myBackups.length > 14) {
           // time to delete the backups
@@ -71,10 +73,10 @@ const monthNames = [
   "Dec",
 ];
 function createBackup() {
-  MDS.log("Assert table emptiness, create backup on truthy.");
+  log("Assert table emptiness, create backup on truthy.");
 
   MDS.sql("select * from BACKUPS", function (response) {
-    MDS.log(JSON.stringify(response));
+    log(JSON.stringify(response));
   });
   MDS.sql("SELECT COUNT(*) FROM BACKUPS", function (response) {
     var tableEmpty = response.rows[0]["COUNT(*)"] === "0";
@@ -82,7 +84,7 @@ function createBackup() {
     MDS.sql(
       "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '1' SECOND <= CURRENT_TIMESTAMP",
       function (response) {
-        MDS.log(JSON.stringify(response));
+        log(JSON.stringify(response));
 
         const timeForNewBackup = response.count > 0 || tableEmpty;
         // it is time for  a new backup
@@ -100,7 +102,7 @@ function createBackup() {
                   ? "0" + today.getMinutes()
                   : today.getMinutes()
               }.bak`;
-              MDS.log(
+              log(
                 `Creating a new backup file with path -> ${
                   minidappPath + fileName
                 }`
@@ -120,8 +122,8 @@ function createBackup() {
                   function (response) {
                     // something went wrong
                     if (!response.status) {
-                      MDS.log("Backup halted!");
-                      MDS.log(response.error);
+                      log("Backup halted!");
+                      log(response.error);
                     }
                     // backup success
                     if (response.status) {
@@ -130,7 +132,7 @@ function createBackup() {
                         return MDS.sql(
                           `INSERT INTO BACKUPS (filename, block, timestamp) VALUES('${fileName}', '${response.backup.block}', CURRENT_TIMESTAMP)`,
                           function (response) {
-                            MDS.log(JSON.stringify(response));
+                            log(JSON.stringify(response));
                           }
                         );
                       }
@@ -138,7 +140,7 @@ function createBackup() {
                       return MDS.sql(
                         `UPDATE backups SET filename='${fileName}', block='${response.backup.block}', timestamp=CURRENT_TIMESTAMP WHERE id=1`,
                         function (response) {
-                          MDS.log(JSON.stringify(response));
+                          log(JSON.stringify(response));
                         }
                       );
                     }
@@ -155,14 +157,20 @@ function createBackup() {
 
 function getAutomaticBackupStatus() {
   MDS.file.load("/backups/status.txt", function (response) {
-    MDS.log(JSON.stringify(response));
+    log(JSON.stringify(response));
   });
 }
 
 function deleteFile(filepath) {
   MDS.file.delete(filepath, function (response) {
     if (response.status) {
-      MDS.log(`Deleted backup ${filepath}`);
+      log(`Deleted backup ${filepath}`);
     }
   });
+}
+
+function log(log) {
+  if (debugLogs) {
+    return MDS.log(log);
+  }
 }

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../AppContext";
-import { To, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import SlideScreen from "../UI/SlideScreen";
 export function Security() {
   const { vaultLocked, setBackButton } = useContext(appContext);
@@ -9,7 +9,7 @@ export function Security() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setBackButton({ display: false, to: -1 as To, title: "Menu" });
+    setBackButton({ display: false, to: "/dashboard", title: "Security" });
 
     setTimeout(() => setLoading(false), 2000);
   }, []);

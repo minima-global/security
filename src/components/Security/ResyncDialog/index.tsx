@@ -1,19 +1,13 @@
 import styles from "./Dialog.module.css";
 import Button from "../../UI/Button";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Lottie from "lottie-react";
 import Loading from "../../../assets/loading.json";
 import Logs from "../../Logs";
-import { useEffect } from "react";
 
 const ResyncDialog = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    console.log(location.state);
-  }, [location]);
 
   return (
     <div className="grid">

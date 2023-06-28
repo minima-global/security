@@ -30,8 +30,8 @@ const AppProvider = ({ children }: IProps) => {
     title: string;
   }>({
     display: false,
-    to: -1 as To,
-    title: "Menu",
+    to: "/dashboard",
+    title: "Security",
   });
   const loaded = useRef(false);
   const [mode, setMode] = useState("desktop");
@@ -185,7 +185,7 @@ const AppProvider = ({ children }: IProps) => {
 
   const getLatestBackup = () => {
     (window as any).MDS.sql("SELECT * FROM BACKUPS", (response: any) => {
-      console.log(response);
+      // console.log(response);
       if (response.status) {
         setLatestBackup(response.rows[0]);
       }
@@ -274,7 +274,7 @@ const AppProvider = ({ children }: IProps) => {
         }
 
         if (msg.event === "MDS_SHUTDOWN") {
-          console.log("MDS SHUTTING DONW");
+          // console.log("MDS SHUTTING DONW");
           authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({
             content: SuccessDialog.content,

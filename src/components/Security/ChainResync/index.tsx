@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 
 import Input from "../../UI/Input";
 import { appContext } from "../../../AppContext";
-import { To } from "react-router-dom";
 import BackButton from "../../UI/BackButton";
 import ConfirmationDialog from "./Confirmation/ConfirmationDialog";
 
@@ -35,10 +34,10 @@ const ChainResync = () => {
   };
 
   useEffect(() => {
-    setBackButton({ display: true, to: -1 as To, title: "Security" });
+    setBackButton({ display: true, to: "/dashboard", title: "Security" });
 
     return () => {
-      setBackButton({ display: false, to: -1 as To, title: "Security" });
+      setBackButton({ display: false, to: "/dashboard", title: "Security" });
     };
   }, []);
 
@@ -52,7 +51,7 @@ const ChainResync = () => {
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
-              <BackButton to={-1 as To} title="Security" />
+              <BackButton to="/dashboard" title="Security" />
             )}
             <div className="mt-6 text-2xl mb-8 text-left">Chain re-sync</div>
 
