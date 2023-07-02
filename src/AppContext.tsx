@@ -77,12 +77,7 @@ const AppProvider = ({ children }: IProps) => {
     24: "",
   });
   // backups stuff
-  const [latestBackup, setLatestBackup] = useState<{
-    BLOCK: string;
-    FILENAME: string;
-    ID: string;
-    TIMESTAMP: string;
-  } | null>(null);
+
   const [backups, setBackups] = useState<string[]>([]);
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
@@ -94,12 +89,14 @@ const AppProvider = ({ children }: IProps) => {
 
   // apply these whenever vault is locked or unlocked
   useEffect(() => {
-    if (vaultLocked) {
-      resetVault();
-    }
+    if (loaded.current) {
+      if (vaultLocked) {
+        resetVault();
+      }
 
-    if (!vaultLocked) {
-      fetchVault();
+      if (!vaultLocked) {
+        fetchVault();
+      }
     }
   }, [vaultLocked]);
 
@@ -183,18 +180,11 @@ const AppProvider = ({ children }: IProps) => {
     });
   };
 
-  const getLatestBackup = () => {
-    (window as any).MDS.sql("SELECT * FROM BACKUPS", (response: any) => {
-      // console.log(response);
-      if (response.status) {
-        setLatestBackup(response.rows[0]);
-      }
-    });
-  };
-
   const getBackups = () => {
     fileManager.listFiles("/backups").then((response: any) => {
-      setBackups(response.response.list.reverse());
+      if (response.status) {
+        setBackups(response.response.list.reverse());
+      }
     });
   };
 
@@ -294,7 +284,7 @@ const AppProvider = ({ children }: IProps) => {
           /** get and set all current backups */
           getBackups();
           /** get latest backup for display reasons */
-          getLatestBackup();
+          // getLatestBackup();
 
           /** */
           checkVaultLocked();
@@ -331,7 +321,6 @@ const AppProvider = ({ children }: IProps) => {
         //backups
         backups,
         getBackups,
-        latestBackup,
 
         // current background process
         backgroundProcess,

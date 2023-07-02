@@ -130,7 +130,7 @@ const RestoreDialog = () => {
             if (isMobile) {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
-              return Android.closeWindow();
+              return Android.shutdownMinima();
             }
 
             return window.close();

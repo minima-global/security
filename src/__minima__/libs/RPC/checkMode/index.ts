@@ -10,4 +10,4 @@ export function isWriteMode(): Promise<boolean> {
   });
 }
 
-export default isWriteMode();
+export default isWriteMode;
