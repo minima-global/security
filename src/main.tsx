@@ -29,6 +29,8 @@ import Backups from "./components/Security/BackUpNode/Backups/index.tsx";
 import Security from "./components/Security/index.tsx";
 import Dialog from "./components/Dialog/index.tsx";
 import AutoCreatePassword from "./components/Security/BackUpNode/AutoCreatePassword/index.tsx";
+import FadeIn from "./components/UI/Animations/FadeIn/index.tsx";
+import SlideIn from "./components/UI/Animations/SlideIn/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -42,18 +44,53 @@ const router = createHashRouter(
       <Route index element={<Splash />} />
 
       <Route path="/dashboard" element={<Dashboard />}>
-        <Route index element={<Security />} />
+        <Route
+          index
+          element={
+            <FadeIn delay={0}>
+              <Security />
+            </FadeIn>
+          }
+        />
         <Route
           element={
             <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESYNCING"]]} />
           }
         >
-          <Route path="resyncing" element={<ResyncDialog />} />
+          <Route
+            path="resyncing"
+            element={
+              <FadeIn delay={100}>
+                <ResyncDialog />
+              </FadeIn>
+            }
+          />
         </Route>
-        <Route path="lockprivatekeys" element={<LockPrivateKeys />} />
+        <Route
+          path="lockprivatekeys"
+          element={
+            <SlideIn delay={100}>
+              <LockPrivateKeys />
+            </SlideIn>
+          }
+        />
         <Route path="backup">
-          <Route index element={<BackupNode />} />
-          <Route path="backups" element={<Backups />} />
+          <Route
+            index
+            element={
+              <SlideIn delay={100}>
+                <BackupNode />
+              </SlideIn>
+            }
+          />
+          <Route
+            path="backups"
+            element={
+              <FadeIn delay={100}>
+                <Backups />
+              </FadeIn>
+            }
+          />
           <Route
             element={
               <Authorisation
@@ -61,12 +98,33 @@ const router = createHashRouter(
               />
             }
           >
-            <Route path="autocreatepassword" element={<AutoCreatePassword />} />
+            <Route
+              path="autocreatepassword"
+              element={
+                <FadeIn delay={100}>
+                  <AutoCreatePassword />
+                </FadeIn>
+              }
+            />
           </Route>
         </Route>
-        <Route path="resync" element={<ChainResync />} />
+        <Route
+          path="resync"
+          element={
+            <SlideIn delay={100}>
+              <ChainResync />
+            </SlideIn>
+          }
+        />
         <Route path="manageseedphrase">
-          <Route index element={<ManageSeedPhrase />} />
+          <Route
+            index
+            element={
+              <SlideIn delay={100}>
+                <ManageSeedPhrase />
+              </SlideIn>
+            }
+          />
           <Route
             element={
               <Authorisation
@@ -74,7 +132,14 @@ const router = createHashRouter(
               />
             }
           >
-            <Route path="importseedphrase" element={<ImportSeedPhrase />} />
+            <Route
+              path="importseedphrase"
+              element={
+                <SlideIn delay={100}>
+                  <ImportSeedPhrase />
+                </SlideIn>
+              }
+            />
           </Route>
           <Route
             element={
@@ -83,7 +148,14 @@ const router = createHashRouter(
               />
             }
           >
-            <Route path="viewseedphrase" element={<ViewSeedPhrase />} />
+            <Route
+              path="viewseedphrase"
+              element={
+                <SlideIn delay={100}>
+                  <ViewSeedPhrase />
+                </SlideIn>
+              }
+            />
           </Route>
           <Route
             element={
@@ -93,7 +165,14 @@ const router = createHashRouter(
             }
           >
             <Route path="enterseedphrase">
-              <Route index element={<EnterSeedPhrase />} />
+              <Route
+                index
+                element={
+                  <FadeIn delay={0}>
+                    <EnterSeedPhrase />
+                  </FadeIn>
+                }
+              />
               <Route
                 element={
                   <Authorisation
@@ -107,13 +186,27 @@ const router = createHashRouter(
           </Route>
         </Route>
         <Route path="restore">
-          <Route index element={<RestoreFromBackup />} />
+          <Route
+            index
+            element={
+              <SlideIn delay={100}>
+                <RestoreFromBackup />
+              </SlideIn>
+            }
+          />
           <Route
             element={
               <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESTORE"]]} />
             }
           >
-            <Route path="frombackup" element={<RestoreDialog />} />
+            <Route
+              path="frombackup"
+              element={
+                <FadeIn delay={100}>
+                  <RestoreDialog />
+                </FadeIn>
+              }
+            />
           </Route>
         </Route>
 
@@ -122,7 +215,14 @@ const router = createHashRouter(
             <Authorisation permissions={[PERMISSIONS["CAN_VIEW_MODAL"]]} />
           }
         >
-          <Route path="modal" element={<Dialog />} />
+          <Route
+            path="modal"
+            element={
+              <FadeIn delay={100}>
+                <Dialog />
+              </FadeIn>
+            }
+          />
         </Route>
       </Route>
     </Route>
