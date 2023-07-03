@@ -139,6 +139,7 @@ const BackupNode = () => {
             onClick={async () => {
               // toggle off
               await fileManager.toggleBackupStatus(e.target.checked);
+              (window as any).MDS.keypair.set("autopassword", "");
 
               setModal({
                 content: (
