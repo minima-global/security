@@ -398,15 +398,13 @@ const RestoreDialog = () => {
                 Restore
               </Button>
             </div>
+
             <div
               className={`${styles.desktop_only} ${styles.secondaryActions}`}
             >
-              <Button
-                disabled={formik.isSubmitting}
-                onClick={() => setMode(false)}
-              >
-                Cancel
-              </Button>
+              {!formik.isSubmitting && (
+                <Button onClick={() => setMode(false)}>Cancel</Button>
+              )}
             </div>
           </div>
         </div>
@@ -571,12 +569,9 @@ const RestoreDialog = () => {
             <div
               className={`${styles.desktop_only} ${styles.secondaryActions}`}
             >
-              <Button
-                disabled={formik.isSubmitting}
-                onClick={() => setMode(false)}
-              >
-                Cancel
-              </Button>
+              {!formik.isSubmitting && (
+                <Button onClick={() => setMode(false)}>Cancel</Button>
+              )}
             </div>
           </div>
         </div>
@@ -609,12 +604,9 @@ const RestoreDialog = () => {
             <div
               className={`${styles.desktop_only} ${styles.secondaryActions}`}
             >
-              <Button
-                disabled={formik.isSubmitting}
-                onClick={() => navigate(-1)}
-              >
-                Cancel
-              </Button>
+              {!formik.isSubmitting && (
+                <Button onClick={() => navigate(-1)}>Cancel</Button>
+              )}
             </div>
           </div>
         </div>
@@ -623,12 +615,11 @@ const RestoreDialog = () => {
       <div
         className={`${styles.actions} ${styles.mobile_only} ${styles.secondaryActions}`}
       >
-        <Button
-          disabled={formik.isSubmitting}
-          onClick={() => (!mode ? navigate(-1) : setMode(false))}
-        >
-          Cancel
-        </Button>
+        {!formik.isSubmitting && (
+          <Button onClick={() => (!mode ? navigate(-1) : setMode(false))}>
+            Cancel
+          </Button>
+        )}
       </div>
     </div>
   );

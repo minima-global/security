@@ -64,27 +64,29 @@ const WipeThisNode = () => {
             </Button>
           </div>
           <div className={`${styles.desktop_only} ${styles.secondaryActions}`}>
-            <Button
-              disabled={formik.isSubmitting}
-              onClick={() =>
-                navigate("/dashboard/manageseedphrase/enterseedphrase")
-              }
-            >
-              Cancel
-            </Button>
+            {!formik.isSubmitting && (
+              <Button
+                onClick={() =>
+                  navigate("/dashboard/manageseedphrase/enterseedphrase")
+                }
+              >
+                Cancel
+              </Button>
+            )}
           </div>
         </div>
       </div>
 
       <div className={`${styles.mobile_only} ${styles.secondaryActions}`}>
-        <Button
-          disabled={formik.isSubmitting}
-          onClick={() =>
-            navigate("/dashboard/manageseedphrase/enterseedphrase")
-          }
-        >
-          Cancel
-        </Button>
+        {!formik.isSubmitting && (
+          <Button
+            onClick={() =>
+              navigate("/dashboard/manageseedphrase/enterseedphrase")
+            }
+          >
+            Cancel
+          </Button>
+        )}
       </div>
     </div>
   );
