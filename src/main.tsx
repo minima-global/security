@@ -180,7 +180,14 @@ const router = createHashRouter(
                   />
                 }
               >
-                <Route path="wipethisnode" element={<WipeThisNode />} />
+                <Route
+                  path="wipethisnode"
+                  element={
+                    <FadeIn delay={0}>
+                      <WipeThisNode />
+                    </FadeIn>
+                  }
+                />
               </Route>
             </Route>
           </Route>
