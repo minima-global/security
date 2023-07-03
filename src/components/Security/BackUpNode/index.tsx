@@ -21,26 +21,25 @@ import FadeIn from "../../UI/Animations/FadeIn";
 const validationSchema = yup.object().shape({
   password: yup
     .string()
-    .required("Please enter a password")
     .matches(/^[~!@#=?+<>,._'()?a-zA-Z0-9-]+$/, "Invalid character")
     .min(12, "Password must be at least 12 characters long"),
-  confirmPassword: yup
-    .string()
-    .required("Please re-enter your password")
-    .test("matchy-passwords", function (val) {
-      const { path, parent, createError } = this;
-      if (val === undefined) {
-        return false;
-      }
+  confirmPassword: yup.string().test("matchy-passwords", function (val) {
+    const { path, parent, createError } = this;
+    if (parent.password === undefined) {
+      return true;
+    }
+    if (val === undefined && parent.password !== undefined) {
+      return createError({ path, message: "Please re-enter your password" });
+    }
 
-      const pwd = parent.password;
-      const matching = pwd === val;
-      if (matching) {
-        return true;
-      }
+    const pwd = parent.password;
+    const matching = pwd === val;
+    if (matching) {
+      return true;
+    }
 
-      return createError({ path, message: "Passwords do not match" });
-    }),
+    return createError({ path, message: "Passwords do not match" });
+  }),
 });
 
 const BackupNode = () => {
@@ -561,7 +560,7 @@ const BackupNode = () => {
                     />
                     <div className="flex flex-col">
                       <Button type="submit" disabled={!formik.isValid}>
-                        Back up node
+                        Backup node
                       </Button>
                     </div>
                   </form>

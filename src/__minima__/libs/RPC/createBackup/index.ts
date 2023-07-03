@@ -4,7 +4,9 @@ export const createBackup = (
 ): Promise<object> => {
   return new Promise((resolve, reject) => {
     (window as any).MDS.cmd(
-      `backup file:${filename} password:${password}`,
+      `backup file:${filename} ${
+        password.length ? "password: " + password : ""
+      }`,
       (response: any) => {
         if (response.status) {
           resolve({

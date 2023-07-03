@@ -47,7 +47,7 @@ const validationSchema = yup.object().shape({
       return true;
     }),
   file: yup.mixed().required("Please select a backup file (.bak)"),
-  password: yup.string().required("Please enter a password"),
+  password: yup.string(),
 });
 
 const RestoreDialog = () => {
@@ -184,7 +184,10 @@ const RestoreDialog = () => {
           secondaryActions: null,
         });
       } catch (error: any) {
-        const dialog = SomethingWentWrong(error);
+        const wrongPassword = error.includes("Not in GZIP format");
+        const dialog = SomethingWentWrong(
+          wrongPassword ? "Incorrect password or file format" : error
+        );
         authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({
           content: dialog.content,

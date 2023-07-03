@@ -17,7 +17,6 @@ export const toggleBackupStatus = (status: boolean) => {
 export const getBackupStatus = () => {
   return new Promise((resolve) => {
     (window as any).MDS.keypair.get("backupStatus", (response: any) => {
-      console.log(response);
       resolve(response);
     });
   });

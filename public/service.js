@@ -95,7 +95,7 @@ function createBackup() {
               const minidappPath = response.response.getpath.path;
               // create a new filename with latest datetime
               var today = new Date();
-              var fileName = `minima_backup__${today.getDate()}${
+              var fileName = `auto_minima_backup__${today.getDate()}${
                 monthNames[today.getMonth()]
               }${today.getFullYear()}_${today.getHours()}${
                 today.getMinutes() < 10
