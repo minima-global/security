@@ -66,6 +66,9 @@
 .input-outline {
   outline: 1px solid #464C4F;
 }
+.input-no-outline {
+  outline: none;
+}
 
 
 .password-label {

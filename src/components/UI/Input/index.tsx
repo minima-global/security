@@ -55,6 +55,10 @@ const Input = ({
     wrapperBase += " input-outline";
   }
 
+  if (!focus) {
+    wrapperBase += " input-no-outline";
+  }
+
   return (
     <div className={`flex flex-col gap-2`}>
       <div className={wrapperBase}>

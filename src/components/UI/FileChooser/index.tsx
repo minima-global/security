@@ -5,6 +5,7 @@ interface IProps {
   type: string;
   name: string;
   id: string;
+  ref: any;
   autoComplete?: string;
   extraClass?: string;
   accept?: string;
@@ -32,6 +33,7 @@ const FileChooser = ({
   error,
   handleEndIconClick,
   onKeyUp,
+  ref,
 }: IProps) => {
   const [focus, setFocus] = useState(false);
 
@@ -51,10 +53,15 @@ const FileChooser = ({
     wrapperBase += " input-outline";
   }
 
+  if (!focus) {
+    wrapperBase += " input-no-outline";
+  }
+
   return (
     <div className={`flex flex-col gap-2`}>
       <div className={wrapperBase}>
         <input
+          ref={ref}
           autoComplete={autoComplete ? autoComplete : ""}
           onBlur={onBlur}
           name={name}
