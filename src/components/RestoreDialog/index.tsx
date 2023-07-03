@@ -215,7 +215,7 @@ const RestoreDialog = () => {
               onSubmit={formik.handleSubmit}
             >
               <FileChooser
-                key={resetFileField}
+                keyValue={resetFileField}
                 handleEndIconClick={() => {
                   setResetFileField((prev) => prev + 1);
                   formik.setFieldValue("file", undefined);
