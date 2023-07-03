@@ -19,7 +19,11 @@ const ViewSeedPhrase = () => {
   };
 
   useEffect(() => {
-    setBackButton({ display: true, to: "/dashboard", title: "Back" });
+    setBackButton({
+      display: true,
+      to: "/dashboard/manageseedphrase",
+      title: "Back",
+    });
   }, [location]);
 
   const defaultOptions = {
@@ -34,7 +38,7 @@ const ViewSeedPhrase = () => {
     <div className="h-full flex flex-col justify-between px-4 pb-4">
       <div>
         {!displayHeaderBackButton && (
-          <BackButton to="/dashboard" title="Back" />
+          <BackButton to="/dashboard/manageseedphrase" title="Back" />
         )}
         <div className="mt-6 text-2xl mb-8 text-left bg-inherit">
           Your seed phrase

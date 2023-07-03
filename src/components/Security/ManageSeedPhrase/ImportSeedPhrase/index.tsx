@@ -68,7 +68,7 @@ const ImportSeedPhrase = () => {
     setBackButton({
       display: true,
       to: "/dashboard/manageseedphrase",
-      title: "Security",
+      title: "Back",
     });
   }, [location]);
 
@@ -95,7 +95,7 @@ const ImportSeedPhrase = () => {
       <SlideScreen display={!wipeThisNode}>
         <div className="h-full bg-black px-4 pb-4">
           {!displayHeaderBackButton && (
-            <BackButton to="/dashboard/manageseedphrase" title="Security" />
+            <BackButton to="/dashboard/manageseedphrase" title="Back" />
           )}
           <div className="mt-6 text-2xl mb-8 text-left">Import seed phrase</div>
 

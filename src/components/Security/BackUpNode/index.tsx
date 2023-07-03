@@ -15,6 +15,8 @@ import BackButton from "../../UI/BackButton";
 import Toggle from "../../UI/Toggle";
 import PERMISSIONS from "../../../permissions";
 import { useAuth } from "../../../providers/authProvider";
+import SlideIn from "../../UI/Animations/SlideIn";
+import FadeIn from "../../UI/Animations/FadeIn";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -318,7 +320,7 @@ const BackupNode = () => {
   return (
     <>
       {step === 0 && (
-        <>
+        <SlideIn isOpen={true} delay={0}>
           <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
               {!displayHeaderBackButton && (
@@ -435,11 +437,11 @@ const BackupNode = () => {
               </div>
             </div>
           </div>
-        </>
+        </SlideIn>
       )}
 
       {step === 1 && (
-        <>
+        <FadeIn isOpen={true} delay={0}>
           <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
               {!displayHeaderBackButton && (
@@ -568,7 +570,7 @@ const BackupNode = () => {
               </div>
             </div>
           </div>
-        </>
+        </FadeIn>
       )}
     </>
   );
