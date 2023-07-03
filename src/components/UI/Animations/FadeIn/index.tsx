@@ -13,7 +13,9 @@ const FadeIn = ({ isOpen = true, children, delay, loop = false }: IProps) => {
       opacity: 0,
     },
     enter: {
+      display: "grid",
       opacity: 1,
+      height: "100%",
     },
     leave: {
       opacity: 0,

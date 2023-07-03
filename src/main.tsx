@@ -60,9 +60,9 @@ const router = createHashRouter(
           <Route
             path="resyncing"
             element={
-              <SlideIn delay={100}>
+              <FadeIn delay={100}>
                 <ResyncDialog />
-              </SlideIn>
+              </FadeIn>
             }
           />
         </Route>
@@ -98,7 +98,14 @@ const router = createHashRouter(
               />
             }
           >
-            <Route path="autocreatepassword" element={<AutoCreatePassword />} />
+            <Route
+              path="autocreatepassword"
+              element={
+                <FadeIn delay={100}>
+                  <AutoCreatePassword />
+                </FadeIn>
+              }
+            />
           </Route>
         </Route>
         <Route
@@ -158,7 +165,14 @@ const router = createHashRouter(
             }
           >
             <Route path="enterseedphrase">
-              <Route index element={<EnterSeedPhrase />} />
+              <Route
+                index
+                element={
+                  <FadeIn delay={0}>
+                    <EnterSeedPhrase />
+                  </FadeIn>
+                }
+              />
               <Route
                 element={
                   <Authorisation

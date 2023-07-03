@@ -71,6 +71,7 @@ const LockPrivateKeys = () => {
     primaryActions: <div></div>,
     secondaryActions: (
       <Button
+        extraClass="mt-4"
         onClick={() => {
           authNavigate("/dashboard/lockprivatekeys", []);
           checkVaultLocked();
@@ -92,6 +93,7 @@ const LockPrivateKeys = () => {
     primaryActions: <div></div>,
     secondaryActions: (
       <Button
+        extraClass="mt-4"
         onClick={() => {
           authNavigate("/dashboard/lockprivatekeys", []);
           checkVaultLocked();

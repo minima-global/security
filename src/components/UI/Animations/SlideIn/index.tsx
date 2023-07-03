@@ -20,7 +20,7 @@ const SlideIn = ({ isOpen = true, children, delay, loop = false }: IProps) => {
       opacity: 1,
     },
     leave: {
-      width: 0,
+      right: "0",
       opacity: 0,
     },
     delay: delay,
