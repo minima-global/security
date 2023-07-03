@@ -2,7 +2,7 @@
 
 var backupStatus; // {active: boolean}
 var keyPairPassword = "autopassword";
-var debugLogs = false;
+var debugLogs = true;
 
 MDS.init(function (msg) {
   if (msg.event === "inited") {
@@ -110,7 +110,7 @@ function createBackup() {
 
               // get the auto password
               MDS.keypair.get(keyPairPassword, function (response) {
-                var backupPassword = "auto";
+                var backupPassword = "minima";
                 if (response.status) {
                   backupPassword = response.value;
                 }

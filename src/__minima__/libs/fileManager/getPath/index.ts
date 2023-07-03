@@ -4,10 +4,6 @@ export const getPath = (filename: string): Promise<string> => {
       if (response.status) {
         resolve(response.response.getpath.path);
       }
-      // READMODE
-      // if (!response.status && response.pending) {
-      //   reject('')
-      // }
 
       if (!response.status && !response.pending) {
         reject(response.error ? response.error : "RPC FAILED");

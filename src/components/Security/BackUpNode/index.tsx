@@ -223,6 +223,7 @@ const BackupNode = () => {
           <a
             ref={linkDownload}
             className="hidden"
+            target="_blank"
             href={download}
             download={name}
           ></a>
@@ -559,7 +560,10 @@ const BackupNode = () => {
                       }
                     />
                     <div className="flex flex-col">
-                      <Button type="submit" disabled={!formik.isValid}>
+                      <Button
+                        type="submit"
+                        disabled={formik.isSubmitting || !formik.isValid}
+                      >
                         Backup node
                       </Button>
                     </div>

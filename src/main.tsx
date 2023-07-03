@@ -31,6 +31,7 @@ import Dialog from "./components/Dialog/index.tsx";
 import AutoCreatePassword from "./components/Security/BackUpNode/AutoCreatePassword/index.tsx";
 import FadeIn from "./components/UI/Animations/FadeIn/index.tsx";
 import SlideIn from "./components/UI/Animations/SlideIn/index.tsx";
+import DeleteBackup from "./components/Security/BackUpNode/Backups/DeleteBackup/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -83,14 +84,32 @@ const router = createHashRouter(
               </SlideIn>
             }
           />
-          <Route
-            path="backups"
-            element={
-              <FadeIn delay={100}>
-                <Backups />
-              </FadeIn>
-            }
-          />
+          <Route path="backups">
+            <Route
+              index
+              element={
+                <FadeIn delay={100}>
+                  <Backups />
+                </FadeIn>
+              }
+            />
+            <Route
+              element={
+                <Authorisation
+                  permissions={[PERMISSIONS["CAN_VIEW_DELETE_BACKUP"]]}
+                />
+              }
+            >
+              <Route
+                path="delete"
+                element={
+                  <FadeIn delay={100}>
+                    <DeleteBackup />
+                  </FadeIn>
+                }
+              />
+            </Route>
+          </Route>
           <Route
             element={
               <Authorisation
@@ -180,14 +199,7 @@ const router = createHashRouter(
                   />
                 }
               >
-                <Route
-                  path="wipethisnode"
-                  element={
-                    <FadeIn delay={0}>
-                      <WipeThisNode />
-                    </FadeIn>
-                  }
-                />
+                <Route path="wipethisnode" element={<WipeThisNode />} />
               </Route>
             </Route>
           </Route>

@@ -14,11 +14,12 @@ const ConfirmationDialog = ({ host, cancel }: IProps) => {
   const { setBackgroundProcess } = useContext(appContext);
 
   const handleResync = () => {
+    authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
+
     try {
       (window as any).MDS.cmd(
         `archive action:resync host:${host.length ? host : "auto"}`,
         (response: any) => {
-          // console.log(response);
           if (!response.status) {
             throw new Error(
               response.error
@@ -27,19 +28,13 @@ const ConfirmationDialog = ({ host, cancel }: IProps) => {
             );
           }
           setBackgroundProcess("Resyncing");
-          return authNavigate("/dashboard/resyncing", [
-            PERMISSIONS.CAN_VIEW_RESYNCING,
-          ]);
         }
       );
     } catch (error: any) {
-      console.error(error);
-      return authNavigate("/dashboard/resyncing", [
-        PERMISSIONS.CAN_VIEW_RESYNCING,
-        {
-          state: { error: error.message },
-        },
-      ]);
+      const errorMessage = typeof error === "string" ? error : error.message;
+      authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING], {
+        state: { error: errorMessage },
+      });
     }
   };
 

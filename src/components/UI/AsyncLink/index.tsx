@@ -42,7 +42,7 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
   }
 
   return (
-    <a onClick={onClick} download={name} href={href}>
+    <a onClick={onClick} download={name} target="_blank" href={href}>
       {children}
     </a>
   );

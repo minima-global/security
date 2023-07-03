@@ -1,7 +1,11 @@
 export const deleteFile = (fileName: string) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     (window as any).MDS.file.delete(fileName, (res: any) => {
-      resolve(res);
+      if (res.status) {
+        return resolve(res);
+      }
+
+      return reject("Failed to delete backup.");
     });
   });
 };

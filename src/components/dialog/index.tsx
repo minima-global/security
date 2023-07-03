@@ -1,9 +1,18 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "./Dialog.module.css";
 import { appContext } from "../../AppContext";
+import { useLocation } from "react-router-dom";
 
 const Dialog = () => {
   const { modal } = useContext(appContext);
+  const location = useLocation();
+  const [error, setError] = useState<string | false>(false);
+
+  useEffect(() => {
+    if (location.state && "error" in location.state) {
+      setError(location.state.error);
+    }
+  }, [location]);
 
   return (
     <>
@@ -12,6 +21,11 @@ const Dialog = () => {
 
         {modal.primaryActions && (
           <div className="flex flex-col gap-3">
+            {!!error && (
+              <div className="text-sm form-error-message text-left">
+                {error}
+              </div>
+            )}
             <div className={`${styles.primaryActions}`}>
               {modal.primaryActions}
             </div>

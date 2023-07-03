@@ -6,13 +6,12 @@ import { useAuth } from "../../../../providers/authProvider";
 import * as fileManager from "../../../../__minima__/libs/fileManager";
 import AsyncLink from "../../../UI/AsyncLink";
 import PERMISSIONS from "../../../../permissions";
-import Button from "../../../UI/Button";
 import useIsMinimaBrowser from "../../../../hooks/useIsMinimaBrowser";
 import SlideUp from "../../../UI/Animations/SlideUp";
 
 const Backups = () => {
   const [searchText, setSearchText] = useState("");
-  const { getBackups, backups, setModal } = useContext(appContext);
+  const { getBackups, backups } = useContext(appContext);
   const { authNavigate } = useAuth();
   const isMinimaBrowser = useIsMinimaBrowser();
 
@@ -46,65 +45,13 @@ const Backups = () => {
   };
 
   const handleDelete = async (backupFile: string) => {
-    authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
-    setModal({
-      content: (
-        <div>
-          <svg
-            className="inline mb-2"
-            xmlns="http://www.w3.org/2000/svg"
-            width="64"
-            height="65"
-            viewBox="0 0 64 65"
-            fill="none"
-          >
-            <g id="delete">
-              <mask
-                id="mask0_1422_18346"
-                maskUnits="userSpaceOnUse"
-                x="0"
-                y="0"
-                width="64"
-                height="65"
-              >
-                <rect
-                  id="Bounding box"
-                  y="0.5"
-                  width="64"
-                  height="64"
-                  fill="#D9D9D9"
-                />
-              </mask>
-              <g mask="url(#mask0_1422_18346)">
-                <path
-                  id="delete_2"
-                  d="M20.3083 53.8333C19.081 53.8333 18.0562 53.4222 17.234 52.6C16.4118 51.7778 16.0007 50.753 16.0007 49.5257V16.5H13.334V13.8333H24.0007V11.782H40.0006V13.8333H50.6673V16.5H48.0006V49.5257C48.0006 50.753 47.5895 51.7778 46.7673 52.6C45.9451 53.4222 44.9203 53.8333 43.693 53.8333H20.3083ZM26.1545 45.8333H28.8212V21.8333H26.1545V45.8333ZM35.1801 45.8333H37.8468V21.8333H35.1801V45.8333Z"
-                  fill="#F9F9FA"
-                />
-              </g>
-            </g>
-          </svg>
-          <h1 className="text-2xl mb-1">Delete this backup?</h1>
-          <p className="text-xl mb-9 text-core-grey-80 ">{backupFile}</p>
-        </div>
-      ),
-      primaryActions: (
-        <Button
-          onClick={async () => {
-            await fileManager.deleteFile("/backups/" + backupFile);
-            getBackups();
-            authNavigate("/dashboard/backup/backups", []);
-          }}
-        >
-          Delete backup
-        </Button>
-      ),
-      secondaryActions: (
-        <Button onClick={() => authNavigate("/dashboard/backup/backups", [])}>
-          Cancel
-        </Button>
-      ),
-    });
+    authNavigate(
+      "/dashboard/backup/backups/delete",
+      PERMISSIONS.CAN_VIEW_DELETE_BACKUP,
+      {
+        state: { backup: { name: backupFile } },
+      }
+    );
   };
 
   return (
