@@ -116,9 +116,9 @@ function createBackup() {
                 }
                 // create the backup
                 MDS.cmd(
-                  `backup file:${
-                    minidappPath + "/backups/" + fileName
-                  } password:"${backupPassword}"`,
+                  `backup file:${minidappPath + "/backups/" + fileName} ${
+                    backupPassword ? "password: " + backupPassword : ""
+                  }`,
                   function (response) {
                     // something went wrong
                     if (!response.status) {

@@ -18,7 +18,7 @@ const Splash = () => {
             <div className="text-center px-4 pb-4">
               <FadeIn delay={50}>
                 <img
-                  className="self-center inline mb-4"
+                  className="self-center inline mb-4 justify-self-center"
                   alt="app-icon"
                   src="./assets/icon.svg"
                 />
