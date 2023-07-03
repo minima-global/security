@@ -5,7 +5,7 @@ interface IProps {
   type: string;
   name: string;
   id: string;
-  ref: any;
+  key: any;
   autoComplete?: string;
   extraClass?: string;
   accept?: string;
@@ -33,7 +33,7 @@ const FileChooser = ({
   error,
   handleEndIconClick,
   onKeyUp,
-  ref,
+  key,
 }: IProps) => {
   const [focus, setFocus] = useState(false);
 
@@ -61,7 +61,7 @@ const FileChooser = ({
     <div className={`flex flex-col gap-2`}>
       <div className={wrapperBase}>
         <input
-          ref={ref}
+          key={key}
           autoComplete={autoComplete ? autoComplete : ""}
           onBlur={onBlur}
           name={name}

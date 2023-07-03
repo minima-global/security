@@ -7,7 +7,7 @@ import * as yup from "yup";
 import * as utils from "../../utils";
 import * as fM from "../../__minima__/libs/fileManager";
 import * as rpc from "../../__minima__/libs/RPC";
-import { RefObject, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../AppContext";
 import FileChooser from "../UI/FileChooser";
 
@@ -55,7 +55,7 @@ const RestoreDialog = () => {
   const [hidePassword, togglePasswordVisibility] = useState(true);
   const { authNavigate } = useAuth();
 
-  const inputRef: RefObject<HTMLInputElement> = useRef(null);
+  const [resetFileField, setResetFileField] = useState<number>(0);
 
   const { setModal, isMobile, backups, getBackups, setBackgroundProcess } =
     useContext(appContext);
@@ -215,8 +215,9 @@ const RestoreDialog = () => {
               onSubmit={formik.handleSubmit}
             >
               <FileChooser
-                ref={inputRef}
+                key={resetFileField}
                 handleEndIconClick={() => {
+                  setResetFileField((prev) => prev + 1);
                   formik.setFieldValue("file", undefined);
                 }}
                 error={formik.errors.file ? formik.errors.file : false}
