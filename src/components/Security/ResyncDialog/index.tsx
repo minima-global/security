@@ -5,11 +5,13 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
 import Loading from "../../../assets/loading.json";
 import Logs from "../../Logs";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { appContext } from "../../../AppContext";
 
 const ResyncDialog = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { setBackgroundProcess } = useContext(appContext);
   const [error, setError] = useState<false | string>(false);
   useEffect(() => {
     if (location.state && "error" in location.state) {
@@ -79,6 +81,9 @@ const ResyncDialog = () => {
           <div className={`${styles.desktop_only} ${styles.secondaryActions}`}>
             <Button
               onClick={() => {
+                if (error) {
+                  setBackgroundProcess(null);
+                }
                 navigate("/dashboard");
               }}
             >

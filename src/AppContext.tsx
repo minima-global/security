@@ -22,7 +22,6 @@ interface IProps {
 }
 const AppProvider = ({ children }: IProps) => {
   const { authNavigate } = useAuth();
-
   const [displayBackButton, setDisplayHeaderBackButton] = useState(false);
   const [backButton, setBackButton] = useState<{
     display: boolean;
@@ -83,8 +82,12 @@ const AppProvider = ({ children }: IProps) => {
     null
   );
 
+  const [minidappSystemFailed, setMinidappSystemFailed] = useState<
+    boolean | null
+  >(null);
+
   const [backgroundProcess, setBackgroundProcess] = useState<
-    "Restoring" | "Resyncing" | null
+    "Resyncing" | null
   >(null);
 
   // apply these whenever vault is locked or unlocked
@@ -223,15 +226,10 @@ const AppProvider = ({ children }: IProps) => {
           </g>
         </svg>
 
-        <h1 className="text-2xl mb-4 font-semibold">
-          {backgroundProcess === "Restoring" ? "Restore" : "Re-sync"} complete
-        </h1>
+        <h1 className="text-2xl mb-4 font-semibold">Re-sync complete</h1>
         <p className="font-medium mb-6 mt-6">
-          Your node was successfully{" "}
-          {backgroundProcess === "Restoring" ? "restored" : "re-synced"} and
-          will shutdown. Restart Minima for the{" "}
-          {backgroundProcess === "Restoring" ? "restore" : "re-sync"} to take
-          effect.
+          Your node was successfully re-synced and will shutdown. Restart Minima
+          for the re-sync to take effect.
         </p>
       </div>
     ),
@@ -264,13 +262,16 @@ const AppProvider = ({ children }: IProps) => {
         }
 
         if (msg.event === "MDS_SHUTDOWN") {
-          // console.log("MDS SHUTTING DONW");
           authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({
             content: SuccessDialog.content,
             primaryActions: SuccessDialog.primaryActions,
-            secondaryActions: null,
+            secondaryActions: SuccessDialog.secondaryActions,
           });
+        }
+
+        if (msg.event === "MDSFAIL") {
+          setMinidappSystemFailed(true);
         }
 
         if (msg.event === "inited") {
@@ -305,6 +306,7 @@ const AppProvider = ({ children }: IProps) => {
         logs,
         setLogs,
         appIsInWriteMode,
+        minidappSystemFailed,
         setPhrase,
         clearPhrase,
         phraseAsArray,

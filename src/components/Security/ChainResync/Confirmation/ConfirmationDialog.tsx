@@ -13,29 +13,28 @@ const ConfirmationDialog = ({ host, cancel }: IProps) => {
   const { authNavigate } = useAuth();
   const { setBackgroundProcess } = useContext(appContext);
 
-  const handleResync = () => {
+  const handleResync = async () => {
+    setBackgroundProcess("Resyncing");
     authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
 
-    try {
-      (window as any).MDS.cmd(
-        `archive action:resync host:${host.length ? host : "auto"}`,
-        (response: any) => {
-          if (!response.status) {
-            throw new Error(
-              response.error
-                ? response.error
-                : "Something went wrong, please try again."
-            );
-          }
-          setBackgroundProcess("Resyncing");
+    (window as any).MDS.cmd(
+      `archive action:resync host:${host.length ? host : "auto"}`,
+      (response: any) => {
+        if (!response.status) {
+          authNavigate(
+            "/dashboard/resyncing",
+            [PERMISSIONS.CAN_VIEW_RESYNCING],
+            {
+              state: {
+                error: response.error
+                  ? response.error
+                  : "Something went wrong, please try again.",
+              },
+            }
+          );
         }
-      );
-    } catch (error: any) {
-      const errorMessage = typeof error === "string" ? error : error.message;
-      authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING], {
-        state: { error: errorMessage },
-      });
-    }
+      }
+    );
   };
 
   return (

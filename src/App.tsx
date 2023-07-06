@@ -20,11 +20,11 @@ function App() {
   }, [ls]);
 
   return (
-    <AppProvider>
-      <AuthProvider>
+    <AuthProvider>
+      <AppProvider>
         <Outlet />
-      </AuthProvider>
-    </AppProvider>
+      </AppProvider>
+    </AuthProvider>
   );
 }
 

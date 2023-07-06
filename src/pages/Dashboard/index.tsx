@@ -3,6 +3,7 @@ import TitleBar from "../../components/TitleBar";
 import { Outlet } from "react-router-dom";
 import AppIsInReadMode from "../AppInReadMode";
 import SlideScreen from "../../components/UI/SlideScreen";
+import MinidappSystemFailed from "../MinidappSystemFailed";
 
 const Dashboard = () => {
   return (
@@ -11,6 +12,7 @@ const Dashboard = () => {
         <>
           <TitleBar />
           <AppIsInReadMode />
+          <MinidappSystemFailed />
         </>
       }
       content={
