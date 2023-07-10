@@ -48,7 +48,29 @@ const validationSchema = yup.object().shape({
 
       return true;
     }),
-  file: yup.mixed().required("Please select a backup file (.bak)"),
+  file: yup
+    .mixed()
+    .required("Please select a (.bak) file")
+    .test("Test extension", function (val) {
+      const { path, createError } = this;
+      const re = /(?:\.([^.]+))?$/;
+      if (val && "name" in val && typeof val.name === "string") {
+        const extension = re.exec(val.name);
+
+        if (
+          extension &&
+          typeof extension[1] === "string" &&
+          extension[1] !== "bak"
+        ) {
+          return createError({
+            path,
+            message: "Please select a valid file extension type.",
+          });
+        }
+      }
+
+      return true;
+    }),
   password: yup.string(),
 });
 
