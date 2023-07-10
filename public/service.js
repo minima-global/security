@@ -2,7 +2,7 @@
 
 var backupStatus; // {active: boolean}
 var keyPairPassword = "autopassword";
-var debugLogs = false;
+var debugLogs = true;
 
 MDS.init(function (msg) {
   if (msg.event === "inited") {
@@ -18,7 +18,7 @@ MDS.init(function (msg) {
       }
     });
   }
-  if (msg.event === "MDS_TIMER_1HOUR") {
+  if (msg.event === "MDS_TIMER_10SECONDS") {
     // check status..
     MDS.keypair.get("backupStatus", function (response) {
       if (response.status) {
@@ -82,9 +82,14 @@ function createBackup() {
     var tableEmpty = response.rows[0]["COUNT(*)"] === "0";
     // is it time for a new backup?
     MDS.sql(
-      "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '24' HOUR <= CURRENT_TIMESTAMP",
+      "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '1' SECOND <= CURRENT_TIMESTAMP",
       function (response) {
         log(JSON.stringify(response));
+
+        const notTimeForBackup = response.count === 0;
+        if (notTimeForBackup) {
+          log("Not time for a backup.");
+        }
 
         const timeForNewBackup = response.count > 0 || tableEmpty;
         // it is time for  a new backup

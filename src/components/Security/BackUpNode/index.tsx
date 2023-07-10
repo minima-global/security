@@ -79,6 +79,7 @@ const BackupNode = () => {
   const getFileData = async (mdsfile: string) => {
     try {
       const hexstring = await fileManager.loadBinaryToHex(mdsfile);
+
       const filedata = hexstring;
 
       return filedata;
@@ -90,6 +91,7 @@ const BackupNode = () => {
   const createDownloadLink = async (mdsfile: string) => {
     try {
       const hexstring = await fileManager.loadBinaryToHex(mdsfile);
+
       await fileManager.saveFileAsBinary(mdsfile, hexstring);
       const filedata = hexstring;
       const b64 = (window as any).MDS.util.hexToBase64(filedata);
@@ -247,15 +249,31 @@ const BackupNode = () => {
         </div>
       ),
       primaryActions: (
-        <Button
-          onClick={() => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            Android.blobDownload(file, filedata);
-          }}
-        >
-          Download
-        </Button>
+        <div className="flex flex-col gap-2">
+          {!!isMinimaBrowser && (
+            <Button
+              onClick={async () => {
+                const fullPath = await fileManager.getPath("/backups/" + file);
+
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                Android.shareFile(fullPath, "*/*");
+              }}
+            >
+              Share
+            </Button>
+          )}
+
+          <Button
+            onClick={() => {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              Android.blobDownload(file, filedata);
+            }}
+          >
+            Download
+          </Button>
+        </div>
       ),
       secondaryActions: (
         <Button onClick={() => authNavigate(-1, [])}>Close</Button>

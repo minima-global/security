@@ -64,6 +64,7 @@
   display: none;
 }
 .mobile_only {
+  margin-top: 16px;
   display: grid;
   margin-bottom: 2.375em;
 }

@@ -16,6 +16,7 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
   const createDownloadLink = async (mdsfile: string) => {
     try {
       const hexstring = await fileManager.loadBinaryToHex(mdsfile);
+
       await fileManager.saveFileAsBinary(mdsfile, hexstring);
       const filedata = hexstring;
       const b64 = (window as any).MDS.util.hexToBase64(filedata);
@@ -32,6 +33,9 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
   };
 
   useEffect(() => {
+    if (!isMinimaBrowser) {
+      return;
+    }
     createDownloadLink(file).then((url) => {
       setHref(url);
     });

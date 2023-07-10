@@ -5,13 +5,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
 import Loading from "../../../assets/loading.json";
 import Logs from "../../Logs";
-import { useContext, useEffect, useState } from "react";
-import { appContext } from "../../../AppContext";
+import { useEffect, useState } from "react";
 
 const ResyncDialog = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { setBackgroundProcess } = useContext(appContext);
+
   const [error, setError] = useState<false | string>(false);
   useEffect(() => {
     if (location.state && "error" in location.state) {
@@ -79,16 +78,15 @@ const ResyncDialog = () => {
 
         <div className="flex flex-col gap-3">
           <div className={`${styles.desktop_only} ${styles.secondaryActions}`}>
-            <Button
-              onClick={() => {
-                if (error) {
-                  setBackgroundProcess(null);
-                }
-                navigate("/dashboard");
-              }}
-            >
-              {!error ? "Run in background" : "Cancel"}
-            </Button>
+            {error && (
+              <Button
+                onClick={() => {
+                  navigate("/dashboard");
+                }}
+              >
+                Cancel
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -96,13 +94,15 @@ const ResyncDialog = () => {
       <div
         className={`${styles.actions} ${styles.mobile_only} ${styles.secondaryActions}`}
       >
-        <Button
-          onClick={() => {
-            navigate("/dashboard");
-          }}
-        >
-          {!error ? "Run in background" : "Cancel"}
-        </Button>
+        {error && (
+          <Button
+            onClick={() => {
+              navigate("/dashboard");
+            }}
+          >
+            Cancel
+          </Button>
+        )}
       </div>
     </div>
   );

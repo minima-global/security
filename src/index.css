@@ -279,6 +279,7 @@ input:-webkit-autofill,
     display: none;
   }
   .mobile-only {
+    margin-top: 16px;
     display: flex;
     margin-bottom: 2.375em;
   }
