@@ -2,7 +2,7 @@
 
 var backupStatus; // {active: boolean}
 var keyPairPassword = "autopassword";
-var debugLogs = true;
+var debugLogs = false;
 
 MDS.init(function (msg) {
   if (msg.event === "inited") {
@@ -18,7 +18,7 @@ MDS.init(function (msg) {
       }
     });
   }
-  if (msg.event === "MDS_TIMER_10SECONDS") {
+  if (msg.event === "MDS_TIMER_1HOUR") {
     // check status..
     MDS.keypair.get("backupStatus", function (response) {
       if (response.status) {
@@ -39,15 +39,20 @@ MDS.init(function (msg) {
 
     // do we need to prune any backups?
     MDS.file.list("/backups", function (response) {
+      log(`Your backups: ${JSON.stringify(response.response.list)}`);
       if (response.status) {
-        const myBackups = response.response.list.reverse();
+        const myBackups = response.response.list;
 
         log(`Total backups: ${myBackups.length}`);
 
         if (myBackups.length > 14) {
+          log(`Backups exceed total amount, time to delete some backups..`);
           // time to delete the backups
-          for (var i = 15; i <= myBackups.length - 1; i++) {
-            deleteFile("/backups/" + myBackups[i].name);
+          for (var i = 14; i <= myBackups.length - 1; i++) {
+            log(`Deleting backup: ${myBackups[i].location}`);
+
+            deleteFile(myBackups[i].location);
+            myBackups.slice(i, 1);
           }
         }
       }
@@ -82,7 +87,7 @@ function createBackup() {
     var tableEmpty = response.rows[0]["COUNT(*)"] === "0";
     // is it time for a new backup?
     MDS.sql(
-      "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '1' SECOND <= CURRENT_TIMESTAMP",
+      "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '24' HOUR <= CURRENT_TIMESTAMP",
       function (response) {
         log(JSON.stringify(response));
 
