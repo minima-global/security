@@ -1,9 +1,8 @@
 import styles from "./Dialog.module.css";
 import Button from "../../../UI/Button";
+
 import { useAuth } from "../../../../providers/authProvider";
 import PERMISSIONS from "../../../../permissions";
-import { useContext } from "react";
-import { appContext } from "../../../../AppContext";
 
 interface IProps {
   host: string;
@@ -11,10 +10,8 @@ interface IProps {
 }
 const ConfirmationDialog = ({ host, cancel }: IProps) => {
   const { authNavigate } = useAuth();
-  const { setBackgroundProcess } = useContext(appContext);
 
   const handleResync = async () => {
-    setBackgroundProcess("Resyncing");
     authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
 
     (window as any).MDS.cmd(

@@ -2,22 +2,27 @@ import "./App.css";
 import AppProvider from "./AppContext";
 import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import { AuthProvider } from "./providers/authProvider";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as utils from "./utils";
 
 function App() {
   const navigate = useNavigate();
   const ls = useLoaderData();
 
-  useEffect(() => {
-    if (!ls) {
-      return localStorage.setItem(utils.getAppUID(), "1");
-    }
+  const [load, setLoad] = useState(false);
 
-    if (ls) {
-      navigate("/dashboard");
+  useEffect(() => {
+    if (!load) {
+      setLoad(true);
+      if (!ls) {
+        return localStorage.setItem(utils.getAppUID(), "1");
+      }
+
+      if (ls) {
+        navigate("/dashboard");
+      }
     }
-  }, [ls]);
+  }, [ls, navigate, load]);
 
   return (
     <AuthProvider>

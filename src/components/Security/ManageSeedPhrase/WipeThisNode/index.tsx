@@ -2,36 +2,41 @@ import styles from "./Dialog.module.css";
 import Button from "../../../UI/Button";
 import { useFormik } from "formik";
 
-import * as rpc from "../../../../__minima__/libs/RPC";
 import { useLocation, useNavigate } from "react-router-dom";
-import PERMISSIONS from "../../../../permissions";
 import { useAuth } from "../../../../providers/authProvider";
-import { useContext } from "react";
-import { appContext } from "../../../../AppContext";
+import PERMISSIONS from "../../../../permissions";
+import * as rpc from "../../../../__minima__/libs/RPC";
 
 const WipeThisNode = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { authNavigate } = useAuth();
-  const { setBackgroundProcess } = useContext(appContext);
   const formik = useFormik({
     initialValues: {},
     onSubmit: () => {
       formik.setStatus(undefined);
       //  Run RPC..
+      authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
+
       rpc
         .importSeedPhrase(
           location.state.seedPhrase,
           location.state.host,
           location.state.keyuses
         )
-        .catch(() => {
-          formik.setStatus("Something went wrong, please try again.");
-
-          setTimeout(() => formik.setStatus(undefined), 2500);
+        .catch((error) => {
+          authNavigate(
+            "/dashboard/resyncing",
+            [PERMISSIONS.CAN_VIEW_RESYNCING],
+            {
+              state: {
+                error: error
+                  ? error
+                  : "Something went wrong, please try again.",
+              },
+            }
+          );
         });
-      setBackgroundProcess("Resyncing");
-      authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
     },
   });
 

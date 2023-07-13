@@ -310,7 +310,6 @@ const BackupNode = () => {
 
         if (!isMinimaBrowser) {
           const downloadlink = await createDownloadLink("/backups/" + fileName);
-          console.log("Full Download link", downloadlink);
           const dialog = downloadBackupDialog(downloadlink, fileName);
 
           authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);

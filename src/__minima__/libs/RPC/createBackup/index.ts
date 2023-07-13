@@ -8,7 +8,7 @@ export const createBackup = (
         password.length ? password : "minima"
       }"`,
       (response: any) => {
-        console.log(response);
+        // console.log(response);
         if (response.status) {
           resolve({
             block: response.backup.block,

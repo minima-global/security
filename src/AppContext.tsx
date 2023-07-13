@@ -86,10 +86,6 @@ const AppProvider = ({ children }: IProps) => {
     boolean | null
   >(null);
 
-  const [backgroundProcess, setBackgroundProcess] = useState<
-    "Resyncing" | null
-  >(null);
-
   // apply these whenever vault is locked or unlocked
   useEffect(() => {
     if (loaded.current) {
@@ -257,7 +253,6 @@ const AppProvider = ({ children }: IProps) => {
       (window as any).MDS.init((msg: any) => {
         if (msg.event === "MINIMALOG") {
           const log = msg.data.message;
-
           setLogs((prevState) => [...prevState, log]);
         }
 
@@ -323,10 +318,6 @@ const AppProvider = ({ children }: IProps) => {
         //backups
         backups,
         getBackups,
-
-        // current background process
-        backgroundProcess,
-        setBackgroundProcess,
       }}
     >
       {children}

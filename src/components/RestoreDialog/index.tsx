@@ -86,8 +86,7 @@ const RestoreDialog = () => {
 
   const [resetFileField, setResetFileField] = useState<number>(0);
 
-  const { setModal, backups, getBackups, setBackgroundProcess } =
-    useContext(appContext);
+  const { setModal, backups, getBackups } = useContext(appContext);
   const [mode, setMode] = useState<"files" | "backups" | false>(false);
   const [tooltip, setTooltip] = useState({ host: false });
 
@@ -117,7 +116,6 @@ const RestoreDialog = () => {
       secondaryActions: (
         <Button
           onClick={() => {
-            setBackgroundProcess(null);
             authNavigate("/dashboard/restore", []);
           }}
         >
