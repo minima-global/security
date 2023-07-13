@@ -51,10 +51,15 @@ const validationSchema = yup.object().shape({
   file: yup
     .mixed()
     .required("Please select a (.bak) file")
-    .test("Test extension", function (val) {
+    .test("Test extension", function (val: any) {
       const { path, createError } = this;
       const re = /(?:\.([^.]+))?$/;
-      if (val && "name" in val && typeof val.name === "string") {
+
+      if (val === undefined || val === null) {
+        return false;
+      }
+
+      if (val && val.name && typeof val.name === "string") {
         const extension = re.exec(val.name);
 
         if (
