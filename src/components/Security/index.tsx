@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { appContext } from "../../AppContext";
 import { useNavigate } from "react-router-dom";
 
@@ -7,12 +7,8 @@ export function Security() {
   const { vaultLocked, setBackButton } = useContext(appContext);
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     setBackButton({ display: false, to: "/dashboard", title: "Security" });
-
-    setTimeout(() => setLoading(false), 2000);
   }, []);
 
   return (
@@ -22,7 +18,7 @@ export function Security() {
           <div className="text-left relative core-black-contrast py-4 px-5 rounded cursor-pointer">
             Node status
             <FadeIn delay={500}>
-              {!!vaultLocked && !loading && (
+              {vaultLocked !== null && !!vaultLocked && (
                 <div className="form-success-message absolute flex-row gap-2 right-0 top-0 h-full px-5 flex items-center">
                   Locked
                   <svg
@@ -53,7 +49,7 @@ export function Security() {
               )}
             </FadeIn>
             <FadeIn delay={500}>
-              {!vaultLocked && !loading && (
+              {vaultLocked !== null && !vaultLocked && (
                 <div className="form-error-message absolute flex-row gap-2 right-0 top-0 h-full px-5 flex items-center">
                   Unlocked
                   <svg
@@ -71,7 +67,7 @@ export function Security() {
                 </div>
               )}
             </FadeIn>
-            {loading && (
+            {vaultLocked === null && (
               <div className="absolute flex-row gap-2 right-0 top-0 h-full px-5 flex items-center">
                 ...
               </div>

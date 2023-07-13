@@ -35,7 +35,7 @@ const AppProvider = ({ children }: IProps) => {
   const loaded = useRef(false);
   const [mode, setMode] = useState("desktop");
   const [showSecurity, setShowSecurity] = useState(true);
-  const [vaultLocked, setVaultLocked] = useState(false);
+  const [vaultLocked, setVaultLocked] = useState<null | boolean>(null);
   const [logs, setLogs] = useState<string[]>([]);
   const [modal, setModal] = useState<{
     content: ReactElement<any, any> | null;
