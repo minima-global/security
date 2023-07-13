@@ -288,14 +288,12 @@ const BackupNode = () => {
     },
     onSubmit: async (formData) => {
       try {
-        const minidappPath = await fileManager.getPath("/");
-
         const dateCreation = format(new Date(), "_dMMMyyyy_Hmm");
         const fileName = "minima_backup_" + dateCreation + ".bak";
-        await rpc.createBackup(
-          minidappPath + "/backups/" + fileName,
-          formData.password
-        );
+
+        const fullPath = await fileManager.getPath("/backups/" + fileName);
+
+        await rpc.createBackup(fullPath, formData.password);
 
         if (isMinimaBrowser) {
           const filedata = await getFileData("/backups/" + fileName);
@@ -312,6 +310,7 @@ const BackupNode = () => {
 
         if (!isMinimaBrowser) {
           const downloadlink = await createDownloadLink("/backups/" + fileName);
+          console.log("Full Download link", downloadlink);
           const dialog = downloadBackupDialog(downloadlink, fileName);
 
           authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
