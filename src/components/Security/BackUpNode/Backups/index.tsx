@@ -35,6 +35,8 @@ const Backups = () => {
   };
 
   const handleDownload = async (backupFile: string) => {
+    console.log("handling download");
+
     if (isMinimaBrowser) {
       const filedata = await getFileData(backupFile);
 
@@ -153,6 +155,7 @@ const Backups = () => {
                           name={b.name}
                           onClick={(e) => {
                             if (isMinimaBrowser) {
+                              console.log("it is MInima browser!");
                               e.stopPropagation();
                               handleDownload("/backups/" + b.name);
                             }

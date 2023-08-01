@@ -1,7 +1,7 @@
 import * as React from "react";
 
 type ButtonProps = {
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "secondary" | "tertiary";
   onClick?: any;
   onContextMenu?: any;
   disabled?: boolean;
@@ -39,6 +39,8 @@ const Button: React.FC<React.PropsWithChildren<ButtonProps>> = ({
     base += " text-black bg-white";
   } else if (variant === "secondary") {
     base += " text-white core-black-contrast-3";
+  } else if (variant === "tertiary") {
+    base += " text-white core-black-contrast-2";
   }
 
   if (disabled) {

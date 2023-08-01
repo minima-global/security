@@ -1,0 +1,69 @@
+.button__wrapper {
+  align-items: center;
+}
+
+.primaryActions button {
+  background-color: #F9F9FA;
+  border-radius: 4px;
+  padding: 16px!important;
+  color: #282B2E;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  font-weight: 600;
+  border: none;
+  width: 100%;
+  font-size: 1rem;
+  text-align: center;
+}
+.primaryActions button:hover {
+  opacity: 0.8;
+  cursor: pointer;
+}
+.primaryActions button:disabled {
+  background-color: #D3D3D8;
+  cursor: not-allowed;
+}
+.secondaryActions button {
+  background-color: #464C4F!important;
+  border: none;
+  border-radius: 4px;
+  padding: 16px;
+  color: #F9F9FA;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  font-weight: 600;
+  font-size: 1rem;
+  align-self: flex-end;
+}
+.secondaryActions button:hover {
+  cursor: pointer;
+  color: #91919D;
+  border-color: #91919D;
+}
+
+.secondaryActions {
+  margin: 0 16px;
+}
+
+.desktop_only {
+  display: none;
+}
+.mobile_only {
+  margin-top: 16px;
+  display: grid;
+  margin-bottom: 2.375em;
+}
+@media screen and (min-width: 560px) {
+  
+  .desktop_only {
+    display: block;
+  }
+  .mobile_only {
+    display: none;
+  }
+  
+  .secondaryActions {
+    margin: 0;
+  }
+}
+

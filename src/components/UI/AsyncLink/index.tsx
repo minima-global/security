@@ -33,9 +33,6 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
   };
 
   useEffect(() => {
-    if (!isMinimaBrowser) {
-      return;
-    }
     createDownloadLink(file).then((url) => {
       setHref(url);
     });
@@ -44,6 +41,8 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
   if (isMinimaBrowser) {
     return <div onClick={onClick}>{children}</div>;
   }
+
+  console.log("returning <a/> tag! w/ href:", href);
 
   return (
     <a onClick={onClick} download={name} target="_blank" href={href}>

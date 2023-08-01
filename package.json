@@ -1,7 +1,7 @@
 {
   "name": "security",
   "private": true,
-  "version": "0.8.2",
+  "version": "0.10.0",
   "type": "module",
   "description": "secure your node",
   "scripts": {
@@ -15,6 +15,7 @@
     "src:zip": "bash create-minima-app/zip.sh"
   },
   "dependencies": {
+    "@amelix/react-lottie": "^1.2.4",
     "@react-spring/web": "^9.7.3",
     "@vitejs/plugin-react-swc": "^3.3.1",
     "autoprefixer": "^10.4.14",
