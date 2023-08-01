@@ -34,11 +34,10 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
 
   useEffect(() => {
     if (!isMinimaBrowser) {
-      return;
+      createDownloadLink(file).then((url) => {
+        setHref(url);
+      });
     }
-    createDownloadLink(file).then((url) => {
-      setHref(url);
-    });
   }, [file]);
 
   if (isMinimaBrowser) {

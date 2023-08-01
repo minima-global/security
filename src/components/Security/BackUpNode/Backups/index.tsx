@@ -22,25 +22,11 @@ const Backups = () => {
     setSearchText(e.target.value);
   };
 
-  const getFileData = async (mdsfile: string) => {
-    try {
-      const hexstring = await fileManager.loadBinaryToHex(mdsfile);
-
-      const filedata = hexstring;
-
-      return filedata;
-    } catch (error) {
-      return "";
-    }
-  };
-
   const handleDownload = async (backupFile: string) => {
     if (isMinimaBrowser) {
-      const filedata = await getFileData(backupFile);
-
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
-      return Android.blobDownload(backupFile, filedata);
+      return Android.fileDownload(MDS.minidappuid, backupFile);
     }
   };
 
