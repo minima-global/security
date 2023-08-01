@@ -20,7 +20,7 @@ const CommonDialogLayout = ({
 }: IProps) => {
   return (
     <>
-      <div>
+      <div className={`${styles.dialog} core-black-contrast`}>
         {content}
 
         {primaryActions && (

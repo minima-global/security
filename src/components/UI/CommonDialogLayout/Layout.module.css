@@ -1,3 +1,15 @@
+.dialog {
+
+  border-radius: 4px;
+  padding: 32px 24px;
+  align-self: center;
+
+  margin: 0 16px;
+}
+.dialog p {
+  word-break: break-word!important;
+}
+
 .button__wrapper {
   align-items: center;
 }
