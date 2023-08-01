@@ -76,18 +76,6 @@ const BackupNode = () => {
     }
   }, [step]);
 
-  const getFileData = async (mdsfile: string) => {
-    try {
-      const hexstring = await fileManager.loadBinaryToHex(mdsfile);
-
-      const filedata = hexstring;
-
-      return filedata;
-    } catch (error) {
-      return "";
-    }
-  };
-
   const createDownloadLink = async (mdsfile: string) => {
     try {
       const hexstring = await fileManager.loadBinaryToHex(mdsfile);
@@ -237,7 +225,7 @@ const BackupNode = () => {
       ),
     };
   };
-  const downloadBackupDialogAndroid = (file: string, filedata: string) => {
+  const downloadBackupDialogAndroid = (mdsfile: string) => {
     return {
       content: (
         <div className="mb-8">
@@ -253,7 +241,9 @@ const BackupNode = () => {
           {!!isMinimaBrowser && (
             <Button
               onClick={async () => {
-                const fullPath = await fileManager.getPath("/backups/" + file);
+                const fullPath = await fileManager.getPath(
+                  "/backups/" + mdsfile
+                );
 
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
@@ -268,7 +258,7 @@ const BackupNode = () => {
             onClick={() => {
               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               // @ts-ignore
-              Android.blobDownload(file, filedata);
+              Android.fileDownload(MDS.minidappuid, "/backups/" + mdsfile);
             }}
           >
             Download
@@ -296,9 +286,7 @@ const BackupNode = () => {
         await rpc.createBackup(fullPath, formData.password);
 
         if (isMinimaBrowser) {
-          const filedata = await getFileData("/backups/" + fileName);
-
-          const dialog = downloadBackupDialogAndroid(fileName, filedata);
+          const dialog = downloadBackupDialogAndroid(fileName);
 
           authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({
