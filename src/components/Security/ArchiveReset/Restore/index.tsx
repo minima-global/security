@@ -15,7 +15,7 @@ const ArchiveReset = () => {
 
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
 
-  const { setArchiveFileToUpload } = useArchiveContext();
+  const { setArchiveFileToUpload, setContext } = useArchiveContext();
 
   const InformativeDialog = {
     content: (
@@ -38,6 +38,7 @@ const ArchiveReset = () => {
             const file = e.target.files ? e.target.files[0] : null;
             if (file) {
               setArchiveFileToUpload(file);
+              setContext("restore");
               authNavigate("/upload", []);
             }
           }}

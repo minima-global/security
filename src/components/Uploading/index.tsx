@@ -7,6 +7,7 @@ import CommonDialogLayout from "../UI/CommonDialogLayout";
 import Button from "../UI/Button";
 import { useArchiveContext } from "../../providers/archiveProvider";
 import { useAuth } from "../../providers/authProvider";
+import PERMISSIONS from "../../permissions";
 
 const Uploading = () => {
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -18,8 +19,11 @@ const Uploading = () => {
   const [error, setError] = useState<false | string>(false);
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
+  const [integrityCheck, setIntegrityCheck] = useState(false);
 
   const {
+    context,
+    resetArchiveContext,
     checkArchiveIntegrity,
     setArchive,
     archive,
@@ -31,7 +35,7 @@ const Uploading = () => {
     if (archiveFileToUpload) {
       handleFileUpload(archiveFileToUpload);
     }
-  }, [location]);
+  }, [location, archiveFileToUpload]);
 
   const handleFileUpload = (file: File) => {
     setUploading(true);
@@ -42,11 +46,22 @@ const Uploading = () => {
         }
 
         if (resp.allchunks === resp.chunk) {
-          setArchiveFileToUpload(undefined);
-          setUploading(false);
+          // setArchiveFileToUpload(undefined);
+          setIntegrityCheck(true);
 
-          const archive = await checkArchiveIntegrity(file.name);
-          setArchive(archive);
+          await checkArchiveIntegrity(file.name)
+            .then((archive) => {
+              setIntegrityCheck(false);
+              setUploading(false);
+              setArchive(archive);
+            })
+            .catch((error) => {
+              console.error(error);
+              setIntegrityCheck(false);
+              setUploading(false);
+
+              setError(error);
+            });
         }
       });
     } catch (error: any) {
@@ -62,6 +77,9 @@ const Uploading = () => {
     animationData: loadingSpinner,
   };
 
+  const complete = archive && archive.first === "1";
+  const warning = archive && parseInt(archive.first) > 1;
+
   return (
     <Grid
       header={null}
@@ -70,7 +88,19 @@ const Uploading = () => {
           status={undefined}
           primaryActions={
             <>
-              {!uploading && !error && <Button>Continue</Button>}
+              {!uploading && !error && (
+                <Button
+                  onClick={() => {
+                    if (context === "restore") {
+                      authNavigate("/dashboard/restore/frombackup", [
+                        PERMISSIONS.CAN_VIEW_RESTORE,
+                      ]);
+                    }
+                  }}
+                >
+                  Continue
+                </Button>
+              )}
 
               {!uploading && error && (
                 <>
@@ -81,8 +111,10 @@ const Uploading = () => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const file = e.target.files ? e.target.files[0] : null;
                       if (file) {
-                        // let's upload..
-                        authNavigate("/upload", [], { state: { file: file } });
+                        // let's re-upload..
+                        setError(false);
+                        setArchiveFileToUpload(file);
+                        authNavigate("/upload", []);
                       }
                     }}
                   />
@@ -96,7 +128,9 @@ const Uploading = () => {
           secondaryActions={
             <>
               <Button
+                disabled={uploading}
                 onClick={() => {
+                  resetArchiveContext();
                   navigate("/dashboard/archivereset");
                 }}
               >
@@ -109,14 +143,18 @@ const Uploading = () => {
               <div className="grid h-full">
                 <div>
                   <div className="flex w-full justify-between px-2 py-2">
-                    {!!uploading && (
+                    {!!uploading && !integrityCheck && (
                       <h1 className="text-2xl">Uploading file...</h1>
                     )}
-                    {!uploading && (
+                    {!!uploading && !!integrityCheck && (
+                      <h1 className="text-2xl">Inspecting file...</h1>
+                    )}
+
+                    {!uploading && !integrityCheck && (
                       <h1 className="text-2xl">Upload complete</h1>
                     )}
 
-                    {!!uploading && (
+                    {!!uploading && !integrityCheck && (
                       <div className="col-span-1 flex justify-end">
                         <div>
                           <Lottie
@@ -127,7 +165,18 @@ const Uploading = () => {
                         </div>
                       </div>
                     )}
-                    {!uploading && (
+                    {!!uploading && !!integrityCheck && (
+                      <div className="col-span-1 flex justify-end">
+                        <div>
+                          <Lottie
+                            options={defaultOptions}
+                            height={32}
+                            width={32}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {!uploading && !integrityCheck && (
                       <div className="col-span-1 flex justify-end">
                         <div>
                           <svg
@@ -180,7 +229,7 @@ const Uploading = () => {
                     </div>
                   )}
 
-                  {!uploading && archive && archive.first === "1" && (
+                  {!uploading && complete && (
                     <div className="px-4 py-3 mb-4 flex rounded gap-4 form-success-box">
                       <svg
                         className="flex-none"
@@ -214,7 +263,7 @@ const Uploading = () => {
                       </p>
                     </div>
                   )}
-                  {!uploading && archive && parseInt(archive.first) > 1 && (
+                  {!uploading && warning && (
                     <div className="px-4 py-3 rounded mb-4 flex gap-4 form-info-box">
                       <svg
                         className="flex-none"
@@ -231,9 +280,9 @@ const Uploading = () => {
                       </svg>
 
                       <p className="text-sm text-left my-auto text-black">
-                        This archive file can only re-sync from block x and may
-                        not be able to re-sync all coins, consider using a
-                        different archive file.
+                        This archive file can only re-sync from block{" "}
+                        {archive.first} and may not be able to re-sync all
+                        coins, consider using a different archive file.
                       </p>
                     </div>
                   )}

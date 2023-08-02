@@ -3,8 +3,10 @@ import { appContext } from "../../AppContext";
 import { useNavigate } from "react-router-dom";
 
 import FadeIn from "../UI/Animations/FadeIn";
+
 export function Security() {
   const { vaultLocked, setBackButton } = useContext(appContext);
+
   const navigate = useNavigate();
 
   useEffect(() => {

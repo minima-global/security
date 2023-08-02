@@ -18,6 +18,7 @@ import PERMISSIONS from "../../permissions";
 import { useAuth } from "../../providers/authProvider";
 import FadeIn from "../UI/Animations/FadeIn";
 import useIsMinimaBrowser from "../../hooks/useIsMinimaBrowser";
+import { useArchiveContext } from "../../providers/archiveProvider";
 
 const validationSchema = yup.object().shape({
   host: yup
@@ -91,8 +92,18 @@ const RestoreDialog = () => {
   const [tooltip, setTooltip] = useState({ host: false });
 
   const isMinimaBrowser = useIsMinimaBrowser();
+  const {
+    userWantsToArchiveReset,
+    lastUploadPath,
+    resetArchiveContext,
+    deleteLastUploadedArchive,
+    setContext,
+  } = useArchiveContext();
 
   useEffect(() => {
+    if (!userWantsToArchiveReset) {
+      setContext("restore");
+    }
     getBackups();
   }, []);
 
@@ -209,7 +220,28 @@ const RestoreDialog = () => {
         if (mode === "backups") {
           fullPath = formData.file || "";
         }
-        await rpc.restoreFromBackup(formData.host, fullPath, formData.password);
+
+        if (!userWantsToArchiveReset) {
+          await rpc.restoreFromBackup(
+            formData.host,
+            fullPath,
+            formData.password
+          );
+        }
+
+        if (userWantsToArchiveReset && lastUploadPath) {
+          await rpc
+            .reset(lastUploadPath, fullPath, formData.password)
+            .then(() => {
+              resetArchiveContext();
+              deleteLastUploadedArchive(lastUploadPath);
+            })
+            .catch((error) => {
+              deleteLastUploadedArchive(lastUploadPath);
+              throw error;
+            });
+        }
+
         authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({
           content: SuccessDialog.content,
@@ -221,6 +253,9 @@ const RestoreDialog = () => {
         const dialog = SomethingWentWrong(
           wrongPassword ? "Incorrect password or file format" : error
         );
+
+        resetArchiveContext();
+
         authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({
           content: dialog.content,
@@ -373,60 +408,67 @@ const RestoreDialog = () => {
                     </>
                   }
                 />
-                <span className="mb-2 flex gap-2 items-center">
-                  <div className="text-left">Archive node host</div>
-                  {!tooltip.host && (
-                    <img
-                      className="w-4 h-4"
-                      onClick={() => setTooltip({ ...tooltip, host: true })}
-                      alt="tooltip"
-                      src="./assets/help_filled.svg"
-                    />
-                  )}
-                  {!!tooltip.host && (
-                    <img
-                      className="w-4 h-4"
-                      onClick={() => setTooltip({ ...tooltip, host: false })}
-                      alt="tooltip-dismiss"
-                      src="./assets/cancel_filled.svg"
-                    />
-                  )}
-                </span>
-                <CSSTransition
-                  in={tooltip.host}
-                  unmountOnExit
-                  timeout={200}
-                  classNames={{
-                    enter: styles.backdropEnter,
-                    enterDone: styles.backdropEnterActive,
-                    exit: styles.backdropExit,
-                    exitActive: styles.backdropExitActive,
-                  }}
-                >
-                  <Tooltip
-                    extraClass="!mb-0 !mt-0"
-                    onClick={() => setTooltip({ ...tooltip, host: false })}
-                    content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
-                    position={148}
-                  />
-                </CSSTransition>
-                <div>
-                  <Input
-                    id="host"
-                    name="host"
-                    placeholder="Auto"
-                    type="text"
-                    value={formik.values.host}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    autoComplete="off"
-                    error={
-                      formik.touched.host && formik.errors.host
-                        ? formik.errors.host
-                        : false
-                    }
-                  />
-                </div>
+
+                {!userWantsToArchiveReset && (
+                  <>
+                    <span className="mb-2 flex gap-2 items-center">
+                      <div className="text-left">Archive node host</div>
+                      {!tooltip.host && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() => setTooltip({ ...tooltip, host: true })}
+                          alt="tooltip"
+                          src="./assets/help_filled.svg"
+                        />
+                      )}
+                      {!!tooltip.host && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() =>
+                            setTooltip({ ...tooltip, host: false })
+                          }
+                          alt="tooltip-dismiss"
+                          src="./assets/cancel_filled.svg"
+                        />
+                      )}
+                    </span>
+                    <CSSTransition
+                      in={tooltip.host}
+                      unmountOnExit
+                      timeout={200}
+                      classNames={{
+                        enter: styles.backdropEnter,
+                        enterDone: styles.backdropEnterActive,
+                        exit: styles.backdropExit,
+                        exitActive: styles.backdropExitActive,
+                      }}
+                    >
+                      <Tooltip
+                        extraClass="!mb-0 !mt-0"
+                        onClick={() => setTooltip({ ...tooltip, host: false })}
+                        content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
+                        position={148}
+                      />
+                    </CSSTransition>
+                    <div>
+                      <Input
+                        id="host"
+                        name="host"
+                        placeholder="Auto"
+                        type="text"
+                        value={formik.values.host}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        autoComplete="off"
+                        error={
+                          formik.touched.host && formik.errors.host
+                            ? formik.errors.host
+                            : false
+                        }
+                      />
+                    </div>
+                  </>
+                )}
               </form>
             </div>
 
@@ -551,60 +593,67 @@ const RestoreDialog = () => {
                     </>
                   }
                 />
-                <span className="mb-2 flex gap-2 items-center">
-                  <div className="text-left">Archive node host</div>
-                  {!tooltip.host && (
-                    <img
-                      className="w-4 h-4"
-                      onClick={() => setTooltip({ ...tooltip, host: true })}
-                      alt="tooltip"
-                      src="./assets/help_filled.svg"
-                    />
-                  )}
-                  {!!tooltip.host && (
-                    <img
-                      className="w-4 h-4"
-                      onClick={() => setTooltip({ ...tooltip, host: false })}
-                      alt="tooltip-dismiss"
-                      src="./assets/cancel_filled.svg"
-                    />
-                  )}
-                </span>
-                <CSSTransition
-                  in={tooltip.host}
-                  unmountOnExit
-                  timeout={200}
-                  classNames={{
-                    enter: styles.backdropEnter,
-                    enterDone: styles.backdropEnterActive,
-                    exit: styles.backdropExit,
-                    exitActive: styles.backdropExitActive,
-                  }}
-                >
-                  <Tooltip
-                    extraClass="!mb-0 !mt-0"
-                    onClick={() => setTooltip({ ...tooltip, host: false })}
-                    content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
-                    position={148}
-                  />
-                </CSSTransition>
-                <div>
-                  <Input
-                    id="host"
-                    name="host"
-                    placeholder="Auto"
-                    type="text"
-                    value={formik.values.host}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                    autoComplete="off"
-                    error={
-                      formik.touched.host && formik.errors.host
-                        ? formik.errors.host
-                        : false
-                    }
-                  />
-                </div>
+
+                {!userWantsToArchiveReset && (
+                  <>
+                    <span className="mb-2 flex gap-2 items-center">
+                      <div className="text-left">Archive node host</div>
+                      {!tooltip.host && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() => setTooltip({ ...tooltip, host: true })}
+                          alt="tooltip"
+                          src="./assets/help_filled.svg"
+                        />
+                      )}
+                      {!!tooltip.host && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() =>
+                            setTooltip({ ...tooltip, host: false })
+                          }
+                          alt="tooltip-dismiss"
+                          src="./assets/cancel_filled.svg"
+                        />
+                      )}
+                    </span>
+                    <CSSTransition
+                      in={tooltip.host}
+                      unmountOnExit
+                      timeout={200}
+                      classNames={{
+                        enter: styles.backdropEnter,
+                        enterDone: styles.backdropEnterActive,
+                        exit: styles.backdropExit,
+                        exitActive: styles.backdropExitActive,
+                      }}
+                    >
+                      <Tooltip
+                        extraClass="!mb-0 !mt-0"
+                        onClick={() => setTooltip({ ...tooltip, host: false })}
+                        content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
+                        position={148}
+                      />
+                    </CSSTransition>
+                    <div>
+                      <Input
+                        id="host"
+                        name="host"
+                        placeholder="Auto"
+                        type="text"
+                        value={formik.values.host}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        autoComplete="off"
+                        error={
+                          formik.touched.host && formik.errors.host
+                            ? formik.errors.host
+                            : false
+                        }
+                      />
+                    </div>
+                  </>
+                )}
               </form>
             </div>
 

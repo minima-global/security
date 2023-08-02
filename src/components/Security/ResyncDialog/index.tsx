@@ -6,13 +6,21 @@ import Lottie from "lottie-react";
 import Loading from "../../../assets/loading.json";
 import Logs from "../../Logs";
 import { useEffect, useState } from "react";
+import { useArchiveContext } from "../../../providers/archiveProvider";
 
 const ResyncDialog = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [error, setError] = useState<false | string>(false);
+
+  const { userWantsToArchiveReset, setContext } = useArchiveContext();
+
   useEffect(() => {
+    if (!userWantsToArchiveReset) {
+      setContext("resync");
+    }
+
     if (location.state && "error" in location.state) {
       setError(location.state.error);
     }
