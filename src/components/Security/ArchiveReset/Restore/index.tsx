@@ -6,6 +6,7 @@ import { useAuth } from "../../../../providers/authProvider";
 import { useNavigate } from "react-router-dom";
 import Button from "../../../UI/Button";
 import PERMISSIONS from "../../../../permissions";
+import { useArchiveContext } from "../../../../providers/archiveProvider";
 
 const ArchiveReset = () => {
   const { displayHeaderBackButton, setModal } = useContext(appContext);
@@ -13,6 +14,8 @@ const ArchiveReset = () => {
   const navigate = useNavigate();
 
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
+
+  const { setArchiveFileToUpload } = useArchiveContext();
 
   const InformativeDialog = {
     content: (
@@ -34,8 +37,8 @@ const ArchiveReset = () => {
           onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files ? e.target.files[0] : null;
             if (file) {
-              // let's upload..
-              authNavigate("/upload", [], { state: { file: file } });
+              setArchiveFileToUpload(file);
+              authNavigate("/upload", []);
             }
           }}
         />

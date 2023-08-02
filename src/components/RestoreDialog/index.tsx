@@ -636,8 +636,8 @@ const RestoreDialog = () => {
             <div>
               <h1 className="text-2xl mb-4">Restore from backup</h1>
               <p className="mb-8">
-                Choose a previous backup, or upload a new backup file from an
-                external location.
+                Select a backup stored internally within the app or upload a new
+                backup from an external location.
               </p>
             </div>
 
@@ -650,10 +650,10 @@ const RestoreDialog = () => {
                     setMode("backups");
                   }}
                 >
-                  Browse in backups
+                  Select an internal backup
                 </Button>
                 <Button onClick={() => setMode("files")}>
-                  Upload an external file
+                  Upload an external backup
                 </Button>
               </div>
               <div

@@ -2,6 +2,7 @@ import "./App.css";
 import AppProvider from "./AppContext";
 import { Outlet, useLoaderData, useNavigate } from "react-router-dom";
 import { AuthProvider } from "./providers/authProvider";
+import { ArchiveProvider } from "./providers/archiveProvider";
 import { useEffect, useState } from "react";
 import * as utils from "./utils";
 
@@ -27,7 +28,9 @@ function App() {
   return (
     <AuthProvider>
       <AppProvider>
-        <Outlet />
+        <ArchiveProvider>
+          <Outlet />
+        </ArchiveProvider>
       </AppProvider>
     </AuthProvider>
   );
