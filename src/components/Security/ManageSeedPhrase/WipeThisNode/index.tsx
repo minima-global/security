@@ -6,11 +6,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../providers/authProvider";
 import PERMISSIONS from "../../../../permissions";
 import * as rpc from "../../../../__minima__/libs/RPC";
+import { useArchiveContext } from "../../../../providers/archiveProvider";
 
 const WipeThisNode = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { authNavigate } = useAuth();
+  const { userWantsToArchiveReset, lastUploadPath } = useArchiveContext();
+
   const formik = useFormik({
     initialValues: {},
     onSubmit: () => {
@@ -18,25 +21,56 @@ const WipeThisNode = () => {
       //  Run RPC..
       authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
 
-      rpc
-        .importSeedPhrase(
-          location.state.seedPhrase,
-          location.state.host,
-          location.state.keyuses
-        )
-        .catch((error) => {
-          authNavigate(
+      if (!userWantsToArchiveReset) {
+        rpc
+          .importSeedPhrase(
+            location.state.seedPhrase,
+            location.state.host,
+            location.state.keyuses
+          )
+          .catch((error) => {
+            authNavigate(
+              "/dashboard/resyncing",
+              [PERMISSIONS.CAN_VIEW_RESYNCING],
+              {
+                state: {
+                  error: error
+                    ? error
+                    : "Something went wrong, please try again.",
+                },
+              }
+            );
+          });
+      }
+
+      if (userWantsToArchiveReset) {
+        if (!lastUploadPath) {
+          return authNavigate(
             "/dashboard/resyncing",
             [PERMISSIONS.CAN_VIEW_RESYNCING],
             {
               state: {
-                error: error
-                  ? error
-                  : "Something went wrong, please try again.",
+                error: "Archive path not found, please try again",
               },
             }
           );
-        });
+        }
+        rpc
+          .resetSeedSync(lastUploadPath, location.state.seedPhrase)
+          .catch((error) => {
+            authNavigate(
+              "/dashboard/resyncing",
+              [PERMISSIONS.CAN_VIEW_RESYNCING],
+              {
+                state: {
+                  error: error
+                    ? error
+                    : "Something went wrong, please try again.",
+                },
+              }
+            );
+          });
+      }
     },
   });
 

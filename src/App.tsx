@@ -27,11 +27,11 @@ function App() {
 
   return (
     <AuthProvider>
-      <AppProvider>
-        <ArchiveProvider>
+      <ArchiveProvider>
+        <AppProvider>
           <Outlet />
-        </ArchiveProvider>
-      </AppProvider>
+        </AppProvider>
+      </ArchiveProvider>
     </AuthProvider>
   );
 }

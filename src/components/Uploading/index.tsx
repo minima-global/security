@@ -8,6 +8,7 @@ import Button from "../UI/Button";
 import { useArchiveContext } from "../../providers/archiveProvider";
 import { useAuth } from "../../providers/authProvider";
 import PERMISSIONS from "../../permissions";
+import * as rpc from "../../__minima__/libs/RPC";
 
 const Uploading = () => {
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -26,6 +27,7 @@ const Uploading = () => {
     resetArchiveContext,
     checkArchiveIntegrity,
     setArchive,
+    lastUploadPath,
     archive,
     archiveFileToUpload,
     setArchiveFileToUpload,
@@ -90,11 +92,50 @@ const Uploading = () => {
             <>
               {!uploading && !error && (
                 <Button
-                  onClick={() => {
+                  onClick={async () => {
                     if (context === "restore") {
                       authNavigate("/dashboard/restore/frombackup", [
                         PERMISSIONS.CAN_VIEW_RESTORE,
                       ]);
+                    }
+                    if (context === "chainresync") {
+                      authNavigate("/dashboard/resyncing", [
+                        PERMISSIONS.CAN_VIEW_RESYNCING,
+                      ]);
+                      if (lastUploadPath) {
+                        await rpc
+                          .resetChainResync(lastUploadPath)
+                          .catch((error) => {
+                            authNavigate(
+                              "/dashboard/resyncing",
+                              [PERMISSIONS.CAN_VIEW_RESYNCING],
+                              {
+                                state: {
+                                  error: error
+                                    ? error
+                                    : "Something went wrong, please try again.",
+                                },
+                              }
+                            );
+                          });
+                      }
+                      if (!lastUploadPath) {
+                        authNavigate(
+                          "/dashboard/resyncing",
+                          [PERMISSIONS.CAN_VIEW_RESYNCING],
+                          {
+                            state: {
+                              error: "Archive file missing, please try again.",
+                            },
+                          }
+                        );
+                      }
+                    }
+                    if (context === "seedresync") {
+                      authNavigate(
+                        "/dashboard/manageseedphrase/enterseedphrase",
+                        [PERMISSIONS["CAN_VIEW_ENTERSEEDPHRASE"]]
+                      );
                     }
                   }}
                 >

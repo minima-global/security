@@ -15,6 +15,7 @@ import BackupNode from "./components/Security/BackUpNode/index.tsx";
 import RestoreFromBackup from "./components/Security/RestoreFromBackup/index.tsx";
 import RestoreDialog from "./components/RestoreDialog/index.tsx";
 import ChainResync from "./components/Security/ChainResync/index.tsx";
+import ChainResyncReset from "./components/Security/ArchiveReset/ChainResync/index.tsx";
 import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
 import ResyncDialog from "./components/Security/ResyncDialog/index.tsx";
 import EnterSeedPhrase from "./components/Security/ManageSeedPhrase/EnterSeedPhrase/index.tsx";
@@ -35,6 +36,7 @@ import DeleteBackup from "./components/Security/BackUpNode/Backups/DeleteBackup/
 import ArchiveReset from "./components/Security/ArchiveReset/index.tsx";
 import Restore from "./components/Security/ArchiveReset/Restore/index.tsx";
 import Uploading from "./components/Uploading/index.tsx";
+import SeedResyncReset from "./components/Security/ArchiveReset/SeedResync/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -72,6 +74,22 @@ const router = createHashRouter(
             element={
               <FadeIn delay={0}>
                 <Restore />
+              </FadeIn>
+            }
+          />
+          <Route
+            path="chainresync"
+            element={
+              <FadeIn delay={0}>
+                <ChainResyncReset />
+              </FadeIn>
+            }
+          />
+          <Route
+            path="seedresync"
+            element={
+              <FadeIn delay={0}>
+                <SeedResyncReset />
               </FadeIn>
             }
           />

@@ -96,7 +96,7 @@ const ArchiveReset = () => {
           </div>
           <div
             onClick={() =>
-              authNavigate("/dashboard/archivereset/importseedphrase", [])
+              authNavigate("/dashboard/archivereset/seedresync", [])
             }
             className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer mb-4"
           >

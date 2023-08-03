@@ -8,7 +8,7 @@ import Button from "../../../UI/Button";
 import PERMISSIONS from "../../../../permissions";
 import { useArchiveContext } from "../../../../providers/archiveProvider";
 
-const ArchiveReset = () => {
+const ChainResyncReset = () => {
   const { displayHeaderBackButton, setModal } = useContext(appContext);
   const { authNavigate } = useAuth();
   const navigate = useNavigate();
@@ -21,10 +21,15 @@ const ArchiveReset = () => {
     content: (
       <div>
         <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
-        <h1 className="text-2xl mb-8">Please note</h1>
+        <h1 className="text-2xl mb-8">Re-sync your node?</h1>
         <p className="mb-6">
-          Restoring from a backup is irreversible. <br /> Make sure you have
-          your seed phrase written down before restoring.
+          The full chain will be downloaded from your chosen archive node.{" "}
+          <br />
+          <br /> This action is irreversible, consider taking a backup before
+          starting re-sync. <br />
+          <br /> This process should take up to 2 hours to complete but could
+          take longer. Please connect your device to a power source before
+          continuing.
         </p>
       </div>
     ),
@@ -38,7 +43,7 @@ const ArchiveReset = () => {
             const file = e.target.files ? e.target.files[0] : null;
             if (file) {
               setArchiveFileToUpload(file);
-              setContext("restore");
+              setContext("chainresync");
               authNavigate("/upload", []);
             }
           }}
@@ -50,9 +55,7 @@ const ArchiveReset = () => {
     ),
     secondaryActions: (
       <Button
-        onClick={() =>
-          authNavigate("/dashboard/archivereset/restorebackup", [])
-        }
+        onClick={() => authNavigate("/dashboard/archivereset/chainresync", [])}
       >
         Cancel
       </Button>
@@ -76,8 +79,8 @@ const ArchiveReset = () => {
       <>
         <Button
           onClick={() =>
-            authNavigate("/dashboard/restore/frombackup", [
-              PERMISSIONS["CAN_VIEW_RESTORE"],
+            authNavigate("/dashboard/resync", [
+              PERMISSIONS["CAN_VIEW_RESYNCING"],
             ])
           }
         >
@@ -87,9 +90,7 @@ const ArchiveReset = () => {
     ),
     secondaryActions: (
       <Button
-        onClick={() =>
-          authNavigate("/dashboard/archivereset/restorebackup", [])
-        }
+        onClick={() => authNavigate("/dashboard/archivereset/chainresync", [])}
       >
         Cancel
       </Button>
@@ -124,17 +125,25 @@ const ArchiveReset = () => {
               title="Archive Reset"
             />
           )}
-          <div className="mt-6 text-2xl mb-8 text-left">Restore</div>
+          <div className="mt-6 text-2xl mb-8 text-left">Chain re-sync</div>
           <div className="mb-4">
             <div className="mb-3 text-left">
-              If you have lost access to your node or started a new node, you
-              can restore your wallet from a backup. <br /> <br /> You will
-              need:
+              If your node is on the wrong chain or has been offline for a long
+              time, you can re-sync all blocks from an archive file. <br />{" "}
+              <br /> Before doing a chain re-sync, you can attempt to get back
+              in sync with the chain by:
               <ul className="list-disc list-inside mb-4">
                 <li className="pt-4 pl-2.5">
-                  Your backup and the password you used when taking the backup
+                  Shutting down your node from Settings and restarting it
+                  (please allow 10-15 minutes for the node to sync)
                 </li>
-                <li className="pl-2.5">An archive file</li>
+                <li className="pl-2.5">
+                  Checking your internet connection is stable
+                </li>
+                <li className="pl-2.5">
+                  Checking the battery settings for the Minima app to ensure it
+                  is allowed to run in the background
+                </li>
               </ul>
               The archive file will be used to sync your node to the chain's top
               block and must be recently extracted from an archive node.
@@ -193,4 +202,4 @@ const ArchiveReset = () => {
   );
 };
 
-export default ArchiveReset;
+export default ChainResyncReset;

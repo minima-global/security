@@ -8,7 +8,7 @@ import Button from "../../../UI/Button";
 import PERMISSIONS from "../../../../permissions";
 import { useArchiveContext } from "../../../../providers/archiveProvider";
 
-const ArchiveReset = () => {
+const SeedResyncReset = () => {
   const { displayHeaderBackButton, setModal } = useContext(appContext);
   const { authNavigate } = useAuth();
   const navigate = useNavigate();
@@ -23,8 +23,8 @@ const ArchiveReset = () => {
         <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
         <h1 className="text-2xl mb-8">Please note</h1>
         <p className="mb-6">
-          Restoring from a backup is irreversible. <br /> Make sure you have
-          your seed phrase written down before restoring.
+          Importing a seed phrase is irreversible. Consider taking a backup of
+          this node before restoring.
         </p>
       </div>
     ),
@@ -38,7 +38,7 @@ const ArchiveReset = () => {
             const file = e.target.files ? e.target.files[0] : null;
             if (file) {
               setArchiveFileToUpload(file);
-              setContext("restore");
+              setContext("seedresync");
               authNavigate("/upload", []);
             }
           }}
@@ -50,9 +50,7 @@ const ArchiveReset = () => {
     ),
     secondaryActions: (
       <Button
-        onClick={() =>
-          authNavigate("/dashboard/archivereset/restorebackup", [])
-        }
+        onClick={() => authNavigate("/dashboard/archivereset/seedresync", [])}
       >
         Cancel
       </Button>
@@ -76,8 +74,8 @@ const ArchiveReset = () => {
       <>
         <Button
           onClick={() =>
-            authNavigate("/dashboard/restore/frombackup", [
-              PERMISSIONS["CAN_VIEW_RESTORE"],
+            authNavigate("/dashboard/manageseedphrase/importseedphrase", [
+              PERMISSIONS["CAN_VIEW_IMPORTSEEDPHRASE"],
             ])
           }
         >
@@ -87,9 +85,7 @@ const ArchiveReset = () => {
     ),
     secondaryActions: (
       <Button
-        onClick={() =>
-          authNavigate("/dashboard/archivereset/restorebackup", [])
-        }
+        onClick={() => authNavigate("/dashboard/archivereset/seedresync", [])}
       >
         Cancel
       </Button>
@@ -124,17 +120,20 @@ const ArchiveReset = () => {
               title="Archive Reset"
             />
           )}
-          <div className="mt-6 text-2xl mb-8 text-left">Restore</div>
+          <div className="mt-6 text-2xl mb-8 text-left">Import seed phrase</div>
           <div className="mb-4">
             <div className="mb-3 text-left">
               If you have lost access to your node or started a new node, you
-              can restore your wallet from a backup. <br /> <br /> You will
-              need:
+              can restore your wallet using just your seed phrase. <br />
+              <br />
+              You will need:
               <ul className="list-disc list-inside mb-4">
-                <li className="pt-4 pl-2.5">
-                  Your backup and the password you used when taking the backup
-                </li>
+                <li className="pt-4 pl-2.5">Your 24 word seed phrase</li>
                 <li className="pl-2.5">An archive file</li>
+                <li className="pl-2.5">
+                  Checking the battery settings for the Minima app to ensure it
+                  is allowed to run in the background
+                </li>
               </ul>
               The archive file will be used to sync your node to the chain's top
               block and must be recently extracted from an archive node.
@@ -193,4 +192,4 @@ const ArchiveReset = () => {
   );
 };
 
-export default ArchiveReset;
+export default SeedResyncReset;
