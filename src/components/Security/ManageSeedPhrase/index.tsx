@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import SlideScreen from "../../UI/SlideScreen";
 import { useContext, useEffect } from "react";
@@ -10,6 +10,7 @@ import BackButton from "../../UI/BackButton";
 
 const ManageSeedPhrase = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const { authNavigate } = useAuth();
   const {
     vaultLocked,
@@ -35,8 +36,17 @@ const ManageSeedPhrase = () => {
 
             <div className="core-black-contrast p-4 rounded">
               {!!vaultLocked && (
-                <div className="mb-5 text-left">
-                  Unlock your node to view your seed phrase.
+                <div
+                  className="mb-5 text-left"
+                  onClick={() => navigate("/dashboard/lockprivatekeys")}
+                >
+                  <a
+                    className="hover:cursor-pointer"
+                    onClick={() => navigate("/dashboard/lockprivatekeys")}
+                  >
+                    Unlock
+                  </a>{" "}
+                  your node to view your seed phrase.
                 </div>
               )}
               {!vaultLocked && (

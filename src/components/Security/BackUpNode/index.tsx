@@ -17,11 +17,12 @@ import PERMISSIONS from "../../../permissions";
 import { useAuth } from "../../../providers/authProvider";
 import SlideIn from "../../UI/Animations/SlideIn";
 import FadeIn from "../../UI/Animations/FadeIn";
+import { useNavigate } from "react-router-dom";
 
 const validationSchema = yup.object().shape({
   password: yup
     .string()
-    .matches(/^[~!@#=?+<>,._'()?a-zA-Z0-9-]+$/, "Invalid character")
+    .matches(/^[~!@#=?+<>,._'/()?a-zA-Z0-9-]+$/, "Invalid character")
     .min(12, "Password must be at least 12 characters long"),
   confirmPassword: yup.string().test("matchy-passwords", function (val) {
     const { path, parent, createError } = this;
@@ -43,6 +44,7 @@ const validationSchema = yup.object().shape({
 });
 
 const BackupNode = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState<0 | 1>(0);
   const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
   const [hidePassword, togglePasswordVisibility] = useState(true);
@@ -357,8 +359,15 @@ const BackupNode = () => {
                         Your node is unlocked.
                       </h1>
                       <p className="text-base text-error font-medium">
-                        Consider locking your private keys so they are not
-                        exposed if someone gets hold of your backup.
+                        Consider{" "}
+                        <a
+                          className="hover:cursor-pointer"
+                          onClick={() => navigate("/dashboard/lockprivatekeys")}
+                        >
+                          locking
+                        </a>{" "}
+                        your private keys so they are not exposed if someone
+                        gets hold of your backup.
                       </p>
                     </div>
                   )}
@@ -375,7 +384,7 @@ const BackupNode = () => {
                   onClick={() => authNavigate("/dashboard/backup/backups", [])}
                   className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer"
                 >
-                  View backups{" "}
+                  Browse internal backups{" "}
                   <div className="absolute right-0 top-0 h-full px-5 flex items-center">
                     <svg
                       width="8"

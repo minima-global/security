@@ -13,7 +13,7 @@ import PERMISSIONS from "../../../../permissions";
 const validationSchema = yup.object().shape({
   password: yup
     .string()
-    .matches(/^[~!@#=?+<>,._'()?a-zA-Z0-9-]+$/, "Invalid character")
+    .matches(/^[~!@#=?+<>,._'/()?a-zA-Z0-9-]+$/, "Invalid character")
     .min(12, "Password must be at least 12 characters long"),
   confirmPassword: yup.string().test("matchy-passwords", function (val) {
     const { path, parent, createError } = this;
