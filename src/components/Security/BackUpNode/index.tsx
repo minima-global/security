@@ -644,7 +644,7 @@ const BackupNode = () => {
                 <div className="text-left">
                   <p className="text-sm password-label mr-4 ml-4">
                     Enter a password over 12 characters using a-z, A-Z, 0-9 and{" "}
-                    {"!@#=?+<>,.-_'()"} symbols only. <br /> <br />
+                    {"!@#=?+<>,.-_'()/"} symbols only. <br /> <br />
                     Your password cannot contain spaces. <br /> <br /> Please
                     make sure you save this password somewhere safe, it cannot
                     be recovered if lost.

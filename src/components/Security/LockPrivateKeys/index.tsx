@@ -374,7 +374,7 @@ const LockPrivateKeys = () => {
               <div className="text-left">
                 <p className="text-sm password-label mr-4 ml-4">
                   Enter a password over 12 characters using a-z, A-Z, 0-9 and{" "}
-                  {"!@#=?+<>,.-_ '() "}
+                  {"!@#=?+<>,.-_ '()/"}
                   symbols only. <br /> <br />
                   Your password cannot contain spaces.
                 </p>
