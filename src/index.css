@@ -50,6 +50,16 @@
   font-weight: 600;
 }
 
+.form-success-box {
+  background-color: #E1FFF1;
+}
+.form-error-box {
+  background-color: #FFD6D9;
+}
+.form-info-box {
+  background-color: #FFF9E5;
+}
+
 .form-success-message {
   color: var(--status-green);
   font-weight: 600;
@@ -316,4 +326,24 @@ code {
 
 ::file-selector-button {
   display: none;
+}
+
+.blend {
+  color: rgb(255, 255, 255);
+  mix-blend-mode: difference;
+}
+
+.upload-complete {
+  border: 1px solid #00CBB6;
+  border-radius: 4px;
+}
+
+.upload-warning {
+  border: 1px solid #FFD028;
+  border-radius: 4px;
+}
+
+.upload-error {
+  border: 1px solid #FF627E;
+  border-radius: 4px;
 }

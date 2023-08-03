@@ -15,6 +15,7 @@ import BackupNode from "./components/Security/BackUpNode/index.tsx";
 import RestoreFromBackup from "./components/Security/RestoreFromBackup/index.tsx";
 import RestoreDialog from "./components/RestoreDialog/index.tsx";
 import ChainResync from "./components/Security/ChainResync/index.tsx";
+import ChainResyncReset from "./components/Security/ArchiveReset/ChainResync/index.tsx";
 import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
 import ResyncDialog from "./components/Security/ResyncDialog/index.tsx";
 import EnterSeedPhrase from "./components/Security/ManageSeedPhrase/EnterSeedPhrase/index.tsx";
@@ -32,6 +33,10 @@ import AutoCreatePassword from "./components/Security/BackUpNode/AutoCreatePassw
 import FadeIn from "./components/UI/Animations/FadeIn/index.tsx";
 import SlideIn from "./components/UI/Animations/SlideIn/index.tsx";
 import DeleteBackup from "./components/Security/BackUpNode/Backups/DeleteBackup/index.tsx";
+import ArchiveReset from "./components/Security/ArchiveReset/index.tsx";
+import Restore from "./components/Security/ArchiveReset/Restore/index.tsx";
+import Uploading from "./components/Uploading/index.tsx";
+import SeedResyncReset from "./components/Security/ArchiveReset/SeedResync/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -44,6 +49,8 @@ const router = createHashRouter(
     >
       <Route index element={<Splash />} />
 
+      <Route path="upload" element={<Uploading />} />
+
       <Route path="/dashboard" element={<Dashboard />}>
         <Route
           index
@@ -53,6 +60,40 @@ const router = createHashRouter(
             </FadeIn>
           }
         />
+        <Route path="archivereset">
+          <Route
+            index
+            element={
+              <FadeIn delay={0}>
+                <ArchiveReset />
+              </FadeIn>
+            }
+          />
+          <Route
+            path="restorebackup"
+            element={
+              <FadeIn delay={0}>
+                <Restore />
+              </FadeIn>
+            }
+          />
+          <Route
+            path="chainresync"
+            element={
+              <FadeIn delay={0}>
+                <ChainResyncReset />
+              </FadeIn>
+            }
+          />
+          <Route
+            path="seedresync"
+            element={
+              <FadeIn delay={0}>
+                <SeedResyncReset />
+              </FadeIn>
+            }
+          />
+        </Route>
         <Route
           element={
             <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESYNCING"]]} />

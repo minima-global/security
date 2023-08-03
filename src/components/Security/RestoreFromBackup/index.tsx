@@ -5,6 +5,7 @@ import { appContext } from "../../../AppContext";
 import { useAuth } from "../../../providers/authProvider";
 import PERMISSIONS from "../../../permissions";
 import BackButton from "../../UI/BackButton";
+import { useArchiveContext } from "../../../providers/archiveProvider";
 
 const RestoreFromBackup = () => {
   const {
@@ -13,6 +14,7 @@ const RestoreFromBackup = () => {
     displayBackButton: displayHeaderBackButton,
   } = useContext(appContext);
   const location = useLocation();
+  const { userWantsToArchiveReset } = useArchiveContext();
   const { authNavigate } = useAuth();
 
   useEffect(() => {
@@ -33,9 +35,15 @@ const RestoreFromBackup = () => {
     primaryActions: (
       <Button
         onClick={() => {
-          authNavigate("dashboard/restore/frombackup", [
-            PERMISSIONS.CAN_VIEW_RESTORE,
-          ]);
+          if (userWantsToArchiveReset) {
+            authNavigate("/upload", []);
+          }
+
+          if (!userWantsToArchiveReset) {
+            authNavigate("dashboard/restore/frombackup", [
+              PERMISSIONS.CAN_VIEW_RESTORE,
+            ]);
+          }
         }}
       >
         Continue

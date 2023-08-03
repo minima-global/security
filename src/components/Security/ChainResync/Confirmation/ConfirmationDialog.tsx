@@ -12,8 +12,6 @@ const ConfirmationDialog = ({ host, cancel }: IProps) => {
   const { authNavigate } = useAuth();
 
   const handleResync = async () => {
-    authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
-
     (window as any).MDS.cmd(
       `archive action:resync host:${host.length ? host : "auto"}`,
       (response: any) => {

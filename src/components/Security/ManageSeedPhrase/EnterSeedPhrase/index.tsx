@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useFormik, getIn } from "formik";
 import * as yup from "yup";
 import Input from "../../../UI/Input";
@@ -9,6 +9,7 @@ import { useAuth } from "../../../../providers/authProvider";
 import PERMISSIONS from "../../../../permissions";
 import BackButton from "../../../UI/BackButton";
 import { appContext } from "../../../../AppContext";
+import { useArchiveContext } from "../../../../providers/archiveProvider";
 
 const validationSchema = yup.object().shape({
   seedPhrase: yup.object({
@@ -136,8 +137,15 @@ const validationSchema = yup.object().shape({
 });
 
 const EnterSeedPhrase = () => {
+  const navigate = useNavigate();
   const { setBackButton, displayBackButton: displayHeaderBackButton } =
     useContext(appContext);
+  const {
+    userWantsToArchiveReset,
+    resetArchiveContext,
+    archiveFileToUpload,
+    deleteLastUploadedArchive,
+  } = useArchiveContext();
   const { authNavigate } = useAuth();
   const location = useLocation();
 
@@ -226,8 +234,23 @@ const EnterSeedPhrase = () => {
   return (
     <>
       <div className="h-full bg-black px-4 pb-4">
-        {!displayHeaderBackButton && (
+        {!displayHeaderBackButton && !userWantsToArchiveReset && (
           <BackButton to="/dashboard/manageseedphrase" title="Security" />
+        )}
+        {!displayHeaderBackButton && userWantsToArchiveReset && (
+          <BackButton
+            title="Cancel"
+            onClickHandler={() => {
+              // user cancelled.. so reset & delete the file upload
+              resetArchiveContext();
+              if (archiveFileToUpload) {
+                deleteLastUploadedArchive(
+                  "/fileupload/" + archiveFileToUpload.name
+                );
+              }
+              navigate("/dashboard/archivereset/seedresync");
+            }}
+          />
         )}
         <div className="mt-6 text-2xl mb-8 text-left">Enter seed phrase</div>
 
