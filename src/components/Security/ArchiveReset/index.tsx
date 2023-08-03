@@ -1,12 +1,21 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import SlideIn from "../../UI/Animations/SlideIn";
 import { appContext } from "../../../AppContext";
 import BackButton from "../../UI/BackButton";
 import { useAuth } from "../../../providers/authProvider";
 
 const ArchiveReset = () => {
-  const { displayHeaderBackButton } = useContext(appContext);
+  const { displayBackButton: displayHeaderBackButton, setBackButton } =
+    useContext(appContext);
   const { authNavigate } = useAuth();
+
+  useEffect(() => {
+    setBackButton({
+      display: true,
+      to: "/dashboard",
+      title: "Security",
+    });
+  }, []);
 
   return (
     <SlideIn isOpen={true} delay={0}>

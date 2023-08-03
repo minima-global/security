@@ -1,4 +1,4 @@
-import React, { useContext, useRef, RefObject } from "react";
+import React, { useContext, useRef, RefObject, useEffect } from "react";
 import SlideIn from "../../../UI/Animations/SlideIn";
 import { appContext } from "../../../../AppContext";
 import BackButton from "../../../UI/BackButton";
@@ -9,13 +9,25 @@ import PERMISSIONS from "../../../../permissions";
 import { useArchiveContext } from "../../../../providers/archiveProvider";
 
 const SeedResyncReset = () => {
-  const { displayHeaderBackButton, setModal } = useContext(appContext);
+  const {
+    setBackButton,
+    displayBackButton: displayHeaderBackButton,
+    setModal,
+  } = useContext(appContext);
   const { authNavigate } = useAuth();
   const navigate = useNavigate();
 
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
 
   const { setArchiveFileToUpload, setContext } = useArchiveContext();
+
+  useEffect(() => {
+    setBackButton({
+      display: true,
+      onClickHandler: () => navigate("/dashboard/archivereset"),
+      title: "Archive Reset",
+    });
+  }, []);
 
   const InformativeDialog = {
     content: (
