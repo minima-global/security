@@ -772,18 +772,24 @@ const RestoreDialog = () => {
                 {!formik.isSubmitting && (
                   <Button
                     onClick={() => {
-                      if (!userWantsToArchiveReset) {
-                        navigate(-1);
-                      }
-                      if (userWantsToArchiveReset) {
-                        resetArchiveContext();
-                        if (archiveFileToUpload) {
-                          deleteLastUploadedArchive(
-                            "/fileupload/" + archiveFileToUpload.name
-                          );
+                      if (!mode) {
+                        if (!userWantsToArchiveReset) {
+                          navigate(-1);
                         }
+                        if (userWantsToArchiveReset) {
+                          resetArchiveContext();
+                          if (archiveFileToUpload) {
+                            deleteLastUploadedArchive(
+                              "/fileupload/" + archiveFileToUpload.name
+                            );
+                          }
 
-                        navigate("/dashboard/archivereset/restorebackup");
+                          navigate("/dashboard/archivereset/restorebackup");
+                        }
+                      }
+
+                      if (mode) {
+                        setMode(false);
                       }
                     }}
                   >
@@ -800,7 +806,28 @@ const RestoreDialog = () => {
         className={`${styles.actions} ${styles.mobile_only} ${styles.secondaryActions}`}
       >
         {!formik.isSubmitting && (
-          <Button onClick={() => (!mode ? navigate(-1) : setMode(false))}>
+          <Button
+            onClick={() => {
+              if (!mode) {
+                if (!userWantsToArchiveReset) {
+                  navigate(-1);
+                }
+                if (userWantsToArchiveReset) {
+                  resetArchiveContext();
+                  if (archiveFileToUpload) {
+                    deleteLastUploadedArchive(
+                      "/fileupload/" + archiveFileToUpload.name
+                    );
+                  }
+
+                  navigate("/dashboard/archivereset/restorebackup");
+                }
+                if (mode) {
+                  setMode(false);
+                }
+              }
+            }}
+          >
             Cancel
           </Button>
         )}
