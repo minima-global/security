@@ -14,7 +14,7 @@ const Grid = ({ header, content, fullHeight = false }: IProps) => {
 
   return (
     <div className={styles["grid"]} style={{ height: `${height}px` }}>
-      <header onClick={openTitleBar}>{header}</header>
+      {header && <header onClick={openTitleBar}>{header}</header>}
 
       <main>
         <section className={fullHeight ? "!h-screen" : ""}>{content}</section>

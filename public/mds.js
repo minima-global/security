@@ -741,7 +741,7 @@ function _recurseUploadMDS(thefullfile, chunk, callback) {
   formdata.append("fileupload", filepiece);
 
   var request = new XMLHttpRequest();
-  request.open("POST", "/fileuploadchunk.html");
+  request.open("POST", MDS.filehost + "fileuploadchunk.html");
   request.onreadystatechange = function () {
     var status = request.status;
     if (request.readyState == XMLHttpRequest.DONE) {

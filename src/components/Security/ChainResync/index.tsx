@@ -75,6 +75,7 @@ const ChainResync = () => {
                     </div>
                   </div>
                 </div>
+
                 <div className="core-black-contrast-2 p-4 rounded">
                   <div className="mb-2 text-left">Archive node host</div>
                   <div className="mb-6">
@@ -99,6 +100,7 @@ const ChainResync = () => {
                     Re-sync
                   </Button>
                 </div>
+
                 <div className="text-left">
                   <p className="text-sm password-label mr-4 ml-4">
                     You should only re-sync from your own archive node or one

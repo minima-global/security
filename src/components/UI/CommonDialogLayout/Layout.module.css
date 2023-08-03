@@ -1,21 +1,13 @@
-
 .dialog {
-  background-color: #17191C;
-  border-radius: 4px;
-  padding: 40px 24px;
 
+  border-radius: 4px;
+  padding: 32px 24px;
   align-self: center;
 
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
   margin: 0 16px;
 }
 .dialog p {
   word-break: break-word!important;
-}
-.dialog img {
-  display: inline;
 }
 
 .button__wrapper {
@@ -54,7 +46,6 @@
   font-weight: 600;
   font-size: 1rem;
   align-self: flex-end;
-
 }
 .secondaryActions button:hover {
   cursor: pointer;
@@ -76,20 +67,15 @@
 }
 @media screen and (min-width: 560px) {
   
-  
-
-  .secondaryActions {
-    margin: 0;
-  }
-
   .desktop_only {
     display: block;
   }
   .mobile_only {
     display: none;
   }
-
   
+  .secondaryActions {
+    margin: 0;
+  }
 }
-
 

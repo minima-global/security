@@ -6,3 +6,6 @@ export * from "./restoreFromBackup";
 export * from "./checkMode";
 export * from "./vault";
 export * from "./importSeedPhrase";
+export * from "./reset";
+export * from "./resetChainResync";
+export * from "./resetSeedSync";
