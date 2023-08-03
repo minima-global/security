@@ -80,8 +80,8 @@ const Uploading = () => {
     animationData: loadingSpinner,
   };
 
-  const complete = archive && archive.first === "1";
-  const warning = archive && parseInt(archive.first) > 1;
+  const complete = archive && archive.last === "1";
+  const warning = archive && parseInt(archive.last) > 1;
 
   return (
     <Grid
@@ -144,7 +144,7 @@ const Uploading = () => {
                 </Button>
               )}
 
-              {!uploading && error && (
+              {!uploading && (error || warning) && (
                 <>
                   <input
                     className="hidden"
@@ -169,21 +169,22 @@ const Uploading = () => {
           }
           secondaryActions={
             <>
-              <Button
-                disabled={uploading}
-                onClick={() => {
-                  resetArchiveContext();
-                  // since they've cancelled.. delete it
-                  navigate("/dashboard/archivereset");
-                  if (archiveFileToUpload) {
-                    deleteLastUploadedArchive(
-                      "/fileupload/" + archiveFileToUpload.name
-                    );
-                  }
-                }}
-              >
-                Cancel
-              </Button>
+              {!uploading && (
+                <Button
+                  onClick={() => {
+                    resetArchiveContext();
+                    // since they've cancelled.. delete it
+                    navigate("/dashboard/archivereset");
+                    if (archiveFileToUpload) {
+                      deleteLastUploadedArchive(
+                        "/fileupload/" + archiveFileToUpload.name
+                      );
+                    }
+                  }}
+                >
+                  Cancel
+                </Button>
+              )}
             </>
           }
           content={
@@ -273,7 +274,9 @@ const Uploading = () => {
                   {uploading && !!progress && (
                     <div className="core-black-contrast-2 h-[56px] rounded p-4 mt-6 mb-8 relative">
                       <div className="absolute text-left blend z-10 left-[16px] top-[15px] font-black">
-                        {(Number(progress) * 100).toFixed(0)}%
+                        {!integrityCheck
+                          ? `${(Number(progress) * 100).toFixed(0)}%`
+                          : "Inspecting..."}
                       </div>
                       <div
                         className="bg-white absolute w-full h-[56px] rounded transition-all origin-left"
@@ -339,8 +342,8 @@ const Uploading = () => {
 
                       <p className="text-sm text-left my-auto text-black">
                         This archive file can only re-sync from block{" "}
-                        {archive.first} and may not be able to re-sync all
-                        coins, consider using a different archive file.
+                        {archive.last} and may not be able to re-sync all coins,
+                        consider using a different archive file.
                       </p>
                     </div>
                   )}
