@@ -12,7 +12,13 @@ const WipeThisNode = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { authNavigate } = useAuth();
-  const { userWantsToArchiveReset, lastUploadPath } = useArchiveContext();
+  const {
+    userWantsToArchiveReset,
+    lastUploadPath,
+    archiveFileToUpload,
+    resetArchiveContext,
+    deleteLastUploadedArchive,
+  } = useArchiveContext();
 
   const formik = useFormik({
     initialValues: {},
@@ -45,6 +51,10 @@ const WipeThisNode = () => {
 
       if (userWantsToArchiveReset) {
         if (!lastUploadPath) {
+          resetArchiveContext();
+          if (archiveFileToUpload) {
+            deleteLastUploadedArchive(archiveFileToUpload.name);
+          }
           return authNavigate(
             "/dashboard/resyncing",
             [PERMISSIONS.CAN_VIEW_RESYNCING],
@@ -58,6 +68,11 @@ const WipeThisNode = () => {
         rpc
           .resetSeedSync(lastUploadPath, location.state.seedPhrase)
           .catch((error) => {
+            resetArchiveContext();
+            if (archiveFileToUpload) {
+              deleteLastUploadedArchive(archiveFileToUpload.name);
+            }
+
             authNavigate(
               "/dashboard/resyncing",
               [PERMISSIONS.CAN_VIEW_RESYNCING],
@@ -119,9 +134,9 @@ const WipeThisNode = () => {
       <div className={`${styles.mobile_only} ${styles.secondaryActions}`}>
         {!formik.isSubmitting && (
           <Button
-            onClick={() =>
-              navigate("/dashboard/manageseedphrase/enterseedphrase")
-            }
+            onClick={() => {
+              navigate("/dashboard/manageseedphrase/enterseedphrase");
+            }}
           >
             Cancel
           </Button>

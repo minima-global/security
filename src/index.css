@@ -332,3 +332,18 @@ code {
   color: rgb(255, 255, 255);
   mix-blend-mode: difference;
 }
+
+.upload-complete {
+  border: 1px solid #00CBB6;
+  border-radius: 4px;
+}
+
+.upload-warning {
+  border: 1px solid #FFD028;
+  border-radius: 4px;
+}
+
+.upload-error {
+  border: 1px solid #FF627E;
+  border-radius: 4px;
+}

@@ -116,7 +116,7 @@ const SeedResyncReset = () => {
         <div className="flex flex-col h-full">
           {!displayHeaderBackButton && (
             <BackButton
-              onClickHandler={() => navigate(-1)}
+              onClickHandler={() => navigate("/dashboard/archivereset")}
               title="Archive Reset"
             />
           )}

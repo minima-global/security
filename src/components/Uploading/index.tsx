@@ -31,6 +31,7 @@ const Uploading = () => {
     archive,
     archiveFileToUpload,
     setArchiveFileToUpload,
+    deleteLastUploadedArchive,
   } = useArchiveContext();
 
   useEffect(() => {
@@ -172,7 +173,13 @@ const Uploading = () => {
                 disabled={uploading}
                 onClick={() => {
                   resetArchiveContext();
+                  // since they've cancelled.. delete it
                   navigate("/dashboard/archivereset");
+                  if (archiveFileToUpload) {
+                    deleteLastUploadedArchive(
+                      "/fileupload/" + archiveFileToUpload.name
+                    );
+                  }
                 }}
               >
                 Cancel
@@ -249,11 +256,21 @@ const Uploading = () => {
                     )}
                   </div>
 
-                  <div className="w-full p-4 text-white mt-4 text-left core-black-contrast-2 rounded mb-4">
+                  <div
+                    className={`w-full p-4 text-white mt-4 text-left core-black-contrast-2 rounded mb-4 ${
+                      complete
+                        ? "upload-complete"
+                        : warning
+                        ? "upload-warning"
+                        : error
+                        ? "upload-error"
+                        : ""
+                    }`}
+                  >
                     {archiveFileToUpload ? archiveFileToUpload.name : "N/A"}
                   </div>
 
-                  {!!progress && (
+                  {uploading && !!progress && (
                     <div className="core-black-contrast-2 h-[56px] rounded p-4 mt-6 mb-8 relative">
                       <div className="absolute text-left blend z-10 left-[16px] top-[15px] font-black">
                         {(Number(progress) * 100).toFixed(0)}%

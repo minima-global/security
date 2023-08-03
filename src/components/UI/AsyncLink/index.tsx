@@ -42,8 +42,6 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
     return <div onClick={onClick}>{children}</div>;
   }
 
-  console.log("returning <a/> tag! w/ href:", href);
-
   return (
     <a onClick={onClick} download={name} target="_blank" href={href}>
       {children}

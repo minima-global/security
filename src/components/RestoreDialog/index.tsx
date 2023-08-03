@@ -98,6 +98,7 @@ const RestoreDialog = () => {
     lastUploadPath,
     resetArchiveContext,
     deleteLastUploadedArchive,
+    archiveFileToUpload,
   } = useArchiveContext();
 
   useEffect(() => {
@@ -290,10 +291,14 @@ const RestoreDialog = () => {
             .reset(lastUploadPath, fullPath, formData.password)
             .then(() => {
               resetArchiveContext();
-              deleteLastUploadedArchive(lastUploadPath);
+              if (archiveFileToUpload) {
+                deleteLastUploadedArchive(archiveFileToUpload.name);
+              }
             })
             .catch((error) => {
-              deleteLastUploadedArchive(lastUploadPath);
+              if (archiveFileToUpload) {
+                deleteLastUploadedArchive(archiveFileToUpload.name);
+              }
               throw error;
             });
         }
@@ -359,7 +364,7 @@ const RestoreDialog = () => {
                   id="file"
                   name="file"
                   endIcon={
-                    formik.values.file !== undefined && (
+                    formik.values.file && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="25"
@@ -765,7 +770,25 @@ const RestoreDialog = () => {
                 className={`${styles.desktop_only} ${styles.secondaryActions}`}
               >
                 {!formik.isSubmitting && (
-                  <Button onClick={() => navigate(-1)}>Cancel</Button>
+                  <Button
+                    onClick={() => {
+                      if (!userWantsToArchiveReset) {
+                        navigate(-1);
+                      }
+                      if (userWantsToArchiveReset) {
+                        resetArchiveContext();
+                        if (archiveFileToUpload) {
+                          deleteLastUploadedArchive(
+                            "/fileupload/" + archiveFileToUpload.name
+                          );
+                        }
+
+                        navigate("/dashboard/archivereset/restorebackup");
+                      }
+                    }}
+                  >
+                    Cancel
+                  </Button>
                 )}
               </div>
             </div>
