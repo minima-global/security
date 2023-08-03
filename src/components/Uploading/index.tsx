@@ -9,6 +9,7 @@ import { useArchiveContext } from "../../providers/archiveProvider";
 import { useAuth } from "../../providers/authProvider";
 import PERMISSIONS from "../../permissions";
 import * as rpc from "../../__minima__/libs/RPC";
+import * as fM from "../../__minima__/libs/fileManager";
 
 const Uploading = () => {
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -42,6 +43,7 @@ const Uploading = () => {
 
   const handleFileUpload = (file: File) => {
     setUploading(true);
+
     try {
       (window as any).MDS.file.upload(file, async function (resp: any) {
         if (resp.allchunks >= 10) {
@@ -49,10 +51,11 @@ const Uploading = () => {
         }
 
         if (resp.allchunks === resp.chunk) {
-          // setArchiveFileToUpload(undefined);
           setIntegrityCheck(true);
 
-          await checkArchiveIntegrity(file.name)
+          const fullPath = await fM.getPath("/fileupload/" + resp.filename);
+
+          await checkArchiveIntegrity(fullPath)
             .then((archive) => {
               setIntegrityCheck(false);
               setUploading(false);
