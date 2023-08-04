@@ -13,23 +13,19 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
   const [href, setHref] = useState("");
   const isMinimaBrowser = useIsMinimaBrowser();
 
-  const createDownloadLink = async (mdsfile: string) => {
-    try {
-      const hexstring = await fileManager.loadBinaryToHex(mdsfile);
+  const createDownloadLink = async (mdsfile: string): Promise<string> => {
+    const path = await fileManager.getPath(mdsfile);
+    return new Promise((resolve) => {
+      const filePath = `/my_downloads/${mdsfile}`;
 
-      await fileManager.saveFileAsBinary(mdsfile, hexstring);
-      const filedata = hexstring;
-      const b64 = (window as any).MDS.util.hexToBase64(filedata);
-      const binaryData = (window as any).MDS.util.base64ToArrayBuffer(b64);
-      const blob = new Blob([binaryData], {
-        type: "application/octet-stream",
+      const newFileName = mdsfile + "_minima_download_as_file_";
+
+      (window as any).MDS.file.copytoweb(path, filePath, function () {
+        const url = `my_downloads/${newFileName}`;
+
+        resolve(url);
       });
-
-      const url = URL.createObjectURL(blob);
-      return url;
-    } catch (error) {
-      return "";
-    }
+    });
   };
 
   useEffect(() => {

@@ -27,7 +27,7 @@ interface IArchiveContext {
   setArchiveFileToUpload: Dispatch<SetStateAction<File | undefined>>;
   archive?: Archive;
   setArchive: Dispatch<SetStateAction<Archive | undefined>>;
-  checkArchiveIntegrity: (archivefile: string) => Promise<Archive>;
+  checkArchiveIntegrity: (path: string) => Promise<Archive>;
 }
 
 const ArchiveContext = createContext<IArchiveContext | undefined>(undefined);
@@ -62,24 +62,25 @@ export const ArchiveProvider = ({ children }) => {
 
   /**
    *
-   * @param archivefile
+   * @param path (relative path of minima folder)
    * @returns an Archive object
    */
-  const checkArchiveIntegrity = (archivefile: string): Promise<Archive> => {
+  const checkArchiveIntegrity = async (path: string): Promise<Archive> => {
+    const fullPath = await fM.getPath(path);
+
     return new Promise((resolve, reject) => {
       (window as any).MDS.cmd(
-        `archive action:inspect file:"${archivefile}"`,
+        `archive action:inspect file:"${fullPath}"`,
         async function (resp) {
           if (!resp.status) {
             // no good.. get rid of it
-            deleteLastUploadedArchive(archivefile);
-            reject(resp.error ? resp.error : "Rpc failed...");
+            deleteLastUploadedArchive(path);
+            reject(resp.error ? resp.error : "Checking integrity RPC failed.");
           }
           if (resp.status) {
             // set the last successful archive file path to use down the line
-            const fullPath = await fM.getPath("/fileUpload/" + archivefile);
-
             setLastUploadPath(fullPath);
+
             resolve(resp.response.archive);
           }
         }

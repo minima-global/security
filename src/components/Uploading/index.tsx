@@ -9,7 +9,6 @@ import { useArchiveContext } from "../../providers/archiveProvider";
 import { useAuth } from "../../providers/authProvider";
 import PERMISSIONS from "../../permissions";
 import * as rpc from "../../__minima__/libs/RPC";
-import * as fM from "../../__minima__/libs/fileManager";
 
 const Uploading = () => {
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -53,9 +52,7 @@ const Uploading = () => {
         if (resp.allchunks === resp.chunk) {
           setIntegrityCheck(true);
 
-          const fullPath = await fM.getPath("/fileupload/" + resp.filename);
-
-          await checkArchiveIntegrity(fullPath)
+          await checkArchiveIntegrity("/fileupload/" + resp.filename)
             .then((archive) => {
               setIntegrityCheck(false);
               setUploading(false);
