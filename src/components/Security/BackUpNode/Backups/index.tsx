@@ -135,8 +135,7 @@ const Backups = () => {
                         )}
 
                         <AsyncLink
-                          file={"/backups/" + b.name}
-                          name={b.name}
+                          file={b.name}
                           onClick={(e) => {
                             if (isMinimaBrowser) {
                               e.stopPropagation();
@@ -248,8 +247,7 @@ const Backups = () => {
                         </svg>
                       )}
                       <AsyncLink
-                        file={"/backups/" + b.name}
-                        name={b.name}
+                        file={b.name}
                         onClick={(e) => {
                           if (isMinimaBrowser) {
                             e.stopPropagation();

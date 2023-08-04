@@ -1,6 +1,5 @@
 import { RefObject, useEffect, useRef, useState } from "react";
-import loadingSpinner from "../../assets/spinner.json";
-import Lottie from "@amelix/react-lottie";
+import Lottie from "lottie-react";
 import { useNavigate } from "react-router-dom";
 import Grid from "../UI/Grid";
 import CommonDialogLayout from "../UI/CommonDialogLayout";
@@ -9,6 +8,8 @@ import { useArchiveContext } from "../../providers/archiveProvider";
 import { useAuth } from "../../providers/authProvider";
 import PERMISSIONS from "../../permissions";
 import * as rpc from "../../__minima__/libs/RPC";
+
+import Loading from "../../assets/loading.json";
 
 const Uploading = () => {
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
@@ -72,12 +73,6 @@ const Uploading = () => {
       setError(error);
       setUploading(false);
     }
-  };
-
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: loadingSpinner,
   };
 
   const complete = archive && archive.last === "1";
@@ -207,9 +202,13 @@ const Uploading = () => {
                       <div className="col-span-1 flex justify-end">
                         <div>
                           <Lottie
-                            options={defaultOptions}
-                            height={32}
-                            width={32}
+                            className="mb-4"
+                            style={{
+                              width: 32,
+                              height: 32,
+                              alignSelf: "center",
+                            }}
+                            animationData={Loading}
                           />
                         </div>
                       </div>
@@ -218,9 +217,13 @@ const Uploading = () => {
                       <div className="col-span-1 flex justify-end">
                         <div>
                           <Lottie
-                            options={defaultOptions}
-                            height={32}
-                            width={32}
+                            className="mb-4"
+                            style={{
+                              width: 32,
+                              height: 32,
+                              alignSelf: "center",
+                            }}
+                            animationData={Loading}
                           />
                         </div>
                       </div>

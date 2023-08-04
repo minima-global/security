@@ -10,7 +10,7 @@ export const restoreFromBackup = (
       }"`,
       (response: any) => {
         if (!response.status)
-          reject(response.error ? response.error : "RPC FAILED");
+          return reject(response.error ? response.error : "RPC FAILED");
 
         resolve(response);
       }

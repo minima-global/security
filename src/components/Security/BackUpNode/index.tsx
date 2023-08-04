@@ -78,23 +78,20 @@ const BackupNode = () => {
     }
   }, [step]);
 
-  const createDownloadLink = async (mdsfile: string) => {
-    try {
-      const hexstring = await fileManager.loadBinaryToHex(mdsfile);
+  const createDownloadLink = (mdsfile: string): Promise<string> => {
+    return new Promise((resolve) => {
+      const origFilePath = `/backups/${mdsfile}`;
+      const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
 
-      await fileManager.saveFileAsBinary(mdsfile, hexstring);
-      const filedata = hexstring;
-      const b64 = (window as any).MDS.util.hexToBase64(filedata);
-      const binaryData = (window as any).MDS.util.base64ToArrayBuffer(b64);
-      const blob = new Blob([binaryData], {
-        type: "application/octet-stream",
-      });
-
-      const url = URL.createObjectURL(blob);
-      return url;
-    } catch (error) {
-      return "";
-    }
+      (window as any).MDS.file.copytoweb(
+        origFilePath,
+        newFilePath,
+        function () {
+          const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
+          resolve(url);
+        }
+      );
+    });
   };
 
   const getBackupStatus = async () => {
@@ -193,7 +190,7 @@ const BackupNode = () => {
       ),
     };
   };
-  const downloadBackupDialog = (download: string, name: string) => {
+  const downloadBackupDialog = (download: string) => {
     return {
       content: (
         <div className="mb-8">
@@ -218,7 +215,6 @@ const BackupNode = () => {
             className="hidden"
             target="_blank"
             href={download}
-            download={name}
           ></a>
         </Button>
       ),
@@ -299,8 +295,8 @@ const BackupNode = () => {
         }
 
         if (!isMinimaBrowser) {
-          const downloadlink = await createDownloadLink("/backups/" + fileName);
-          const dialog = downloadBackupDialog(downloadlink, fileName);
+          const downloadlink = await createDownloadLink(fileName);
+          const dialog = downloadBackupDialog(downloadlink);
 
           authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
           setModal({

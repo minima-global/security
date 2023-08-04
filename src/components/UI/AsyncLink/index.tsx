@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import * as fileManager from "../../../__minima__/libs/fileManager";
 import useIsMinimaBrowser from "../../../hooks/useIsMinimaBrowser";
 
 interface IProps {
@@ -7,24 +6,24 @@ interface IProps {
   file: string;
   children: any;
   onClick: (e: any) => void;
-  name: string;
 }
-const AsyncLink = ({ file, name, children, onClick }: IProps) => {
+const AsyncLink = ({ file, children, onClick }: IProps) => {
   const [href, setHref] = useState("");
   const isMinimaBrowser = useIsMinimaBrowser();
 
-  const createDownloadLink = async (mdsfile: string): Promise<string> => {
-    const path = await fileManager.getPath(mdsfile);
+  const createDownloadLink = (mdsfile: string): Promise<string> => {
     return new Promise((resolve) => {
-      const filePath = `/my_downloads/${mdsfile}`;
+      const origFilePath = `/backups/${mdsfile}`;
+      const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
 
-      const newFileName = mdsfile + "_minima_download_as_file_";
-
-      (window as any).MDS.file.copytoweb(path, filePath, function () {
-        const url = `my_downloads/${newFileName}`;
-
-        resolve(url);
-      });
+      (window as any).MDS.file.copytoweb(
+        origFilePath,
+        newFilePath,
+        function () {
+          const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
+          resolve(url);
+        }
+      );
     });
   };
 
@@ -39,7 +38,7 @@ const AsyncLink = ({ file, name, children, onClick }: IProps) => {
   }
 
   return (
-    <a onClick={onClick} download={name} target="_blank" href={href}>
+    <a href={href} target="_blank">
       {children}
     </a>
   );

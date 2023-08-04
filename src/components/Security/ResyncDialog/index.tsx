@@ -9,6 +9,7 @@ import { useContext, useEffect, useState } from "react";
 import { appContext } from "../../../AppContext";
 import { useAuth } from "../../../providers/authProvider";
 import PERMISSIONS from "../../../permissions";
+import { useArchiveContext } from "../../../providers/archiveProvider";
 
 const ResyncDialog = () => {
   const navigate = useNavigate();
@@ -16,6 +17,12 @@ const ResyncDialog = () => {
 
   const { authNavigate } = useAuth();
   const { shuttingDown, setModal, isMobile } = useContext(appContext);
+  const {
+    userWantsToArchiveReset,
+    deleteLastUploadedArchive,
+    resetArchiveContext,
+    archiveFileToUpload,
+  } = useArchiveContext();
   const [error, setError] = useState<false | string>(false);
 
   useEffect(() => {
@@ -147,6 +154,14 @@ const ResyncDialog = () => {
               <Button
                 onClick={() => {
                   navigate("/dashboard");
+                  if (userWantsToArchiveReset) {
+                    resetArchiveContext();
+                    if (archiveFileToUpload) {
+                      deleteLastUploadedArchive(
+                        "/fileupload/" + archiveFileToUpload.name
+                      );
+                    }
+                  }
                 }}
               >
                 Cancel
@@ -163,6 +178,14 @@ const ResyncDialog = () => {
           <Button
             onClick={() => {
               navigate("/dashboard");
+              if (userWantsToArchiveReset) {
+                resetArchiveContext();
+                if (archiveFileToUpload) {
+                  deleteLastUploadedArchive(
+                    "/fileupload/" + archiveFileToUpload.name
+                  );
+                }
+              }
             }}
           >
             Cancel

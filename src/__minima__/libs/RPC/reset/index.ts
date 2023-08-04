@@ -9,10 +9,13 @@ export const reset = (
         password ? password : "minima"
       }"`,
       (response: any) => {
-        if (!response.status)
+        if (!response.status) {
           reject(response.error ? response.error : "RPC FAILED");
+        }
 
-        resolve(response);
+        if (response.status) {
+          resolve(true);
+        }
       }
     );
   });
