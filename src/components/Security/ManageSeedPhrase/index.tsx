@@ -120,7 +120,7 @@ const ManageSeedPhrase = () => {
                 </div>
               </div>
 
-              <div className="core-black-contrast p-4 rounded">
+              {/* <div className="core-black-contrast p-4 rounded">
                 <div className="mb-5 text-left">
                   If you have lost your phone or do not have a backup, you can
                   import your seed phrase. <br /> <br />
@@ -153,7 +153,7 @@ const ManageSeedPhrase = () => {
                     </svg>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

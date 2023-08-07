@@ -35,13 +35,11 @@ const ChainResyncReset = () => {
         <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
         <h1 className="text-2xl mb-8">Re-sync your node?</h1>
         <p className="mb-6">
-          The full chain will be downloaded from your chosen archive node.{" "}
-          <br />
-          <br /> This action is irreversible, consider taking a backup before
-          starting re-sync. <br />
-          <br /> This process should take up to 2 hours to complete but could
-          take longer. Please connect your device to a power source before
-          continuing.
+          The full chain will be re-synced from the archive file. <br />
+          <br /> This action is irreversible, consider taking a backup
+          continuing. <br />
+          <br /> Once started, please be patient and wait for the re-sync to
+          complete.
         </p>
       </div>
     ),
@@ -191,13 +189,10 @@ const ChainResyncReset = () => {
             </svg>
 
             <p className="text-sm password-label">
-              If you don't have an archive file, you can download a file here:{" "}
-              <a
-                className=""
-                target="_blank"
-                href="https://www.github.com/archivenode"
-              >
-                www.github.com/archivenode
+              If you don't have an archive file, you can visit the archive file
+              channel on our Discord server{" "}
+              <a target="_blank" href="https://discord.com/invite/minima">
+                https://discord.com/invite/minima
               </a>
             </p>
           </div>

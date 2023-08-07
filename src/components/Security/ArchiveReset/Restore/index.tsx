@@ -182,13 +182,10 @@ const ArchiveReset = () => {
             </svg>
 
             <p className="text-sm password-label">
-              If you don't have an archive file, you can download a file here:{" "}
-              <a
-                className=""
-                target="_blank"
-                href="https://www.github.com/archivenode"
-              >
-                www.github.com/archivenode
+              If you don't have an archive file, you can visit the archive file
+              channel on our Discord server{" "}
+              <a target="_blank" href="https://discord.com/invite/minima">
+                https://discord.com/invite/minima
               </a>
             </p>
           </div>

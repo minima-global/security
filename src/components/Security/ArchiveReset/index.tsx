@@ -22,6 +22,41 @@ const ArchiveReset = () => {
     useState<ExportedArchive | null>(null);
   const [error, setError] = useState<false | string>(false);
 
+  // function downloadFile(path: string, downloadName: string) {
+  //   return new Promise((resolve) => {
+  //     // webview download support
+  //     // do not load binary
+  //     if (isMinimaBrowser) {
+  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //       // @ts-ignore
+  //       Android.fileDownload(MDS.minidappuid, path);
+  //       return resolve(true);
+  //     }
+
+  //     // On Desktop - do a link download... although this would also work on Phone...
+  //     // Create the NEW filename... with special string..
+  //     const newFileName = downloadName + "_minima_download_as_file_";
+
+  //     //Copy the original file to webfolder - WITH the special name
+  //     (window as any).MDS.file.copytoweb(
+  //       path,
+  //       `/my_downloads/${newFileName}`,
+  //       function (resp) {
+  //         console.log(resp);
+  //         // Get the URL to this File - with the special ending which makes it download
+  //         const url = `my_downloads/${newFileName}`;
+
+  //         // Now create a normal link - that when clicked downloads it..
+  //         const link = document.createElement("a");
+  //         link.href = url;
+  //         document.body.appendChild(link);
+  //         link.click();
+  //         resolve(true);
+  //       }
+  //     );
+  //   });
+  // }
+
   useEffect(() => {
     setBackButton({
       display: true,
@@ -199,6 +234,23 @@ const ArchiveReset = () => {
                     {!exporting ? "Export archive file" : "Exporting..."}
                   </Button>
                 )}
+
+                {/* {!exporting && exportedArchive !== null && (
+                  <Button
+                    variant="primary"
+                    onClick={async () => {
+                      const dateCreation = format(new Date(), "_dMMMyyyy_Hmm");
+                      const fileName = "archive_export__" + dateCreation;
+
+                      await downloadFile(
+                        exportedArchive.fileLocation,
+                        fileName
+                      );
+                    }}
+                  >
+                    Download
+                  </Button>
+                )} */}
               </>
             }
             secondaryActions={
