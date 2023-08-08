@@ -8,14 +8,14 @@ import AsyncLink from "../../../UI/AsyncLink";
 import PERMISSIONS from "../../../../permissions";
 import useIsMinimaBrowser from "../../../../hooks/useIsMinimaBrowser";
 
-const Backups = () => {
+const Archives = () => {
   const [searchText, setSearchText] = useState("");
-  const { getBackups, backups } = useContext(appContext);
+  const { getArchives, archives } = useContext(appContext);
   const { authNavigate } = useAuth();
   const isMinimaBrowser = useIsMinimaBrowser();
 
   useEffect(() => {
-    getBackups();
+    getArchives();
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,8 +32,8 @@ const Backups = () => {
 
   const handleDelete = async (backupFile: string) => {
     authNavigate(
-      "/dashboard/backup/backups/delete",
-      PERMISSIONS.CAN_VIEW_DELETE_BACKUP,
+      "/dashboard/archivereset/archives/delete",
+      PERMISSIONS.CAN_VIEW_DELETE_ARCHIVE,
       {
         state: { backup: { name: backupFile } },
       }
@@ -44,9 +44,9 @@ const Backups = () => {
     <div className={styles["backdrop"]}>
       <div className={styles["dd"]}>
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl">Recent backups</h1>
+          <h1 className="text-2xl">Recent archives</h1>
           <svg
-            onClick={() => authNavigate("/dashboard/backup", [])}
+            onClick={() => authNavigate("/dashboard/archivereset", [])}
             width="16"
             height="17"
             viewBox="0 0 16 17"
@@ -60,14 +60,14 @@ const Backups = () => {
           </svg>
         </div>
 
-        {!!backups.length && (
+        {!!archives.length && (
           <>
             <div className="mb-6">
               <Input
                 id="search"
                 name="search"
                 type="text"
-                placeholder="Search backups"
+                placeholder="Search archives"
                 onChange={handleChange}
                 extraClass="core-black-contrast rounded-r-none"
                 endIcon={
@@ -100,7 +100,7 @@ const Backups = () => {
             </div>
             <ul className="pb-4">
               {!!searchText.length &&
-                backups
+                archives
                   .filter((o) => o.name.includes(searchText))
                   .map((b, i) => (
                     <li
@@ -114,7 +114,7 @@ const Backups = () => {
                           <svg
                             onClick={async () => {
                               const fullPath = await fileManager.getPath(
-                                "/backups/" + b.name
+                                "/archives/" + b.name
                               );
 
                               // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -135,17 +135,17 @@ const Backups = () => {
                         )}
 
                         <AsyncLink
-                          folder="backups"
+                          folder="archives"
                           file={b.name}
                           onClick={(e) => {
                             if (isMinimaBrowser) {
                               e.stopPropagation();
-                              handleDownload("/backups/" + b.name);
+                              handleDownload("/archives/" + b.name);
                             }
                           }}
                         >
                           <svg
-                            onClick={() => handleDownload(backups.name)}
+                            onClick={() => handleDownload(archives.name)}
                             xmlns="http://www.w3.org/2000/svg"
                             width="24"
                             height="24"
@@ -216,7 +216,7 @@ const Backups = () => {
                     </li>
                   ))}
               {!searchText.length &&
-                backups.map((b, i) => (
+                archives.map((b, i) => (
                   <li
                     className="font-normal p-4 core-grey-5 rounded color-black"
                     key={i}
@@ -228,7 +228,7 @@ const Backups = () => {
                         <svg
                           onClick={async () => {
                             const fullPath = await fileManager.getPath(
-                              "/backups/" + b.name
+                              "/archives/" + b.name
                             );
 
                             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -248,12 +248,12 @@ const Backups = () => {
                         </svg>
                       )}
                       <AsyncLink
-                        folder="backups"
+                        folder="archives"
                         file={b.name}
                         onClick={(e) => {
                           if (isMinimaBrowser) {
                             e.stopPropagation();
-                            handleDownload("/backups/" + b.name);
+                            handleDownload("/archives/" + b.name);
                           }
                         }}
                       >
@@ -328,19 +328,19 @@ const Backups = () => {
                   </li>
                 ))}
               {!!searchText.length &&
-                backups.filter((o) => o.name.includes(searchText)).length ===
+                archives.filter((o) => o.name.includes(searchText)).length ===
                   0 && <p className={styles["no-results"]}>No results found</p>}
             </ul>
           </>
         )}
-        {!backups.length && (
+        {!archives.length && (
           <>
             <div className="mb-6">
               <Input
                 id="search"
                 name="search"
                 type="text"
-                placeholder="Search backups"
+                placeholder="Search archives"
                 onChange={handleChange}
                 extraClass="core-black-contrast rounded-r-none"
                 endIcon={
@@ -371,15 +371,12 @@ const Backups = () => {
                 }
               />
             </div>
-            <p className={styles["no-results"]}>You have no recent backups</p>
+            <p className={styles["no-results"]}>You have no recent archives</p>
           </>
         )}
       </div>
     </div>
-    // <SlideUp delay={100}>
-
-    // </SlideUp>
   );
 };
 
-export default Backups;
+export default Archives;

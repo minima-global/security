@@ -344,17 +344,17 @@ const BackupNode = () => {
                     </div>
                   </div>
                 </div>
+                <div className=" text-left">
+                  Before taking a backup, check that you are in sync with the
+                  chain.
+                </div>
                 <div className="core-black-contrast-2 p-4 rounded">
-                  <div className="mb-6 text-left">
-                    Before taking a backup, check that you are in sync with the
-                    chain.
-                  </div>
                   {!vaultLocked && (
-                    <div className="form-error-border p-4 text-left mb-6">
-                      <h1 className="text-base text-error pb-4 font-bold">
+                    <div className=" text-left mb-6">
+                      <h1 className="text-base pb-4 font-bold">
                         Your node is unlocked.
                       </h1>
-                      <p className="text-base text-error font-medium">
+                      <p className="text-base font-medium">
                         Consider{" "}
                         <a
                           className="hover:cursor-pointer"
