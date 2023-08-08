@@ -7,13 +7,19 @@ import Button from "../../UI/Button";
 import CommonDialogLayout from "../../UI/CommonDialogLayout";
 import FadeIn from "../../UI/Animations/FadeIn";
 
+import { format } from "date-fns";
+import * as fileManager from "../../../__minima__/libs/fileManager";
+
 interface ExportedArchive {
   fileLocation: string;
   size: string;
 }
 const ArchiveReset = () => {
-  const { displayBackButton: displayHeaderBackButton, setBackButton } =
-    useContext(appContext);
+  const {
+    displayBackButton: displayHeaderBackButton,
+    setBackButton,
+    isMinimaBrowser,
+  } = useContext(appContext);
   const { authNavigate } = useAuth();
 
   const [exportingArchive, setExportingArchive] = useState(false);
@@ -21,41 +27,38 @@ const ArchiveReset = () => {
   const [exportedArchive, setExportedArchive] =
     useState<ExportedArchive | null>(null);
   const [error, setError] = useState<false | string>(false);
+  const [fileName, setFileName] = useState("");
 
-  // function downloadFile(path: string, downloadName: string) {
-  //   return new Promise((resolve) => {
-  //     // webview download support
-  //     // do not load binary
-  //     if (isMinimaBrowser) {
-  //       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //       // @ts-ignore
-  //       Android.fileDownload(MDS.minidappuid, path);
-  //       return resolve(true);
-  //     }
+  function downloadFile(mdsfile: string) {
+    return new Promise((resolve) => {
+      // webview download support
+      // do not load binary
+      if (isMinimaBrowser) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        Android.fileDownload(MDS.minidappuid, path);
+        return resolve(true);
+      }
 
-  //     // On Desktop - do a link download... although this would also work on Phone...
-  //     // Create the NEW filename... with special string..
-  //     const newFileName = downloadName + "_minima_download_as_file_";
+      const origFilePath = `/archives/${mdsfile}`;
+      const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
 
-  //     //Copy the original file to webfolder - WITH the special name
-  //     (window as any).MDS.file.copytoweb(
-  //       path,
-  //       `/my_downloads/${newFileName}`,
-  //       function (resp) {
-  //         console.log(resp);
-  //         // Get the URL to this File - with the special ending which makes it download
-  //         const url = `my_downloads/${newFileName}`;
-
-  //         // Now create a normal link - that when clicked downloads it..
-  //         const link = document.createElement("a");
-  //         link.href = url;
-  //         document.body.appendChild(link);
-  //         link.click();
-  //         resolve(true);
-  //       }
-  //     );
-  //   });
-  // }
+      //Copy the original file to webfolder - WITH the special name
+      (window as any).MDS.file.copytoweb(
+        origFilePath,
+        newFilePath,
+        function () {
+          const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
+          // Now create a normal link - that when clicked downloads it..
+          const link = document.createElement("a");
+          link.href = url;
+          document.body.appendChild(link);
+          link.click();
+          resolve(true);
+        }
+      );
+    });
+  }
 
   useEffect(() => {
     setBackButton({
@@ -183,6 +186,28 @@ const ArchiveReset = () => {
               <Button onClick={() => setExportingArchive(true)}>
                 Archive export
               </Button>
+              <div
+                onClick={() =>
+                  authNavigate("/dashboard/archivereset/archives", [])
+                }
+                className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer mt-4"
+              >
+                Browse internal archives{" "}
+                <div className="absolute right-0 top-0 h-full px-5 flex items-center">
+                  <svg
+                    width="8"
+                    height="12"
+                    viewBox="0 0 8 12"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M7.04984 5.99995L1.37504 11.6501L0.500244 10.7501L5.24984 5.99995L0.500244 1.24975L1.40024 0.349747L7.04984 5.99995Z"
+                      fill="#F4F4F5"
+                    />
+                  </svg>
+                </div>
+              </div>
             </div>
           </div>
         </SlideIn>
@@ -195,7 +220,7 @@ const ArchiveReset = () => {
             primaryActions={
               <>
                 {error && (
-                  <div className="text-sm form-error-message text-left mb-4">
+                  <div className="text-sm form-error-message text-left mb-4 break-words">
                     {error}
                   </div>
                 )}
@@ -203,13 +228,18 @@ const ArchiveReset = () => {
                 {exportedArchive === null && (
                   <Button
                     disabled={exporting}
-                    onClick={() => {
+                    onClick={async () => {
                       setError(false);
                       setExporting(true);
 
+                      const rootPath = await fileManager.getPath("");
+                      const dateCreation = format(new Date(), "_dMMMyyyy_Hmm");
+                      const fileName = "archive_export_" + dateCreation;
+                      setFileName(fileName);
+
                       (window as any).MDS.cmd(
-                        "archive action:export",
-                        function (resp) {
+                        `archive action:export file:"${rootPath}/archives/${fileName}"`,
+                        async function (resp) {
                           if (!resp.status) {
                             setError(
                               resp.error
@@ -235,22 +265,16 @@ const ArchiveReset = () => {
                   </Button>
                 )}
 
-                {/* {!exporting && exportedArchive !== null && (
+                {!exporting && exportedArchive !== null && (
                   <Button
                     variant="primary"
                     onClick={async () => {
-                      const dateCreation = format(new Date(), "_dMMMyyyy_Hmm");
-                      const fileName = "archive_export__" + dateCreation;
-
-                      await downloadFile(
-                        exportedArchive.fileLocation,
-                        fileName
-                      );
+                      await downloadFile(fileName);
                     }}
                   >
-                    Download
+                    Download now
                   </Button>
-                )} */}
+                )}
               </>
             }
             secondaryActions={
@@ -298,8 +322,18 @@ const ArchiveReset = () => {
                     </svg>
                     <h1 className="text-2xl mb-8">Export completed</h1>
                     <p className="mb-6">
-                      Your archive with size {exportedArchive.size} can be found
-                      at {exportedArchive.fileLocation}
+                      An archive <span className="font-bold">{fileName}</span>{" "}
+                      with size {exportedArchive.size} has been saved in your
+                      internal archives directory. Click{" "}
+                      <a
+                        className="cursor-pointer"
+                        onClick={() =>
+                          authNavigate("/dashboard/archivereset/archives", [])
+                        }
+                      >
+                        here
+                      </a>{" "}
+                      to browse your archives. You can also download it below:
                     </p>
                   </div>
                 )}

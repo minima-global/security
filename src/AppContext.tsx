@@ -71,8 +71,8 @@ const AppProvider = ({ children }: IProps) => {
     23: "",
     24: "",
   });
-  // backups stuff
 
+  // backups stuff
   const [backups, setBackups] = useState<string[]>([]);
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
@@ -83,6 +83,9 @@ const AppProvider = ({ children }: IProps) => {
   >(null);
 
   const [shuttingDown, setShuttingDown] = useState(false);
+
+  // archive stuff
+  const [archives, setArchives] = useState<string[]>([]);
 
   // apply these whenever vault is locked or unlocked
   useEffect(() => {
@@ -184,6 +187,13 @@ const AppProvider = ({ children }: IProps) => {
       }
     });
   };
+  const getArchives = () => {
+    fileManager.listFiles("/archives").then((response: any) => {
+      if (response.status) {
+        setArchives(response.response.list.reverse());
+      }
+    });
+  };
 
   const checkVaultLocked = () => {
     rpc.isVaultLocked().then((r) => {
@@ -218,8 +228,8 @@ const AppProvider = ({ children }: IProps) => {
 
           /** get and set all current backups */
           getBackups();
-          /** get latest backup for display reasons */
-          // getLatestBackup();
+          /** get and set all current archives */
+          getArchives();
 
           /** */
           checkVaultLocked();
@@ -257,6 +267,10 @@ const AppProvider = ({ children }: IProps) => {
         //backups
         backups,
         getBackups,
+
+        //archives
+        archives,
+        getArchives,
 
         // mds shutting down
         shuttingDown,

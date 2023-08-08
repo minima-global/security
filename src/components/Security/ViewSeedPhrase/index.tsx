@@ -47,7 +47,10 @@ const ViewSeedPhrase = () => {
           {phraseAsArray.map((p, index) => (
             <li>
               <div>{index + 1}</div>
-              {!hide ? p : ""}
+              {!hide
+                ? p.toLowerCase().charAt(0).toUpperCase() +
+                  p.slice(1).toLowerCase()
+                : ""}
             </li>
           ))}
         </ul>

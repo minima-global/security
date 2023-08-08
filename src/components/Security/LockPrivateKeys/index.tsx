@@ -175,13 +175,11 @@ const LockPrivateKeys = () => {
               <div className="rounded">
                 <div>
                   <div className="mb-3 text-left pb-2">
-                    Locking your private keys prevents unauthorised access to
-                    your wallet and seed phrase. <br />
+                    Locking your node prevents unauthorised access to your
+                    wallet and seed phrase. <br />
                     <br /> Your private keys will be encrypted with a password
                     which you will be required to enter when transacting. You
-                    will still be able to receive funds as usual. Before
-                    locking, ensure you have a copy of your seed phrase written
-                    down.
+                    will still be able to receive funds as usual.
                   </div>
                   <p className="text-core-grey-80 text-left">
                     Before locking, ensure you have a copy of your seed phrase
