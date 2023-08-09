@@ -27,34 +27,24 @@ import Logs from "../Logs";
 import TogglePasswordIcon from "../UI/TogglePasswordIcon/TogglePasswordIcon";
 
 const validationSchema = yup.object().shape({
-  host: yup
-    .string()
-    .required("Please enter an archive host node")
-    .test("test-host", function (val) {
-      const { createError, path } = this;
-      if (val === undefined) {
-        return createError({
-          path,
-          message: "Please enter an archive host node",
-        });
-      }
-
-      if (val === "auto") {
-        return true;
-      }
-
-      const regexp = new RegExp(
-        /([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}):?([0-9]{1,5})?/
-      );
-      if (!regexp.test(val)) {
-        return createError({
-          path,
-          message: "Please enter a valid archive host node",
-        });
-      }
-
+  host: yup.string().test("test-host", function (val) {
+    const { createError, path } = this;
+    if (val === undefined) {
       return true;
-    }),
+    }
+
+    const regexp = new RegExp(
+      /([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}):?([0-9]{1,5})?/
+    );
+    if (!regexp.test(val)) {
+      return createError({
+        path,
+        message: "Please enter a valid archive host node",
+      });
+    }
+
+    return true;
+  }),
   file: yup
     .mixed()
     .required("Please select a (.bak) file")
@@ -438,7 +428,7 @@ const RestoreDialog = () => {
                           <Input
                             id="host"
                             name="host"
-                            placeholder="host"
+                            placeholder="host (optional)"
                             type="text"
                             value={formik.values.host}
                             onChange={formik.handleChange}

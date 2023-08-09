@@ -36,7 +36,7 @@ const ArchiveReset = () => {
       if (isMinimaBrowser) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        Android.fileDownload(MDS.minidappuid, path);
+        Android.fileDownload(MDS.minidappuid, mdsfile);
         return resolve(true);
       }
 

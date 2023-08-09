@@ -7,7 +7,6 @@ export const importSeedPhrase = (
     (window as any).MDS.cmd(
       `archive action:resync phrase:"${phrase}" host:"${host}" keyuses:${keyuses}`,
       (response: any) => {
-        // console.log(response);
         if (!response.status)
           reject(response.error ? response.error : "RPC FAILED");
         resolve(response.response);
