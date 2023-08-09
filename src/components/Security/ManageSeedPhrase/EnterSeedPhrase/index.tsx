@@ -166,8 +166,8 @@ const EnterSeedPhrase = () => {
   useEffect(() => {
     setBackButton({
       display: true,
-      to: "/dashboard/manageseedphrase",
-      title: "Security",
+      to: "/dashboard/archivereset/seedresync",
+      title: "Back",
     });
   }, [location]);
 
@@ -235,7 +235,7 @@ const EnterSeedPhrase = () => {
     <>
       <div className="h-full bg-black px-4 pb-4">
         {!displayHeaderBackButton && !userWantsToArchiveReset && (
-          <BackButton to="/dashboard/manageseedphrase" title="Security" />
+          <BackButton to="/dashboard/archivereset/seedresync" title="Back" />
         )}
         {!displayHeaderBackButton && userWantsToArchiveReset && (
           <BackButton

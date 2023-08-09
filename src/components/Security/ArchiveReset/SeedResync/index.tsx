@@ -43,6 +43,7 @@ const SeedResyncReset = () => {
     primaryActions: (
       <>
         <input
+          accept=".gzip"
           type="file"
           className="hidden"
           ref={inputRef}
@@ -51,7 +52,7 @@ const SeedResyncReset = () => {
             if (file) {
               setArchiveFileToUpload(file);
               setContext("seedresync");
-              authNavigate("/upload", []);
+              authNavigate("/upload", [PERMISSIONS["CAN_VIEW_UPLOADING"]]);
             }
           }}
         />

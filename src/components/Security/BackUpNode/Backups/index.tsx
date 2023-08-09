@@ -69,7 +69,7 @@ const Backups = () => {
                 type="text"
                 placeholder="Search backups"
                 onChange={handleChange}
-                extraClass="core-black-contrast rounded-r-none"
+                extraClass="rounded-r-none"
                 endIcon={
                   <svg
                     width="20"
@@ -342,7 +342,7 @@ const Backups = () => {
                 type="text"
                 placeholder="Search backups"
                 onChange={handleChange}
-                extraClass="core-black-contrast rounded-r-none"
+                extraClass="rounded-r-none"
                 endIcon={
                   <svg
                     width="20"

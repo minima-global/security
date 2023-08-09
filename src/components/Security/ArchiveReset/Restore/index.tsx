@@ -43,6 +43,7 @@ const ArchiveReset = () => {
     primaryActions: (
       <>
         <input
+          accept=".gzip"
           type="file"
           className="hidden"
           ref={inputRef}
@@ -51,7 +52,7 @@ const ArchiveReset = () => {
             if (file) {
               setArchiveFileToUpload(file);
               setContext("restore");
-              authNavigate("/upload", []);
+              authNavigate("/upload", [PERMISSIONS["CAN_VIEW_UPLOADING"]]);
             }
           }}
         />

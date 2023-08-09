@@ -69,7 +69,7 @@ const Archives = () => {
                 type="text"
                 placeholder="Search archives"
                 onChange={handleChange}
-                extraClass="core-black-contrast rounded-r-none"
+                extraClass="core-black-contrast-2 rounded-r-none"
                 endIcon={
                   <svg
                     width="20"
@@ -342,7 +342,7 @@ const Archives = () => {
                 type="text"
                 placeholder="Search archives"
                 onChange={handleChange}
-                extraClass="core-black-contrast rounded-r-none"
+                extraClass="core-black-contrast-2 rounded-r-none"
                 endIcon={
                   <svg
                     width="20"

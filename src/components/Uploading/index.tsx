@@ -142,6 +142,7 @@ const Uploading = () => {
               {!uploading && (error || warning) && (
                 <>
                   <input
+                    accept=".gzip"
                     className="hidden"
                     type="file"
                     ref={inputRef}
@@ -151,7 +152,9 @@ const Uploading = () => {
                         // let's re-upload..
                         setError(false);
                         setArchiveFileToUpload(file);
-                        authNavigate("/upload", []);
+                        authNavigate("/upload", [
+                          PERMISSIONS["CAN_VIEW_UPLOADING"],
+                        ]);
                       }
                     }}
                   />

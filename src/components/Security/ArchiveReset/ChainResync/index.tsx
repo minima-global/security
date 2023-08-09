@@ -46,6 +46,7 @@ const ChainResyncReset = () => {
     primaryActions: (
       <>
         <input
+          accept=".gzip"
           type="file"
           className="hidden"
           ref={inputRef}
@@ -54,7 +55,7 @@ const ChainResyncReset = () => {
             if (file) {
               setArchiveFileToUpload(file);
               setContext("chainresync");
-              authNavigate("/upload", []);
+              authNavigate("/upload", [PERMISSIONS["CAN_VIEW_UPLOADING"]]);
             }
           }}
         />
