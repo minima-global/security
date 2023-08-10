@@ -55,6 +55,9 @@ const Uploading = () => {
 
           await checkArchiveIntegrity("/fileupload/" + resp.filename)
             .then((archive) => {
+              if (parseInt(archive.last) < 0) {
+                setError("Something went wrong, please try again");
+              }
               setIntegrityCheck(false);
               setUploading(false);
               setArchive(archive);
@@ -158,7 +161,10 @@ const Uploading = () => {
                       }
                     }}
                   />
-                  <Button onClick={() => inputRef.current?.click()}>
+                  <Button
+                    extraClass="mt-4"
+                    onClick={() => inputRef.current?.click()}
+                  >
                     Upload a different file
                   </Button>
                 </>

@@ -461,7 +461,51 @@ const RestoreDialog = () => {
                     className={`${styles.desktop_only} ${styles.secondaryActions}`}
                   >
                     {!formik.isSubmitting && (
-                      <Button onClick={() => setMode(false)}>Cancel</Button>
+                      <Button
+                        onClick={() => {
+                          if (!mode) {
+                            if (!userWantsToArchiveReset) {
+                              navigate(-1);
+                            }
+                            if (userWantsToArchiveReset) {
+                              resetArchiveContext();
+                              if (archiveFileToUpload) {
+                                deleteLastUploadedArchive(
+                                  "/fileupload/" + archiveFileToUpload.name
+                                );
+                              }
+
+                              navigate("/dashboard/archivereset/restorebackup");
+                            }
+                          }
+
+                          if (mode) {
+                            if (!mode) {
+                              if (!userWantsToArchiveReset) {
+                                navigate(-1);
+                              }
+                              if (userWantsToArchiveReset) {
+                                resetArchiveContext();
+                                if (archiveFileToUpload) {
+                                  deleteLastUploadedArchive(
+                                    "/fileupload/" + archiveFileToUpload.name
+                                  );
+                                }
+
+                                navigate(
+                                  "/dashboard/archivereset/restorebackup"
+                                );
+                              }
+                            }
+
+                            if (mode) {
+                              setMode(false);
+                            }
+                          }
+                        }}
+                      >
+                        Cancel
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -558,7 +602,7 @@ const RestoreDialog = () => {
                           <Input
                             id="host"
                             name="host"
-                            placeholder="Auto"
+                            placeholder="host (optional)"
                             type="text"
                             value={formik.values.host}
                             onChange={formik.handleChange}
