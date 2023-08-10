@@ -172,9 +172,7 @@ const RestoreDialog = () => {
         <div>
           <img className="mb-3" alt="download" src="./assets/error.svg" />{" "}
           <h1 className="text-2xl mb-8 font-semibold">Something went wrong!</h1>
-          <p className="font-medium">
-            {error.length ? error : "Please go back and try again."}
-          </p>
+          <p className="font-medium">{error}</p>
         </div>
       ),
       primaryActions: <div></div>,
@@ -245,9 +243,7 @@ const RestoreDialog = () => {
             });
         }
       } catch (error: any) {
-        const dialog = SomethingWentWrong(
-          error ? error : "Something went wrong"
-        );
+        const dialog = SomethingWentWrong(JSON.stringify(error));
 
         authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({

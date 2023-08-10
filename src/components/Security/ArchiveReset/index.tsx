@@ -234,7 +234,8 @@ const ArchiveReset = () => {
 
                       const rootPath = await fileManager.getPath("");
                       const dateCreation = format(new Date(), "_dMMMyyyy_Hmm");
-                      const fileName = "archive_export_" + dateCreation;
+                      const fileName =
+                        "archive_export_" + dateCreation + ".gzip";
                       setFileName(fileName);
 
                       (window as any).MDS.cmd(
