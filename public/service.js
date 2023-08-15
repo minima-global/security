@@ -41,7 +41,7 @@ MDS.init(function (msg) {
     MDS.file.list("/backups", function (response) {
       log(`Your backups: ${JSON.stringify(response.response.list)}`);
       if (response.status) {
-        const myBackups = response.response.list;
+        const myBackups = response.response.list.reverse();
 
         log(`Total backups: ${myBackups.length}`);
 
@@ -172,6 +172,7 @@ function getAutomaticBackupStatus() {
 }
 
 function deleteFile(filepath) {
+  log(`Deleting backup file:${filepath}`);
   MDS.file.delete(filepath, function (response) {
     if (response.status) {
       log(`Deleted backup ${filepath}`);

@@ -23,7 +23,7 @@ const Archives = () => {
   };
 
   const handleDownload = async (backupFile: string) => {
-    if (isMinimaBrowser) {
+    if (window.navigator.userAgent.includes("Minima Browser")) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return Android.fileDownload(MDS.minidappuid, backupFile);

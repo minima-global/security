@@ -83,7 +83,7 @@ const RestoreDialog = () => {
 
   const [resetFileField, setResetFileField] = useState<number>(0);
 
-  const { setModal, backups, getBackups, shuttingDown, isMobile } =
+  const { setModal, backups, getBackups, shuttingDown } =
     useContext(appContext);
   const [mode, setMode] = useState<"files" | "backups" | false>(false);
   const [tooltip, setTooltip] = useState({ host: false });
@@ -144,7 +144,7 @@ const RestoreDialog = () => {
         secondaryActions: (
           <Button
             onClick={() => {
-              if (isMobile === "mobile") {
+              if (window.navigator.userAgent.includes("Minima Browser")) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 return Android.shutdownMinima();
@@ -243,7 +243,13 @@ const RestoreDialog = () => {
             });
         }
       } catch (error: any) {
-        const dialog = SomethingWentWrong(JSON.stringify(error));
+        const dialog = SomethingWentWrong(
+          typeof error === "string"
+            ? error
+            : error && error.message
+            ? error.message
+            : "Something went wrong"
+        );
 
         authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
         setModal({
