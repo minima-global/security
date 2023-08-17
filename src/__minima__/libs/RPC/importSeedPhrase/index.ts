@@ -1,6 +1,6 @@
 export const importSeedPhrase = (
   phrase: string,
-  host = "auto",
+  host: string,
   keyuses = 1000
 ) => {
   return new Promise((resolve, reject) => {

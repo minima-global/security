@@ -39,21 +39,23 @@ MDS.init(function (msg) {
 
     // do we need to prune any backups?
     MDS.file.list("/backups", function (response) {
-      log(`Your backups: ${JSON.stringify(response.response.list)}`);
       if (response.status) {
         const myBackups = response.response.list.reverse();
+        log(`Your backups: ${JSON.stringify(myBackups)}`);
+        myBackups.sort(function (a, b) {
+          return a.modified - b.modified;
+        });
+
+        MDS.log(JSON.stringify(myBackups));
 
         log(`Total backups: ${myBackups.length}`);
 
         if (myBackups.length > 14) {
           log(`Backups exceed total amount, time to delete some backups..`);
           // time to delete the backups
-          for (var i = 14; i <= myBackups.length - 1; i++) {
-            log(`Deleting backup: ${myBackups[i].location}`);
-
-            deleteFile(myBackups[i].location);
-            myBackups.slice(i, 1);
-          }
+          log(`Deleting backup: ${myBackups[0].location}`);
+          deleteFile(myBackups[0].location);
+          myBackups.slice(0, 1);
         }
       }
     });

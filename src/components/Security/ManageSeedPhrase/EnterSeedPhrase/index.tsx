@@ -153,6 +153,19 @@ const EnterSeedPhrase = () => {
   const [step, setStep] = useState<number>(0);
   const [seedWord, setSeedWord] = useState([1, 2, 3, 4, 5, 6]);
 
+  const [currentHost, setCurrentHost] = useState("");
+  const [keyUses, setKeyUses] = useState(1000);
+
+  useEffect(() => {
+    if (location.state && location.state.host) {
+      setCurrentHost(location.state.host);
+    }
+
+    if (location.state && location.state.keyuses) {
+      setKeyUses(location.state.keyuses);
+    }
+  }, [location]);
+
   useEffect(() => {
     const endOfSeedPhrase = seedWord[5] === 24;
 
@@ -199,7 +212,8 @@ const EnterSeedPhrase = () => {
         23: "".toUpperCase(),
         24: "".toUpperCase(),
       },
-      keyuses: 1000,
+      keyuses: keyUses,
+      host: currentHost,
     },
     onSubmit: async (formData) => {
       try {
@@ -213,7 +227,13 @@ const EnterSeedPhrase = () => {
             PERMISSIONS.CAN_VIEW_WIPETHISNODE,
             PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE,
           ],
-          { state: { seedPhrase: phraseAsString } }
+          {
+            state: {
+              seedPhrase: phraseAsString,
+              host: currentHost,
+              keyuses: keyUses,
+            },
+          }
         );
       } catch (error) {
         formik.setStatus(error);
