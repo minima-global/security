@@ -737,27 +737,7 @@ const RestoreDialog = () => {
                           }
 
                           if (mode) {
-                            if (!mode) {
-                              if (!userWantsToArchiveReset) {
-                                navigate(-1);
-                              }
-                              if (userWantsToArchiveReset) {
-                                resetArchiveContext();
-                                if (archiveFileToUpload) {
-                                  deleteLastUploadedArchive(
-                                    "/fileupload/" + archiveFileToUpload.name
-                                  );
-                                }
-
-                                navigate(
-                                  "/dashboard/archivereset/restorebackup"
-                                );
-                              }
-                            }
-
-                            if (mode) {
-                              setMode(false);
-                            }
+                            setMode(false);
                           }
                         }}
                       >
@@ -790,9 +770,10 @@ const RestoreDialog = () => {
 
                       navigate("/dashboard/archivereset/restorebackup");
                     }
-                    if (mode) {
-                      setMode(false);
-                    }
+                  }
+
+                  if (mode) {
+                    setMode(false);
                   }
                 }}
               >

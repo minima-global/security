@@ -132,8 +132,9 @@ const Uploading = () => {
                     }
                     if (context === "seedresync") {
                       authNavigate(
-                        "/dashboard/manageseedphrase/enterseedphrase",
-                        [PERMISSIONS["CAN_VIEW_ENTERSEEDPHRASE"]]
+                        "/dashboard/manageseedphrase/importseedphrase",
+                        [PERMISSIONS.CAN_VIEW_IMPORTSEEDPHRASE],
+                        { state: { seedresync: true } }
                       );
                     }
                   }}

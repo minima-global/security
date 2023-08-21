@@ -66,7 +66,11 @@ const WipeThisNode = () => {
           );
         }
         rpc
-          .resetSeedSync(lastUploadPath, location.state.seedPhrase)
+          .resetSeedSync(
+            lastUploadPath,
+            location.state.seedPhrase,
+            location.state.keyuses
+          )
           .catch((error) => {
             resetArchiveContext();
             if (archiveFileToUpload) {
@@ -120,9 +124,17 @@ const WipeThisNode = () => {
           <div className={`${styles.desktop_only} ${styles.secondaryActions}`}>
             {!formik.isSubmitting && (
               <Button
-                onClick={() =>
-                  navigate("/dashboard/manageseedphrase/enterseedphrase")
-                }
+                onClick={() => {
+                  if (userWantsToArchiveReset) {
+                    resetArchiveContext();
+                    if (archiveFileToUpload) {
+                      deleteLastUploadedArchive(
+                        "/fileupload/" + archiveFileToUpload.name
+                      );
+                    }
+                  }
+                  navigate("/dashboard/archivereset/restorebackup");
+                }}
               >
                 Cancel
               </Button>
@@ -135,7 +147,15 @@ const WipeThisNode = () => {
         {!formik.isSubmitting && (
           <Button
             onClick={() => {
-              navigate("/dashboard/manageseedphrase/enterseedphrase");
+              if (userWantsToArchiveReset) {
+                resetArchiveContext();
+                if (archiveFileToUpload) {
+                  deleteLastUploadedArchive(
+                    "/fileupload/" + archiveFileToUpload.name
+                  );
+                }
+              }
+              navigate("/dashboard/archivereset/restorebackup");
             }}
           >
             Cancel

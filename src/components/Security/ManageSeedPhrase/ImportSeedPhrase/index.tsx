@@ -47,6 +47,13 @@ const validationSchema = yup.object().shape({
       "Please enter the maximum times you have signed a transaction.  Otherwise leave the default 1000 if you think you haven't signed over 1000 transactions"
     ),
 });
+const validationSchemaNoHost = yup.object().shape({
+  keyuses: yup
+    .number()
+    .required(
+      "Please enter the maximum times you have signed a transaction.  Otherwise leave the default 1000 if you think you haven't signed over 1000 transactions"
+    ),
+});
 
 const ImportSeedPhrase = () => {
   const { setBackButton, displayBackButton: displayHeaderBackButton } =
@@ -74,13 +81,25 @@ const ImportSeedPhrase = () => {
       keyuses: 1000,
     },
     onSubmit: (formData) => {
+      // doing an archive reset
+      if (location.state && "seedresync" in location.state) {
+        return authNavigate(
+          "/dashboard/manageseedphrase/enterseedphrase",
+          [PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE],
+          { state: { seedresync: true, keyuses: formData.keyuses } }
+        );
+      }
+      //  default
       authNavigate(
         "/dashboard/manageseedphrase/enterseedphrase",
         [PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE],
         { state: { host: formData.host, keyuses: formData.keyuses } }
       );
     },
-    validationSchema: validationSchema,
+    validationSchema:
+      location.state && "seedresync" in location.state
+        ? validationSchemaNoHost
+        : validationSchema,
   });
 
   return (
@@ -103,67 +122,70 @@ const ImportSeedPhrase = () => {
                     onSubmit={formik.handleSubmit}
                     className="flex flex-col gap-4"
                   >
-                    <div>
-                      <span className="mb-2 flex gap-2 items-center">
-                        <div className="text-left">Archive node host</div>
-                        {!tooltip.host && (
-                          <img
-                            className="w-4 h-4"
-                            onClick={() =>
-                              setTooltip({ ...tooltip, host: true })
-                            }
-                            alt="tooltip"
-                            src="./assets/help_filled.svg"
-                          />
-                        )}
-                        {!!tooltip.host && (
-                          <img
-                            className="w-4 h-4"
+                    {location.state === null && (
+                      <div>
+                        <span className="mb-2 flex gap-2 items-center">
+                          <div className="text-left">Archive node host</div>
+                          {!tooltip.host && (
+                            <img
+                              className="w-4 h-4"
+                              onClick={() =>
+                                setTooltip({ ...tooltip, host: true })
+                              }
+                              alt="tooltip"
+                              src="./assets/help_filled.svg"
+                            />
+                          )}
+                          {!!tooltip.host && (
+                            <img
+                              className="w-4 h-4"
+                              onClick={() =>
+                                setTooltip({ ...tooltip, host: false })
+                              }
+                              alt="tooltip-dismiss"
+                              src="./assets/cancel_filled.svg"
+                            />
+                          )}
+                        </span>
+                        <CSSTransition
+                          in={tooltip.host}
+                          unmountOnExit
+                          timeout={200}
+                          classNames={{
+                            enter: styles.backdropEnter,
+                            enterDone: styles.backdropEnterActive,
+                            exit: styles.backdropExit,
+                            exitActive: styles.backdropExitActive,
+                          }}
+                        >
+                          <Tooltip
                             onClick={() =>
                               setTooltip({ ...tooltip, host: false })
                             }
-                            alt="tooltip-dismiss"
-                            src="./assets/cancel_filled.svg"
+                            content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
+                            position={148}
                           />
-                        )}
-                      </span>
-                      <CSSTransition
-                        in={tooltip.host}
-                        unmountOnExit
-                        timeout={200}
-                        classNames={{
-                          enter: styles.backdropEnter,
-                          enterDone: styles.backdropEnterActive,
-                          exit: styles.backdropExit,
-                          exitActive: styles.backdropExitActive,
-                        }}
-                      >
-                        <Tooltip
-                          onClick={() =>
-                            setTooltip({ ...tooltip, host: false })
-                          }
-                          content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
-                          position={148}
-                        />
-                      </CSSTransition>
+                        </CSSTransition>
 
-                      <Input
-                        extraClass="core-black-contrast"
-                        id="host"
-                        name="host"
-                        placeholder="host"
-                        type="text"
-                        value={formik.values.host}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        autoComplete="off"
-                        error={
-                          formik.touched.host && formik.errors.host
-                            ? formik.errors.host
-                            : false
-                        }
-                      />
-                    </div>
+                        <Input
+                          extraClass="core-black-contrast"
+                          id="host"
+                          name="host"
+                          placeholder="host"
+                          type="text"
+                          value={formik.values.host}
+                          onChange={formik.handleChange}
+                          onBlur={formik.handleBlur}
+                          autoComplete="off"
+                          error={
+                            formik.touched.host && formik.errors.host
+                              ? formik.errors.host
+                              : false
+                          }
+                        />
+                      </div>
+                    )}
+
                     <div>
                       <span className="mb-2 flex gap-2 items-center">
                         <div className="text-left">Key uses</div>
@@ -257,10 +279,7 @@ const ImportSeedPhrase = () => {
               </form>
             </div>
             <div className="mobile-only">
-              <Button
-                disabled={!formik.isValid || formik.isSubmitting}
-                onClick={formik.handleSubmit}
-              >
+              <Button disabled={!formik.isValid} onClick={formik.handleSubmit}>
                 Next
               </Button>
             </div>

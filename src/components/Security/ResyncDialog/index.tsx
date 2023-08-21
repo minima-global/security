@@ -26,7 +26,7 @@ const ResyncDialog = () => {
   const [error, setError] = useState<false | string>(false);
 
   useEffect(() => {
-    if (location.state && location.state.error) {
+    if (location.state && location.state.hasOwnPropery("error")) {
       setError(
         typeof location.state.error === "string"
           ? location.state.error

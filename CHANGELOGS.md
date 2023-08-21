@@ -8,3 +8,8 @@
 
 - Added timemilli to backups and archive names
 - Auto backup will now delete on the timemilli of the backup names rather than the modified property
+
+##### [0.21.0] - 21 August 23
+
+- Added keyuses for archive seed re-sync
+- Fixed some minor bugs

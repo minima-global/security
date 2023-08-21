@@ -9,7 +9,7 @@ const Dialog = () => {
   const [error, setError] = useState<string | false>(false);
 
   useEffect(() => {
-    if (location.state && "error" in location.state) {
+    if (location.state && location.state.hasOwnPropery("error")) {
       setError(location.state.error);
     }
   }, [location]);
