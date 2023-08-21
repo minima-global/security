@@ -9,6 +9,7 @@ const PERMISSIONS = {
   CAN_VIEW_AUTOCREATEPASSWORD: "view_auto_create_password",
   CAN_VIEW_DELETE_BACKUP: "view_delete_backup",
   CAN_VIEW_DELETE_ARCHIVE: "view_delete_archive",
+  CAN_VIEW_UPLOADING: "can_view_uploading",
 };
 
 export default PERMISSIONS;

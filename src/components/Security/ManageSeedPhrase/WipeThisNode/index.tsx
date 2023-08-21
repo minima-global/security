@@ -41,7 +41,7 @@ const WipeThisNode = () => {
               {
                 state: {
                   error: error
-                    ? error
+                    ? JSON.stringify(error)
                     : "Something went wrong, please try again.",
                 },
               }

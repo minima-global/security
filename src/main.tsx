@@ -51,7 +51,13 @@ const router = createHashRouter(
     >
       <Route index element={<Splash />} />
 
-      <Route path="upload" element={<Uploading />} />
+      <Route
+        element={
+          <Authorisation permissions={[PERMISSIONS["CAN_VIEW_UPLOADING"]]} />
+        }
+      >
+        <Route path="upload" element={<Uploading />} />
+      </Route>
 
       <Route path="/dashboard" element={<Dashboard />}>
         <Route

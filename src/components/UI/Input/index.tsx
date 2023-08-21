@@ -1,5 +1,3 @@
-import { useState } from "react";
-
 interface IProps {
   placeholder: string;
   type: string;
@@ -15,8 +13,8 @@ interface IProps {
   endIcon?: any;
   startIcon?: any;
   error?: string | false;
-  webbie?: boolean;
   onKeyUp?: any;
+  onKeyPress?: any;
   handleEndIconClick?: () => void;
 }
 const Input = ({
@@ -33,16 +31,14 @@ const Input = ({
   endIcon,
   startIcon,
   error,
-  webbie,
   handleEndIconClick,
   onKeyUp,
+  onKeyPress,
 }: IProps) => {
-  const [focus, setFocus] = useState(false);
-
   let wrapperBase = "flex flex-row";
 
   let base =
-    "core-black-contrast w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none";
+    "core-black-contrast-2 w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none !focus:border-[#fff] !border-[#fff]";
 
   if (extraClass) {
     base += ` ${extraClass}`;
@@ -51,64 +47,35 @@ const Input = ({
     wrapperBase += " form-error-border";
   }
 
-  if (focus) {
-    wrapperBase += " input-outline";
-  }
-
-  if (!focus) {
-    wrapperBase += " input-no-outline";
-  }
-
   return (
     <div className={`flex flex-col gap-2`}>
-      <div className={wrapperBase}>
+      <div className={`${wrapperBase} relative`}>
         {!!startIcon && (
-          <div
-            className={`core-black-contrast flex flex-col justify-center pl-4 color-core-grey font-medium ${
-              error ? "form-error-message" : ""
-            }`}
-          >
+          <div className="absolute text-base top-[15px] left-[15px]">
             {startIcon}
           </div>
         )}
-        {webbie && (
-          <input
-            autoComplete={autoComplete ? autoComplete : ""}
-            directory=""
-            webkitdirectory="true"
-            onBlur={onBlur}
-            name={name}
-            id={id}
-            value={value}
-            type={type}
-            placeholder={placeholder}
-            className={base}
-            onChange={onChange}
-            accept={accept}
-            onKeyUp={onKeyUp}
-            onFocus={() => setFocus(true)}
-          />
-        )}
-        {!webbie && (
-          <input
-            autoComplete={autoComplete ? autoComplete : ""}
-            onBlur={onBlur}
-            name={name}
-            id={id}
-            value={value}
-            type={type}
-            placeholder={placeholder}
-            className={base}
-            onChange={onChange}
-            accept={accept}
-            onKeyUp={onKeyUp}
-            onFocus={() => setFocus(true)}
-          />
-        )}
+        <input
+          onKeyDown={onKeyPress}
+          autoComplete={autoComplete ? autoComplete : ""}
+          onBlur={onBlur}
+          name={name}
+          id={id}
+          value={value}
+          type={type}
+          placeholder={placeholder}
+          className={`${base} focus:border-[#464C4F] ${
+            startIcon ? "pl-10" : ""
+          }`}
+          onChange={onChange}
+          accept={accept}
+          onKeyUp={onKeyUp}
+        />
+
         {!!endIcon && (
           <div
             onClick={handleEndIconClick}
-            className="core-black-contrast flex flex-col justify-center pr-4 rounded-r"
+            className="pr-4 absolute right-[1px] top-4 bottom-0"
           >
             {endIcon}
           </div>

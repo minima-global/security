@@ -16,7 +16,7 @@ const ResyncDialog = () => {
   const location = useLocation();
 
   const { authNavigate } = useAuth();
-  const { shuttingDown, setModal, isMobile } = useContext(appContext);
+  const { shuttingDown, setModal } = useContext(appContext);
   const {
     userWantsToArchiveReset,
     deleteLastUploadedArchive,
@@ -26,8 +26,12 @@ const ResyncDialog = () => {
   const [error, setError] = useState<false | string>(false);
 
   useEffect(() => {
-    if (location.state && "error" in location.state) {
-      setError(location.state.error);
+    if (location.state && location.state.error) {
+      setError(
+        typeof location.state.error === "string"
+          ? location.state.error
+          : "Something went wrong, please try again."
+      );
     }
   }, [location]);
 
@@ -73,7 +77,7 @@ const ResyncDialog = () => {
         secondaryActions: (
           <Button
             onClick={() => {
-              if (isMobile) {
+              if (window.navigator.userAgent.includes("Minima Browser")) {
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore
                 return Android.shutdownMinima();

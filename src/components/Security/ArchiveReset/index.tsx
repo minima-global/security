@@ -15,11 +15,8 @@ interface ExportedArchive {
   size: string;
 }
 const ArchiveReset = () => {
-  const {
-    displayBackButton: displayHeaderBackButton,
-    setBackButton,
-    isMinimaBrowser,
-  } = useContext(appContext);
+  const { displayBackButton: displayHeaderBackButton, setBackButton } =
+    useContext(appContext);
   const { authNavigate } = useAuth();
 
   const [exportingArchive, setExportingArchive] = useState(false);
@@ -33,10 +30,10 @@ const ArchiveReset = () => {
     return new Promise((resolve) => {
       // webview download support
       // do not load binary
-      if (isMinimaBrowser) {
+      if (window.navigator.userAgent.includes("Minima Browser")) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        Android.fileDownload(MDS.minidappuid, path);
+        Android.fileDownload(MDS.minidappuid, mdsfile);
         return resolve(true);
       }
 
@@ -233,8 +230,12 @@ const ArchiveReset = () => {
                       setExporting(true);
 
                       const rootPath = await fileManager.getPath("");
-                      const dateCreation = format(new Date(), "_dMMMyyyy_Hmm");
-                      const fileName = "archive_export_" + dateCreation;
+                      const now = new Date();
+                      const dateCreation = format(now, "__dMMMyyyy_Hmm");
+                      const fileName =
+                        `archive_export_${now.getTime()}` +
+                        dateCreation +
+                        ".gzip";
                       setFileName(fileName);
 
                       (window as any).MDS.cmd(

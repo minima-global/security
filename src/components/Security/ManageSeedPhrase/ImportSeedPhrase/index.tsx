@@ -29,10 +29,6 @@ const validationSchema = yup.object().shape({
         });
       }
 
-      if (val === "auto") {
-        return true;
-      }
-
       const regexp = new RegExp(
         /([0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}):?([0-9]{1,5})?/
       );
@@ -67,14 +63,14 @@ const ImportSeedPhrase = () => {
   useEffect(() => {
     setBackButton({
       display: true,
-      to: "/dashboard/manageseedphrase",
+      to: "/dashboard/archivereset/seedresync",
       title: "Back",
     });
   }, [location]);
 
   const formik = useFormik({
     initialValues: {
-      host: "auto",
+      host: "",
       keyuses: 1000,
     },
     onSubmit: (formData) => {
@@ -95,7 +91,7 @@ const ImportSeedPhrase = () => {
       <SlideScreen display={!wipeThisNode}>
         <div className="h-full bg-black px-4 pb-4">
           {!displayHeaderBackButton && (
-            <BackButton to="/dashboard/manageseedphrase" title="Back" />
+            <BackButton to="/dashboard/archivereset/seedresync" title="Back" />
           )}
           <div className="mt-6 text-2xl mb-8 text-left">Import seed phrase</div>
 
@@ -152,9 +148,10 @@ const ImportSeedPhrase = () => {
                       </CSSTransition>
 
                       <Input
+                        extraClass="core-black-contrast"
                         id="host"
                         name="host"
-                        placeholder="Auto"
+                        placeholder="host"
                         type="text"
                         value={formik.values.host}
                         onChange={formik.handleChange}
@@ -212,6 +209,7 @@ const ImportSeedPhrase = () => {
                         />
                       </CSSTransition>
                       <Input
+                        extraClass="core-black-contrast"
                         id="keyuses"
                         name="keyuses"
                         placeholder="Key uses"

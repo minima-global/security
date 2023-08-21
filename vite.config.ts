@@ -25,6 +25,7 @@ export default ({ mode }) => {
     base: "",
     build: {
       outDir: "build",
+      minify: false,
     },
     plugins: [
       react(),

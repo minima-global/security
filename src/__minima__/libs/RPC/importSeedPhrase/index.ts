@@ -1,13 +1,12 @@
 export const importSeedPhrase = (
   phrase: string,
-  host = "auto",
+  host: string,
   keyuses = 1000
 ) => {
   return new Promise((resolve, reject) => {
     (window as any).MDS.cmd(
       `archive action:resync phrase:"${phrase}" host:"${host}" keyuses:${keyuses}`,
       (response: any) => {
-        // console.log(response);
         if (!response.status)
           reject(response.error ? response.error : "RPC FAILED");
         resolve(response.response);

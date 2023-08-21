@@ -23,7 +23,7 @@ const Archives = () => {
   };
 
   const handleDownload = async (backupFile: string) => {
-    if (isMinimaBrowser) {
+    if (window.navigator.userAgent.includes("Minima Browser")) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       return Android.fileDownload(MDS.minidappuid, backupFile);
@@ -69,7 +69,7 @@ const Archives = () => {
                 type="text"
                 placeholder="Search archives"
                 onChange={handleChange}
-                extraClass="core-black-contrast rounded-r-none"
+                extraClass="core-black-contrast-2 rounded-r-none"
                 endIcon={
                   <svg
                     width="20"
@@ -342,7 +342,7 @@ const Archives = () => {
                 type="text"
                 placeholder="Search archives"
                 onChange={handleChange}
-                extraClass="core-black-contrast rounded-r-none"
+                extraClass="core-black-contrast-2 rounded-r-none"
                 endIcon={
                   <svg
                     width="20"

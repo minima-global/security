@@ -55,6 +55,9 @@ const Uploading = () => {
 
           await checkArchiveIntegrity("/fileupload/" + resp.filename)
             .then((archive) => {
+              if (parseInt(archive.last) < 0) {
+                setError("Something went wrong, please try again");
+              }
               setIntegrityCheck(false);
               setUploading(false);
               setArchive(archive);
@@ -142,6 +145,7 @@ const Uploading = () => {
               {!uploading && (error || warning) && (
                 <>
                   <input
+                    accept=".gzip"
                     className="hidden"
                     type="file"
                     ref={inputRef}
@@ -151,11 +155,16 @@ const Uploading = () => {
                         // let's re-upload..
                         setError(false);
                         setArchiveFileToUpload(file);
-                        authNavigate("/upload", []);
+                        authNavigate("/upload", [
+                          PERMISSIONS["CAN_VIEW_UPLOADING"],
+                        ]);
                       }
                     }}
                   />
-                  <Button onClick={() => inputRef.current?.click()}>
+                  <Button
+                    extraClass="mt-4"
+                    onClick={() => inputRef.current?.click()}
+                  >
                     Upload a different file
                   </Button>
                 </>

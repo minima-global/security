@@ -14,7 +14,7 @@ const ChainResync = () => {
 
   const [confirmation, setConfirmation] = useState(false);
 
-  const [host, setHost] = useState("auto");
+  const [host, setHost] = useState("");
   const [error, setError] = useState<false | string>(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +28,7 @@ const ChainResync = () => {
       return setError("Please enter an archive host");
     }
 
-    if (!regexp.test(e.target.value) && e.target.value !== "auto") {
+    if (!regexp.test(e.target.value)) {
       return setError("Please enter an appropriate ip:host format");
     }
 
@@ -80,9 +80,10 @@ const ChainResync = () => {
                   <div className="mb-2 text-left">Archive node host</div>
                   <div className="mb-6">
                     <Input
+                      extraClass="core-black-contrast"
                       id="host"
                       name="host"
-                      placeholder="Auto"
+                      placeholder="host"
                       type="text"
                       value={host}
                       onChange={handleChange}

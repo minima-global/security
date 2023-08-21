@@ -153,7 +153,7 @@ const ManageSeedPhrase = () => {
                     </svg>
                   </div>
                 </div>
-              </div> */}
+              </div>extraClass="core-black-contrast" */}
             </div>
           </div>
         </div>

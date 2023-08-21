@@ -153,6 +153,19 @@ const EnterSeedPhrase = () => {
   const [step, setStep] = useState<number>(0);
   const [seedWord, setSeedWord] = useState([1, 2, 3, 4, 5, 6]);
 
+  const [currentHost, setCurrentHost] = useState("");
+  const [keyUses, setKeyUses] = useState(1000);
+
+  useEffect(() => {
+    if (location.state && location.state.host) {
+      setCurrentHost(location.state.host);
+    }
+
+    if (location.state && location.state.keyuses) {
+      setKeyUses(location.state.keyuses);
+    }
+  }, [location]);
+
   useEffect(() => {
     const endOfSeedPhrase = seedWord[5] === 24;
 
@@ -166,10 +179,26 @@ const EnterSeedPhrase = () => {
   useEffect(() => {
     setBackButton({
       display: true,
-      to: "/dashboard/manageseedphrase",
-      title: "Security",
+      to: "/dashboard/archivereset/seedresync",
+      title: "Back",
     });
   }, [location]);
+
+  const handleKeyPress = (event) => {
+    if (!currentFormError && event.key === "Enter") {
+      handleNextClick();
+    }
+  };
+
+  const handleNextClick = () => {
+    if (!endOfSeedPhrase) {
+      return setStep((prevState) =>
+        prevState !== 18 ? prevState + 6 : prevState
+      );
+    }
+
+    return formik.submitForm();
+  };
 
   const formik = useFormik({
     initialValues: {
@@ -199,7 +228,8 @@ const EnterSeedPhrase = () => {
         23: "".toUpperCase(),
         24: "".toUpperCase(),
       },
-      keyuses: 1000,
+      keyuses: keyUses,
+      host: currentHost,
     },
     onSubmit: async (formData) => {
       try {
@@ -213,7 +243,13 @@ const EnterSeedPhrase = () => {
             PERMISSIONS.CAN_VIEW_WIPETHISNODE,
             PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE,
           ],
-          { state: { seedPhrase: phraseAsString } }
+          {
+            state: {
+              seedPhrase: phraseAsString,
+              host: currentHost,
+              keyuses: keyUses,
+            },
+          }
         );
       } catch (error) {
         formik.setStatus(error);
@@ -235,7 +271,7 @@ const EnterSeedPhrase = () => {
     <>
       <div className="h-full bg-black px-4 pb-4">
         {!displayHeaderBackButton && !userWantsToArchiveReset && (
-          <BackButton to="/dashboard/manageseedphrase" title="Security" />
+          <BackButton to="/dashboard/archivereset/seedresync" title="Back" />
         )}
         {!displayHeaderBackButton && userWantsToArchiveReset && (
           <BackButton
@@ -268,6 +304,7 @@ const EnterSeedPhrase = () => {
                 {seedWord.map((word) => (
                   <li key={word}>
                     <Input
+                      onKeyPress={handleKeyPress}
                       extraClass="core-black-contrast-2"
                       type="text"
                       startIcon={<div>{word}</div>}
@@ -320,21 +357,14 @@ const EnterSeedPhrase = () => {
           </div>
           <div className="mobile-only">
             {!endOfSeedPhrase && (
-              <Button
-                disabled={currentFormError}
-                onClick={() =>
-                  setStep((prevState) =>
-                    prevState !== 18 ? prevState + 6 : prevState
-                  )
-                }
-              >
+              <Button disabled={currentFormError} onClick={handleNextClick}>
                 Next
               </Button>
             )}
             {!!endOfSeedPhrase && (
               <Button
                 disabled={currentFormError && !formik.isValid}
-                onClick={() => formik.submitForm()}
+                onClick={handleNextClick}
               >
                 Finish
               </Button>

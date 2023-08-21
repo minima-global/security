@@ -43,6 +43,7 @@ const ArchiveReset = () => {
     primaryActions: (
       <>
         <input
+          accept=".gzip"
           type="file"
           className="hidden"
           ref={inputRef}
@@ -51,7 +52,7 @@ const ArchiveReset = () => {
             if (file) {
               setArchiveFileToUpload(file);
               setContext("restore");
-              authNavigate("/upload", []);
+              authNavigate("/upload", [PERMISSIONS["CAN_VIEW_UPLOADING"]]);
             }
           }}
         />
@@ -143,10 +144,11 @@ const ArchiveReset = () => {
               can restore your wallet from a backup. <br /> <br /> You will
               need:
               <ul className="list-disc list-inside mb-4">
-                <li className="pt-4 pl-2.5">
-                  Your backup and the password you used when taking the backup
+                <li className="pt-4 pl-2.5">Upload an archive file (.gzip)</li>
+                <li className="pl-2.5">
+                  Upload your backup file (.bak) and provide the password if
+                  applicable
                 </li>
-                <li className="pl-2.5">An archive file</li>
               </ul>
               The archive file will be used to sync your node to the chain's top
               block and must be recently extracted from an archive node.

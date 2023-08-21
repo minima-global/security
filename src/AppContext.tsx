@@ -73,7 +73,7 @@ const AppProvider = ({ children }: IProps) => {
   });
 
   // backups stuff
-  const [backups, setBackups] = useState<string[]>([]);
+  const [backups, setBackups] = useState<any[]>([]);
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
   );
@@ -85,7 +85,7 @@ const AppProvider = ({ children }: IProps) => {
   const [shuttingDown, setShuttingDown] = useState(false);
 
   // archive stuff
-  const [archives, setArchives] = useState<string[]>([]);
+  const [archives, setArchives] = useState<any[]>([]);
 
   // apply these whenever vault is locked or unlocked
   useEffect(() => {
@@ -180,17 +180,55 @@ const AppProvider = ({ children }: IProps) => {
     });
   };
 
+  const getTimeMilliFromBackupName = (name: string) => {
+    try {
+      const timeMilli = name.split("backup_")[1];
+
+      return parseInt(timeMilli.split("__")[0]);
+    } catch (error) {
+      return 0;
+    }
+  };
+
+  const getTimeMilliFromArchiveName = (name: string) => {
+    try {
+      const timeMilli = name.split("export_")[1];
+
+      return parseInt(timeMilli.split("__")[0]);
+    } catch (error) {
+      return 0;
+    }
+  };
+
   const getBackups = () => {
     fileManager.listFiles("/backups").then((response: any) => {
       if (response.status) {
-        setBackups(response.response.list.reverse());
+        setBackups(
+          response.response.list
+            .sort(function (a, b) {
+              return (
+                getTimeMilliFromBackupName(a.name) -
+                getTimeMilliFromBackupName(b.name)
+              );
+            })
+            .reverse()
+        );
       }
     });
   };
   const getArchives = () => {
     fileManager.listFiles("/archives").then((response: any) => {
       if (response.status) {
-        setArchives(response.response.list.reverse());
+        setArchives(
+          response.response.list
+            .sort(function (a, b) {
+              return (
+                getTimeMilliFromArchiveName(a.name) -
+                getTimeMilliFromArchiveName(b.name)
+              );
+            })
+            .reverse()
+        );
       }
     });
   };
