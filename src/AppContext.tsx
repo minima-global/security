@@ -180,13 +180,36 @@ const AppProvider = ({ children }: IProps) => {
     });
   };
 
+  const getTimeMilliFromBackupName = (name: string) => {
+    try {
+      const timeMilli = name.split("backup_")[1];
+
+      return parseInt(timeMilli.split("__")[0]);
+    } catch (error) {
+      return 0;
+    }
+  };
+
+  const getTimeMilliFromArchiveName = (name: string) => {
+    try {
+      const timeMilli = name.split("export_")[1];
+
+      return parseInt(timeMilli.split("__")[0]);
+    } catch (error) {
+      return 0;
+    }
+  };
+
   const getBackups = () => {
     fileManager.listFiles("/backups").then((response: any) => {
       if (response.status) {
         setBackups(
           response.response.list
             .sort(function (a, b) {
-              return a.modified - b.modified;
+              return (
+                getTimeMilliFromBackupName(a.name) -
+                getTimeMilliFromBackupName(b.name)
+              );
             })
             .reverse()
         );
@@ -199,7 +222,10 @@ const AppProvider = ({ children }: IProps) => {
         setArchives(
           response.response.list
             .sort(function (a, b) {
-              return a.modified - b.modified;
+              return (
+                getTimeMilliFromArchiveName(a.name) -
+                getTimeMilliFromArchiveName(b.name)
+              );
             })
             .reverse()
         );

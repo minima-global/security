@@ -43,7 +43,12 @@ MDS.init(function (msg) {
         const myBackups = response.response.list.reverse();
         log(`Your backups: ${JSON.stringify(myBackups)}`);
         myBackups.sort(function (a, b) {
-          return a.modified - b.modified;
+          MDS.log(getTimeMilliFromBackupName(a.name));
+          MDS.log(getTimeMilliFromBackupName(b.name));
+          return (
+            getTimeMilliFromBackupName(a.name) -
+            getTimeMilliFromBackupName(b.name)
+          );
         });
 
         MDS.log(JSON.stringify(myBackups));
@@ -107,7 +112,7 @@ function createBackup() {
               const minidappPath = response.response.getpath.path;
               // create a new filename with latest datetime
               var today = new Date();
-              var fileName = `auto_minima_backup__${today.getDate()}${
+              var fileName = `auto_minima_backup_${today.getTime()}__${today.getDate()}${
                 monthNames[today.getMonth()]
               }${today.getFullYear()}_${today.getHours()}${
                 today.getMinutes() < 10
@@ -185,5 +190,15 @@ function deleteFile(filepath) {
 function log(log) {
   if (debugLogs) {
     return MDS.log(log);
+  }
+}
+
+function getTimeMilliFromBackupName(name) {
+  try {
+    const timeMilli = name.split("backup_")[1];
+
+    return parseInt(timeMilli.split("__")[0]);
+  } catch (error) {
+    return 0;
   }
 }

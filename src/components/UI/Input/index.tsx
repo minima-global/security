@@ -14,6 +14,7 @@ interface IProps {
   startIcon?: any;
   error?: string | false;
   onKeyUp?: any;
+  onKeyPress?: any;
   handleEndIconClick?: () => void;
 }
 const Input = ({
@@ -32,6 +33,7 @@ const Input = ({
   error,
   handleEndIconClick,
   onKeyUp,
+  onKeyPress,
 }: IProps) => {
   let wrapperBase = "flex flex-row";
 
@@ -54,6 +56,7 @@ const Input = ({
           </div>
         )}
         <input
+          onKeyDown={onKeyPress}
           autoComplete={autoComplete ? autoComplete : ""}
           onBlur={onBlur}
           name={name}

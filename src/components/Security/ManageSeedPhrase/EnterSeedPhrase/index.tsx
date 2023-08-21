@@ -184,6 +184,22 @@ const EnterSeedPhrase = () => {
     });
   }, [location]);
 
+  const handleKeyPress = (event) => {
+    if (!currentFormError && event.key === "Enter") {
+      handleNextClick();
+    }
+  };
+
+  const handleNextClick = () => {
+    if (!endOfSeedPhrase) {
+      return setStep((prevState) =>
+        prevState !== 18 ? prevState + 6 : prevState
+      );
+    }
+
+    return formik.submitForm();
+  };
+
   const formik = useFormik({
     initialValues: {
       seedPhrase: {
@@ -288,6 +304,7 @@ const EnterSeedPhrase = () => {
                 {seedWord.map((word) => (
                   <li key={word}>
                     <Input
+                      onKeyPress={handleKeyPress}
                       extraClass="core-black-contrast-2"
                       type="text"
                       startIcon={<div>{word}</div>}
@@ -340,21 +357,14 @@ const EnterSeedPhrase = () => {
           </div>
           <div className="mobile-only">
             {!endOfSeedPhrase && (
-              <Button
-                disabled={currentFormError}
-                onClick={() =>
-                  setStep((prevState) =>
-                    prevState !== 18 ? prevState + 6 : prevState
-                  )
-                }
-              >
+              <Button disabled={currentFormError} onClick={handleNextClick}>
                 Next
               </Button>
             )}
             {!!endOfSeedPhrase && (
               <Button
                 disabled={currentFormError && !formik.isValid}
-                onClick={() => formik.submitForm()}
+                onClick={handleNextClick}
               >
                 Finish
               </Button>

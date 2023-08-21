@@ -277,8 +277,10 @@ const BackupNode = () => {
     },
     onSubmit: async (formData) => {
       try {
-        const dateCreation = format(new Date(), "_dMMMyyyy_Hmm");
-        const fileName = "minima_backup_" + dateCreation + ".bak";
+        const now = new Date();
+        const dateCreation = format(now, "__dMMMyyyy_Hmm");
+        const fileName =
+          `minima_backup_${now.getTime()}` + dateCreation + ".bak";
 
         const fullPath = await fileManager.getPath("/backups/" + fileName);
 
