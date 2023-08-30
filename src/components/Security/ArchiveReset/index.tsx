@@ -270,7 +270,7 @@ const ArchiveReset = () => {
                   <Button
                     variant="primary"
                     onClick={async () => {
-                      await downloadFile(fileName);
+                      await downloadFile("/archives/" + fileName);
                     }}
                   >
                     Download now

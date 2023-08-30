@@ -13,3 +13,7 @@
 
 - Added keyuses for archive seed re-sync
 - Fixed some minor bugs
+
+##### [0.22.0] - 30 August 23
+
+- Fix 'Download now' button for archive exports
