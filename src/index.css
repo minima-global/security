@@ -26,6 +26,14 @@
   --core-black-contrast-3: #464C4F;
 }
 
+
+.core-black-contrast-2 {
+  background-color: var(--core-black-contrast-2);
+}
+.core-black-contrast {
+  background-color: var(--core-black-contrast);
+}
+
 .bg-black {
   background-color: var(--core-black-100);
 }
@@ -346,4 +354,23 @@ code {
 .upload-error {
   border: 1px solid #FF627E;
   border-radius: 4px;
+}
+
+.arrow-active {
+  transform: rotate(180deg);
+  transition: transform 0.2s ease-in;
+}
+.arrow-passive {
+  transform: rotate(0deg);
+  transition: transform 0.2s ease-in;
+}
+.accordion-content {
+  overflow: hidden;
+  max-height: 1000px;
+  transition: max-height 1s ease-in-out;
+}
+
+.accordion-content[aria-expanded="true"] {
+  max-height: 0px;
+  transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
 }

@@ -140,12 +140,7 @@ const EnterSeedPhrase = () => {
   const navigate = useNavigate();
   const { setBackButton, displayBackButton: displayHeaderBackButton } =
     useContext(appContext);
-  const {
-    userWantsToArchiveReset,
-    resetArchiveContext,
-    archiveFileToUpload,
-    deleteLastUploadedArchive,
-  } = useArchiveContext();
+  const { userWantsToArchiveReset, resetArchiveContext } = useArchiveContext();
   const { authNavigate } = useAuth();
   const location = useLocation();
 
@@ -279,11 +274,6 @@ const EnterSeedPhrase = () => {
             onClickHandler={() => {
               // user cancelled.. so reset & delete the file upload
               resetArchiveContext();
-              if (archiveFileToUpload) {
-                deleteLastUploadedArchive(
-                  "/fileupload/" + archiveFileToUpload.name
-                );
-              }
               navigate("/dashboard/archivereset/seedresync");
             }}
           />

@@ -14,82 +14,58 @@ const WipeThisNode = () => {
   const { authNavigate } = useAuth();
   const {
     userWantsToArchiveReset,
-    lastUploadPath,
-    archiveFileToUpload,
+    archivePathToResetWith,
     resetArchiveContext,
-    deleteLastUploadedArchive,
   } = useArchiveContext();
 
   const formik = useFormik({
     initialValues: {},
-    onSubmit: () => {
+    onSubmit: async () => {
       formik.setStatus(undefined);
-      //  Run RPC..
       authNavigate("/dashboard/resyncing", [PERMISSIONS.CAN_VIEW_RESYNCING]);
 
       if (!userWantsToArchiveReset) {
-        rpc
+        return rpc
           .importSeedPhrase(
             location.state.seedPhrase,
             location.state.host,
             location.state.keyuses
           )
           .catch((error) => {
-            authNavigate(
+            return authNavigate(
               "/dashboard/resyncing",
               [PERMISSIONS.CAN_VIEW_RESYNCING],
               {
                 state: {
-                  error: error
-                    ? JSON.stringify(error)
-                    : "Something went wrong, please try again.",
+                  error:
+                    error && error.message
+                      ? error.message
+                      : "Something went wrong, please try again.",
                 },
               }
             );
           });
       }
 
-      if (userWantsToArchiveReset) {
-        if (!lastUploadPath) {
-          resetArchiveContext();
-          if (archiveFileToUpload) {
-            deleteLastUploadedArchive(archiveFileToUpload.name);
-          }
-          return authNavigate(
+      return rpc
+        .resetSeedSync(
+          archivePathToResetWith,
+          location.state.seedPhrase,
+          location.state.keyuses
+        )
+        .catch((error) => {
+          authNavigate(
             "/dashboard/resyncing",
             [PERMISSIONS.CAN_VIEW_RESYNCING],
             {
               state: {
-                error: "Archive path not found, please try again",
+                error: error ? error : "Seed re-sync failed, please try again.",
               },
             }
           );
-        }
-        rpc
-          .resetSeedSync(
-            lastUploadPath,
-            location.state.seedPhrase,
-            location.state.keyuses
-          )
-          .catch((error) => {
-            resetArchiveContext();
-            if (archiveFileToUpload) {
-              deleteLastUploadedArchive(archiveFileToUpload.name);
-            }
 
-            authNavigate(
-              "/dashboard/resyncing",
-              [PERMISSIONS.CAN_VIEW_RESYNCING],
-              {
-                state: {
-                  error: error
-                    ? error
-                    : "Something went wrong, please try again.",
-                },
-              }
-            );
-          });
-      }
+          resetArchiveContext();
+        });
     },
   });
 
@@ -127,11 +103,6 @@ const WipeThisNode = () => {
                 onClick={() => {
                   if (userWantsToArchiveReset) {
                     resetArchiveContext();
-                    if (archiveFileToUpload) {
-                      deleteLastUploadedArchive(
-                        "/fileupload/" + archiveFileToUpload.name
-                      );
-                    }
                   }
                   navigate("/dashboard/archivereset/restorebackup");
                 }}
@@ -149,11 +120,6 @@ const WipeThisNode = () => {
             onClick={() => {
               if (userWantsToArchiveReset) {
                 resetArchiveContext();
-                if (archiveFileToUpload) {
-                  deleteLastUploadedArchive(
-                    "/fileupload/" + archiveFileToUpload.name
-                  );
-                }
               }
               navigate("/dashboard/archivereset/restorebackup");
             }}

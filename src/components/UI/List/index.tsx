@@ -27,8 +27,9 @@ function formatBytes(bytes, decimals = 2) {
 interface IProps {
   options: any[];
   setForm: (o: string) => void;
+  disabled?: boolean;
 }
-const List = ({ options, setForm }: IProps) => {
+const List = ({ options, setForm, disabled }: IProps) => {
   const [selected, setSelected] = useState("");
   const [openModal, setModal] = useState(false);
   const [searchText, setSearchText] = useState("");
@@ -41,38 +42,43 @@ const List = ({ options, setForm }: IProps) => {
     setSelected(backup);
     setModal(false);
     setForm(backup);
+    setSearchText("");
   };
 
   useEffect(() => {
     if (selected === "") {
-      // select the latest backup..
-
       handleSelect(options.length ? options[0].name : "No backups available");
+      setForm(options.length ? options[0].name : "");
     }
   }, [options]);
 
   return (
     <div className={`${styles.layout} core-grey-20`}>
       <div
-        onClick={() =>
-          options.length ? setModal((prevState) => !prevState) : null
-        }
-        className={styles["picker"]}
+        onClick={() => {
+          if (!disabled) {
+            options.length ? setModal((prevState) => !prevState) : null;
+          }
+        }}
+        className={`${styles.picker} hover:cursor-pointer hover:bg-slate-200`}
       >
-        <span className="color-black font-medium">{selected}</span>
-        <img
-          className={openModal ? styles.active : ""}
-          alt="arrow-d"
-          src="./assets/expand_more.svg"
-        />
+        <span className="color-black font-sm">{selected}</span>
+        {!disabled && (
+          <img
+            className={openModal ? styles.active : ""}
+            alt="arrow-d"
+            src="./assets/expand_more.svg"
+          />
+        )}
       </div>
       {openModal && (
         <>
           <div className={styles["backdrop"]}>
             <div className={styles["dd"]}>
               <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl">Choose a backup file</h1>
+                <h1 className="text-2xl">Choose a file</h1>
                 <svg
+                  className="hover:cursor-pointer"
                   onClick={() => setModal(false)}
                   width="16"
                   height="17"
@@ -94,9 +100,9 @@ const List = ({ options, setForm }: IProps) => {
                       id="search"
                       name="search"
                       type="text"
-                      placeholder="Search backups"
+                      placeholder="Search files"
                       onChange={handleChange}
-                      extraClass="core-black-contrast rounded-r-none"
+                      extraClass="core-black-contrast-2 rounded-r-none"
                       endIcon={
                         <svg
                           width="20"
@@ -131,13 +137,15 @@ const List = ({ options, setForm }: IProps) => {
                         .filter((o) => o.name.includes(searchText))
                         .map((b, i) => (
                           <li
-                            className="font-normal p-4 core-grey-5 rounded color-black flex justify-between gap-2 items-center"
+                            className="font-normal p-4 core-grey-5 rounded color-black grid grid-cols-[1fr,auto] grid-rows-1 gap-2 items-center"
                             key={i}
                             onClick={() => handleSelect(b.name)}
                           >
-                            <p className="font-medium break-all">{b.name}</p>
+                            <h1 className="font-medium text-sm break-all">
+                              {b.name}
+                            </h1>
 
-                            <p className="float-right text-sm font-medium">
+                            <p className="text-sm font-medium text-right grid">
                               {formatBytes(b.size)}
                             </p>
                           </li>
@@ -145,13 +153,15 @@ const List = ({ options, setForm }: IProps) => {
                     {!searchText.length &&
                       options.map((b, i) => (
                         <li
-                          className="font-normal p-4 core-grey-5 rounded color-black flex justify-between gap-2 items-center"
+                          className="font-normal p-4 core-grey-5 rounded color-black grid grid-cols-[1fr,auto] grid-rows-1 gap-2 items-center"
                           key={i}
                           onClick={() => handleSelect(b.name)}
                         >
-                          <p className="font-medium break-all">{b.name}</p>
+                          <h1 className="font-medium text-sm break-all">
+                            {b.name}
+                          </h1>
 
-                          <p className="float-right text-sm font-medium">
+                          <p className="text-sm font-medium text-right grid">
                             {formatBytes(b.size)}
                           </p>
                         </li>
@@ -165,7 +175,7 @@ const List = ({ options, setForm }: IProps) => {
                 </>
               )}
               {!options.length && (
-                <p className={styles["no-results"]}>No backups founds</p>
+                <p className={styles["no-results"]}>No file found</p>
               )}
             </div>
           </div>

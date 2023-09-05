@@ -90,10 +90,8 @@ const RestoreDialog = () => {
 
   const {
     userWantsToArchiveReset,
-    lastUploadPath,
+    archivePathToResetWith,
     resetArchiveContext,
-    deleteLastUploadedArchive,
-    archiveFileToUpload,
   } = useArchiveContext();
 
   const [restoring, setRestoring] = useState(false);
@@ -197,15 +195,15 @@ const RestoreDialog = () => {
       file: undefined,
     },
     onSubmit: async (formData) => {
-      try {
-        if (!formData.file) {
-          formik.setFieldError(
-            "file",
-            "Please select a valid (.bak) backup file."
-          );
-        }
+      if (!formData.file) {
+        formik.setFieldError(
+          "file",
+          "Please select a valid (.bak) backup file."
+        );
+      }
+      let fullPath = "";
 
-        let fullPath = "";
+      try {
         if (mode === "files") {
           const arrayBuffer = await utils.blobToArrayBuffer(formData.file);
           const hex = utils.bufferToHex(arrayBuffer);
@@ -232,14 +230,11 @@ const RestoreDialog = () => {
           );
         }
 
-        if (userWantsToArchiveReset && lastUploadPath) {
+        if (userWantsToArchiveReset && archivePathToResetWith) {
           await rpc
-            .reset(lastUploadPath, fullPath, formData.password)
+            .reset(archivePathToResetWith, fullPath, formData.password)
             .then(() => {
               resetArchiveContext();
-              if (archiveFileToUpload) {
-                deleteLastUploadedArchive(archiveFileToUpload.name);
-              }
             });
         }
       } catch (error: any) {
@@ -471,11 +466,6 @@ const RestoreDialog = () => {
                             }
                             if (userWantsToArchiveReset) {
                               resetArchiveContext();
-                              if (archiveFileToUpload) {
-                                deleteLastUploadedArchive(
-                                  "/fileupload/" + archiveFileToUpload.name
-                                );
-                              }
 
                               navigate("/dashboard/archivereset/restorebackup");
                             }
@@ -488,11 +478,6 @@ const RestoreDialog = () => {
                               }
                               if (userWantsToArchiveReset) {
                                 resetArchiveContext();
-                                if (archiveFileToUpload) {
-                                  deleteLastUploadedArchive(
-                                    "/fileupload/" + archiveFileToUpload.name
-                                  );
-                                }
 
                                 navigate(
                                   "/dashboard/archivereset/restorebackup"
@@ -644,11 +629,6 @@ const RestoreDialog = () => {
                             }
                             if (userWantsToArchiveReset) {
                               resetArchiveContext();
-                              if (archiveFileToUpload) {
-                                deleteLastUploadedArchive(
-                                  "/fileupload/" + archiveFileToUpload.name
-                                );
-                              }
 
                               navigate("/dashboard/archivereset/restorebackup");
                             }
@@ -661,11 +641,6 @@ const RestoreDialog = () => {
                               }
                               if (userWantsToArchiveReset) {
                                 resetArchiveContext();
-                                if (archiveFileToUpload) {
-                                  deleteLastUploadedArchive(
-                                    "/fileupload/" + archiveFileToUpload.name
-                                  );
-                                }
 
                                 navigate(
                                   "/dashboard/archivereset/restorebackup"
@@ -706,11 +681,17 @@ const RestoreDialog = () => {
                       onClick={() => {
                         getBackups();
                         setMode("backups");
+                        formik.resetForm();
                       }}
                     >
                       Select an internal backup
                     </Button>
-                    <Button onClick={() => setMode("files")}>
+                    <Button
+                      onClick={() => {
+                        setMode("files");
+                        formik.resetForm();
+                      }}
+                    >
                       Upload an external backup
                     </Button>
                   </div>
@@ -726,11 +707,6 @@ const RestoreDialog = () => {
                             }
                             if (userWantsToArchiveReset) {
                               resetArchiveContext();
-                              if (archiveFileToUpload) {
-                                deleteLastUploadedArchive(
-                                  "/fileupload/" + archiveFileToUpload.name
-                                );
-                              }
 
                               navigate("/dashboard/archivereset/restorebackup");
                             }
@@ -762,11 +738,6 @@ const RestoreDialog = () => {
                     }
                     if (userWantsToArchiveReset) {
                       resetArchiveContext();
-                      if (archiveFileToUpload) {
-                        deleteLastUploadedArchive(
-                          "/fileupload/" + archiveFileToUpload.name
-                        );
-                      }
 
                       navigate("/dashboard/archivereset/restorebackup");
                     }

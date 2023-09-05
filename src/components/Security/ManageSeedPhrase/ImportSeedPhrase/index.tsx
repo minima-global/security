@@ -82,7 +82,7 @@ const ImportSeedPhrase = () => {
     },
     onSubmit: (formData) => {
       // doing an archive reset
-      if (location.state && "seedresync" in location.state) {
+      if (location.state && location.state.seedresync) {
         return authNavigate(
           "/dashboard/manageseedphrase/enterseedphrase",
           [PERMISSIONS.CAN_VIEW_ENTERSEEDPHRASE],
@@ -116,103 +116,36 @@ const ImportSeedPhrase = () => {
 
           <div className="flex flex-col gap-5">
             <div>
+              {/* why are you nesting forms */}
               <form onSubmit={formik.handleSubmit}>
                 <div className="core-black-contrast-2 p-4 rounded">
-                  <form
-                    onSubmit={formik.handleSubmit}
-                    className="flex flex-col gap-4"
-                  >
-                    {location.state === null && (
-                      <div>
-                        <span className="mb-2 flex gap-2 items-center">
-                          <div className="text-left">Archive node host</div>
-                          {!tooltip.host && (
-                            <img
-                              className="w-4 h-4"
-                              onClick={() =>
-                                setTooltip({ ...tooltip, host: true })
-                              }
-                              alt="tooltip"
-                              src="./assets/help_filled.svg"
-                            />
-                          )}
-                          {!!tooltip.host && (
-                            <img
-                              className="w-4 h-4"
-                              onClick={() =>
-                                setTooltip({ ...tooltip, host: false })
-                              }
-                              alt="tooltip-dismiss"
-                              src="./assets/cancel_filled.svg"
-                            />
-                          )}
-                        </span>
-                        <CSSTransition
-                          in={tooltip.host}
-                          unmountOnExit
-                          timeout={200}
-                          classNames={{
-                            enter: styles.backdropEnter,
-                            enterDone: styles.backdropEnterActive,
-                            exit: styles.backdropExit,
-                            exitActive: styles.backdropExitActive,
-                          }}
-                        >
-                          <Tooltip
-                            onClick={() =>
-                              setTooltip({ ...tooltip, host: false })
-                            }
-                            content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
-                            position={148}
-                          />
-                        </CSSTransition>
-
-                        <Input
-                          extraClass="core-black-contrast"
-                          id="host"
-                          name="host"
-                          placeholder="host"
-                          type="text"
-                          value={formik.values.host}
-                          onChange={formik.handleChange}
-                          onBlur={formik.handleBlur}
-                          autoComplete="off"
-                          error={
-                            formik.touched.host && formik.errors.host
-                              ? formik.errors.host
-                              : false
-                          }
-                        />
-                      </div>
-                    )}
-
+                  {location.state === null && (
                     <div>
                       <span className="mb-2 flex gap-2 items-center">
-                        <div className="text-left">Key uses</div>
-                        {!tooltip.keyuses && (
+                        <div className="text-left">Archive node host</div>
+                        {!tooltip.host && (
                           <img
                             className="w-4 h-4"
                             onClick={() =>
-                              setTooltip({ ...tooltip, keyuses: true })
+                              setTooltip({ ...tooltip, host: true })
                             }
                             alt="tooltip"
                             src="./assets/help_filled.svg"
                           />
                         )}
-                        {!!tooltip.keyuses && (
+                        {!!tooltip.host && (
                           <img
                             className="w-4 h-4"
                             onClick={() =>
-                              setTooltip({ ...tooltip, keyuses: false })
+                              setTooltip({ ...tooltip, host: false })
                             }
                             alt="tooltip-dismiss"
                             src="./assets/cancel_filled.svg"
                           />
                         )}
                       </span>
-
                       <CSSTransition
-                        in={tooltip.keyuses}
+                        in={tooltip.host}
                         unmountOnExit
                         timeout={200}
                         classNames={{
@@ -224,35 +157,98 @@ const ImportSeedPhrase = () => {
                       >
                         <Tooltip
                           onClick={() =>
-                            setTooltip({ ...tooltip, keyuses: false })
+                            setTooltip({ ...tooltip, host: false })
                           }
-                          content="How many times at most you used your keys. Your keys are used for signing every transaction you make. Every time you import your seed phrase this needs to be higher."
-                          position={75}
+                          content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
+                          position={148}
                         />
                       </CSSTransition>
+
                       <Input
                         extraClass="core-black-contrast"
-                        id="keyuses"
-                        name="keyuses"
-                        placeholder="Key uses"
-                        type="number"
-                        value={formik.values.keyuses}
+                        id="host"
+                        name="host"
+                        placeholder="host"
+                        type="text"
+                        value={formik.values.host}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         autoComplete="off"
                         error={
-                          formik.touched.keyuses && formik.errors.keyuses
-                            ? formik.errors.keyuses
+                          formik.touched.host && formik.errors.host
+                            ? formik.errors.host
                             : false
                         }
                       />
                     </div>
-                    {formik.status && (
-                      <div className="text-sm form-error-message text-left">
-                        {formik.status}
-                      </div>
-                    )}
-                  </form>
+                  )}
+
+                  <div className="mb-2">
+                    <span className="mb-2 flex gap-2 items-center mt-2">
+                      <div className="text-left">Key uses</div>
+                      {!tooltip.keyuses && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() =>
+                            setTooltip({ ...tooltip, keyuses: true })
+                          }
+                          alt="tooltip"
+                          src="./assets/help_filled.svg"
+                        />
+                      )}
+                      {!!tooltip.keyuses && (
+                        <img
+                          className="w-4 h-4"
+                          onClick={() =>
+                            setTooltip({ ...tooltip, keyuses: false })
+                          }
+                          alt="tooltip-dismiss"
+                          src="./assets/cancel_filled.svg"
+                        />
+                      )}
+                    </span>
+
+                    <CSSTransition
+                      in={tooltip.keyuses}
+                      unmountOnExit
+                      timeout={200}
+                      classNames={{
+                        enter: styles.backdropEnter,
+                        enterDone: styles.backdropEnterActive,
+                        exit: styles.backdropExit,
+                        exitActive: styles.backdropExitActive,
+                      }}
+                    >
+                      <Tooltip
+                        onClick={() =>
+                          setTooltip({ ...tooltip, keyuses: false })
+                        }
+                        content="How many times at most you used your keys. Your keys are used for signing every transaction you make. Every time you import your seed phrase this needs to be higher."
+                        position={75}
+                      />
+                    </CSSTransition>
+                    <Input
+                      extraClass="core-black-contrast"
+                      id="keyuses"
+                      name="keyuses"
+                      placeholder="Key uses"
+                      type="number"
+                      value={formik.values.keyuses}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                      autoComplete="off"
+                      error={
+                        formik.touched.keyuses && formik.errors.keyuses
+                          ? formik.errors.keyuses
+                          : false
+                      }
+                    />
+                  </div>
+                  {formik.status && (
+                    <div className="text-sm form-error-message text-left">
+                      {formik.status}
+                    </div>
+                  )}
                 </div>
                 <div className="text-left">
                   <p className="text-sm password-label mt-4 mr-4 ml-4">

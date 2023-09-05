@@ -36,7 +36,9 @@ const RestoreFromBackup = () => {
       <Button
         onClick={() => {
           if (userWantsToArchiveReset) {
-            authNavigate("/upload", [PERMISSIONS["CAN_VIEW_UPLOADING"]]);
+            authNavigate("/upload", [PERMISSIONS["CAN_VIEW_UPLOADING"]], {
+              state: { context: "restore" },
+            });
           }
 
           if (!userWantsToArchiveReset) {

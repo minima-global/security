@@ -6,11 +6,16 @@ export const resetSeedSync = (
   return new Promise((resolve, reject) => {
     (window as any).MDS.cmd(
       `reset archivefile:"${archivefile}" action:seedsync phrase:"${phrase}" keyuses:"${keyuses}"`,
-      (response: any) => {
-        if (!response.status)
-          reject(response.error ? response.error : "RPC FAILED");
+      (resp: any) => {
+        if (!resp.response.status) {
+          return reject(
+            resp.response.error
+              ? resp.response.error
+              : "Archive seed re-sync failed"
+          );
+        }
 
-        resolve(response);
+        resolve(resp);
       }
     );
   });

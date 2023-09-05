@@ -39,6 +39,7 @@ import Restore from "./components/Security/ArchiveReset/Restore/index.tsx";
 import Uploading from "./components/Uploading/index.tsx";
 import SeedResyncReset from "./components/Security/ArchiveReset/SeedResync/index.tsx";
 import Archives from "./components/Security/ArchiveReset/Archives/index.tsx";
+import IntegrityCheck from "./components/Security/IntegrityCheck/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -68,6 +69,9 @@ const router = createHashRouter(
             </FadeIn>
           }
         />
+
+        <Route path="integritycheck" element={<IntegrityCheck />} />
+
         <Route path="archivereset">
           <Route
             index

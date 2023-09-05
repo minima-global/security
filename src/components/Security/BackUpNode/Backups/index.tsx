@@ -46,6 +46,7 @@ const Backups = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl">Recent backups</h1>
           <svg
+            className="hover:cursor-pointer"
             onClick={() => authNavigate("/dashboard/backup", [])}
             width="16"
             height="17"

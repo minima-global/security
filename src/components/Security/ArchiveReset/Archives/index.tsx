@@ -46,6 +46,7 @@ const Archives = () => {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl">Recent archives</h1>
           <svg
+            className="hover:cursor-pointer"
             onClick={() => authNavigate("/dashboard/archivereset", [])}
             width="16"
             height="17"

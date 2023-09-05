@@ -45,7 +45,7 @@ const ViewSeedPhrase = () => {
         </div>
         <ul className={styles["seed-phrase-list"]}>
           {phraseAsArray.map((p, index) => (
-            <li>
+            <li key={index}>
               <div>{index + 1}</div>
               {!hide
                 ? p.toLowerCase().charAt(0).toUpperCase() +
@@ -97,10 +97,6 @@ const ViewSeedPhrase = () => {
       <Button
         onTouchStart={() => setHideSeedPhrase(false)}
         onTouchEnd={() => setHideSeedPhrase(true)}
-        // onContextMenu={() => {
-        //   setHideSeedPhrase(false);
-        //   setTimeout(() => setHideSeedPhrase(true), 2500);
-        // }}
         extraClass={`mobile-only p-16 flex gap-2 items-center justify-center mb-8 mt-4 ${
           !hide ? "core-black-contrast core-grey-contrast-3" : ""
         }`}

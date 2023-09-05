@@ -17,21 +17,12 @@ const ResyncDialog = () => {
 
   const { authNavigate } = useAuth();
   const { shuttingDown, setModal } = useContext(appContext);
-  const {
-    userWantsToArchiveReset,
-    deleteLastUploadedArchive,
-    resetArchiveContext,
-    archiveFileToUpload,
-  } = useArchiveContext();
+  const { userWantsToArchiveReset, resetArchiveContext } = useArchiveContext();
   const [error, setError] = useState<false | string>(false);
 
   useEffect(() => {
-    if (location.state && location.state.hasOwnPropery("error")) {
-      setError(
-        typeof location.state.error === "string"
-          ? location.state.error
-          : "Something went wrong, please try again."
-      );
+    if (location.state && location.state.error) {
+      setError(location.state.error);
     }
   }, [location]);
 
@@ -160,11 +151,6 @@ const ResyncDialog = () => {
                   navigate("/dashboard");
                   if (userWantsToArchiveReset) {
                     resetArchiveContext();
-                    if (archiveFileToUpload) {
-                      deleteLastUploadedArchive(
-                        "/fileupload/" + archiveFileToUpload.name
-                      );
-                    }
                   }
                 }}
               >
@@ -184,11 +170,6 @@ const ResyncDialog = () => {
               navigate("/dashboard");
               if (userWantsToArchiveReset) {
                 resetArchiveContext();
-                if (archiveFileToUpload) {
-                  deleteLastUploadedArchive(
-                    "/fileupload/" + archiveFileToUpload.name
-                  );
-                }
               }
             }}
           >

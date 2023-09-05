@@ -1,12 +1,13 @@
-export const resetChainResync = (archivefile: string) => {
+export const resetChainResync = (archivefile: string | null) => {
+  console.log(`reset archivefile:"${archivefile}" action:chainsync`);
   return new Promise((resolve, reject) => {
     (window as any).MDS.cmd(
       `reset archivefile:"${archivefile}" action:chainsync`,
-      (response: any) => {
-        if (!response.status)
-          reject(response.error ? response.error : "RPC FAILED");
+      (resp: any) => {
+        if (!resp.status)
+          reject(resp.error ? resp.error : "Archive chain re-sync failed");
 
-        resolve(response);
+        resolve(resp);
       }
     );
   });

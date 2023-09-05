@@ -1,6 +1,6 @@
-import { RefObject, useEffect, useRef, useState } from "react";
+import { RefObject, useContext, useEffect, useRef, useState } from "react";
 import Lottie from "lottie-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Grid from "../UI/Grid";
 import CommonDialogLayout from "../UI/CommonDialogLayout";
 import Button from "../UI/Button";
@@ -10,30 +10,28 @@ import PERMISSIONS from "../../permissions";
 import * as rpc from "../../__minima__/libs/RPC";
 
 import Loading from "../../assets/loading.json";
+import { appContext } from "../../AppContext";
 
 const Uploading = () => {
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
 
+  const location = useLocation();
   const navigate = useNavigate();
-
   const { authNavigate } = useAuth();
 
   const [error, setError] = useState<false | string>(false);
   const [progress, setProgress] = useState(0);
   const [uploading, setUploading] = useState(false);
-  const [integrityCheck, setIntegrityCheck] = useState(false);
 
   const {
     context,
     resetArchiveContext,
-    checkArchiveIntegrity,
-    setArchive,
-    lastUploadPath,
-    archive,
+    handleArchivePathContext,
+    archivePathToResetWith,
     archiveFileToUpload,
-    setArchiveFileToUpload,
-    deleteLastUploadedArchive,
   } = useArchiveContext();
+
+  const { getArchives } = useContext(appContext);
 
   useEffect(() => {
     if (archiveFileToUpload) {
@@ -49,26 +47,27 @@ const Uploading = () => {
         if (resp.allchunks >= 10) {
           setProgress(resp.chunk / resp.allchunks);
         }
-
+        const fileName = resp.filename;
         if (resp.allchunks === resp.chunk) {
-          setIntegrityCheck(true);
+          setUploading(false);
 
-          await checkArchiveIntegrity("/fileupload/" + resp.filename)
-            .then((archive) => {
-              if (parseInt(archive.last) < 0) {
-                setError("Something went wrong, please try again");
+          // Move uploaded file to internal, then set full path to prepare for reset command
+          (window as any).MDS.file.move(
+            "/fileupload/" + fileName,
+            "/archives/" + fileName,
+            (resp: any) => {
+              if (resp.status) {
+                handleArchivePathContext(
+                  "/archives/" + fileName,
+                  location.state && location.state.context
+                    ? location.state.context
+                    : null
+                );
+
+                getArchives();
               }
-              setIntegrityCheck(false);
-              setUploading(false);
-              setArchive(archive);
-            })
-            .catch((error) => {
-              console.error(error);
-              setIntegrityCheck(false);
-              setUploading(false);
-
-              setError(error);
-            });
+            }
+          );
         }
       });
     } catch (error: any) {
@@ -78,9 +77,6 @@ const Uploading = () => {
     }
   };
 
-  const complete = archive && archive.last === "1";
-  const warning = archive && parseInt(archive.last) > 1;
-
   return (
     <Grid
       header={null}
@@ -89,21 +85,24 @@ const Uploading = () => {
           status={undefined}
           primaryActions={
             <>
-              {!uploading && !error && (
-                <Button
-                  onClick={async () => {
-                    if (context === "restore") {
-                      authNavigate("/dashboard/restore/frombackup", [
-                        PERMISSIONS.CAN_VIEW_RESTORE,
-                      ]);
-                    }
-                    if (context === "chainresync") {
-                      authNavigate("/dashboard/resyncing", [
-                        PERMISSIONS.CAN_VIEW_RESYNCING,
-                      ]);
-                      if (lastUploadPath) {
+              {location.state &&
+                !location.state.justUploading &&
+                !uploading &&
+                !error && (
+                  <Button
+                    onClick={async () => {
+                      if (context === "restore") {
+                        authNavigate("/dashboard/restore/frombackup", [
+                          PERMISSIONS.CAN_VIEW_RESTORE,
+                        ]);
+                      }
+                      if (context === "chainresync") {
+                        authNavigate("/dashboard/resyncing", [
+                          PERMISSIONS.CAN_VIEW_RESYNCING,
+                        ]);
+
                         await rpc
-                          .resetChainResync(lastUploadPath)
+                          .resetChainResync(archivePathToResetWith)
                           .catch((error) => {
                             authNavigate(
                               "/dashboard/resyncing",
@@ -118,32 +117,20 @@ const Uploading = () => {
                             );
                           });
                       }
-                      if (!lastUploadPath) {
+                      if (context === "seedresync") {
                         authNavigate(
-                          "/dashboard/resyncing",
-                          [PERMISSIONS.CAN_VIEW_RESYNCING],
-                          {
-                            state: {
-                              error: "Archive file missing, please try again.",
-                            },
-                          }
+                          "/dashboard/manageseedphrase/importseedphrase",
+                          [PERMISSIONS.CAN_VIEW_IMPORTSEEDPHRASE],
+                          { state: { seedresync: true } }
                         );
                       }
-                    }
-                    if (context === "seedresync") {
-                      authNavigate(
-                        "/dashboard/manageseedphrase/importseedphrase",
-                        [PERMISSIONS.CAN_VIEW_IMPORTSEEDPHRASE],
-                        { state: { seedresync: true } }
-                      );
-                    }
-                  }}
-                >
-                  Continue
-                </Button>
-              )}
+                    }}
+                  >
+                    Continue
+                  </Button>
+                )}
 
-              {!uploading && (error || warning) && (
+              {!uploading && error && (
                 <>
                   <input
                     accept=".gzip"
@@ -155,10 +142,12 @@ const Uploading = () => {
                       if (file) {
                         // let's re-upload..
                         setError(false);
-                        setArchiveFileToUpload(file);
-                        authNavigate("/upload", [
-                          PERMISSIONS["CAN_VIEW_UPLOADING"],
-                        ]);
+                        handleFileUpload(file);
+                        authNavigate(
+                          "/upload",
+                          [PERMISSIONS["CAN_VIEW_UPLOADING"]],
+                          location.state
+                        );
                       }
                     }}
                   />
@@ -177,14 +166,12 @@ const Uploading = () => {
               {!uploading && (
                 <Button
                   onClick={() => {
-                    resetArchiveContext();
-                    // since they've cancelled.. delete it
-                    navigate("/dashboard/archivereset");
-                    if (archiveFileToUpload) {
-                      deleteLastUploadedArchive(
-                        "/fileupload/" + archiveFileToUpload.name
-                      );
+                    if (location.state && location.state.justUploading) {
+                      return navigate(-1);
                     }
+
+                    resetArchiveContext();
+                    navigate("/dashboard/archivereset");
                   }}
                 >
                   Cancel
@@ -197,18 +184,15 @@ const Uploading = () => {
               <div className="grid h-full">
                 <div>
                   <div className="flex w-full justify-between px-2 py-2">
-                    {!!uploading && !integrityCheck && (
+                    {!!uploading && (
                       <h1 className="text-2xl">Uploading file...</h1>
                     )}
-                    {!!uploading && !!integrityCheck && (
-                      <h1 className="text-2xl">Inspecting file...</h1>
-                    )}
 
-                    {!uploading && !integrityCheck && (
+                    {!uploading && (
                       <h1 className="text-2xl">Upload complete</h1>
                     )}
 
-                    {!!uploading && !integrityCheck && (
+                    {!!uploading && (
                       <div className="col-span-1 flex justify-end">
                         <div>
                           <Lottie
@@ -223,22 +207,8 @@ const Uploading = () => {
                         </div>
                       </div>
                     )}
-                    {!!uploading && !!integrityCheck && (
-                      <div className="col-span-1 flex justify-end">
-                        <div>
-                          <Lottie
-                            className="mb-4"
-                            style={{
-                              width: 32,
-                              height: 32,
-                              alignSelf: "center",
-                            }}
-                            animationData={Loading}
-                          />
-                        </div>
-                      </div>
-                    )}
-                    {!uploading && !integrityCheck && (
+
+                    {!uploading && (
                       <div className="col-span-1 flex justify-end">
                         <div>
                           <svg
@@ -271,14 +241,8 @@ const Uploading = () => {
                   </div>
 
                   <div
-                    className={`w-full p-4 text-white mt-4 text-left core-black-contrast-2 rounded mb-4 ${
-                      complete
-                        ? "upload-complete"
-                        : warning
-                        ? "upload-warning"
-                        : error
-                        ? "upload-error"
-                        : ""
+                    className={`break-all w-full p-4 text-white mt-4 text-left core-black-contrast-2 rounded mb-4 ${
+                      error ? "upload-error" : ""
                     }`}
                   >
                     {archiveFileToUpload ? archiveFileToUpload.name : "N/A"}
@@ -287,9 +251,7 @@ const Uploading = () => {
                   {uploading && !!progress && (
                     <div className="core-black-contrast-2 h-[56px] rounded p-4 mt-6 mb-8 relative">
                       <div className="absolute text-left blend z-10 left-[16px] top-[15px] font-black">
-                        {!integrityCheck
-                          ? `${(Number(progress) * 100).toFixed(0)}%`
-                          : "Inspecting..."}
+                        {(Number(progress) * 100).toFixed(0)}%
                       </div>
                       <div
                         className="bg-white absolute w-full h-[56px] rounded transition-all origin-left"
@@ -303,63 +265,6 @@ const Uploading = () => {
                     </div>
                   )}
 
-                  {!uploading && complete && (
-                    <div className="px-4 py-3 mb-4 flex rounded gap-4 form-success-box">
-                      <svg
-                        className="flex-none"
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <circle cx="12" cy="12" r="8" fill="white" />
-                        <mask
-                          id="mask0_1546_39376"
-                          maskUnits="userSpaceOnUse"
-                          x="0"
-                          y="0"
-                          width="24"
-                          height="24"
-                        >
-                          <rect width="24" height="24" fill="#D9D9D9" />
-                        </mask>
-                        <g mask="url(#mask0_1546_39376)">
-                          <path
-                            d="M10.5061 16.4777L17.583 9.40081L16.4737 8.29152L10.5061 14.2591L7.50607 11.2591L6.39677 12.3684L10.5061 16.4777ZM12.0018 22C10.6187 22 9.31863 21.7375 8.10165 21.2126C6.88464 20.6877 5.82603 19.9753 4.9258 19.0755C4.02555 18.1757 3.31285 17.1175 2.78771 15.9011C2.26257 14.6846 2 13.3849 2 12.0018C2 10.6187 2.26246 9.31863 2.78737 8.10165C3.31228 6.88464 4.02465 5.82603 4.92448 4.9258C5.82433 4.02555 6.88248 3.31286 8.09894 2.78771C9.31538 2.26257 10.6151 2 11.9982 2C13.3813 2 14.6814 2.26246 15.8984 2.78737C17.1154 3.31229 18.174 4.02465 19.0742 4.92448C19.9745 5.82433 20.6871 6.88248 21.2123 8.09894C21.7374 9.31538 22 10.6151 22 11.9982C22 13.3813 21.7375 14.6814 21.2126 15.8984C20.6877 17.1154 19.9753 18.174 19.0755 19.0742C18.1757 19.9745 17.1175 20.6871 15.9011 21.2123C14.6846 21.7374 13.3849 22 12.0018 22Z"
-                            fill="#00CBB6"
-                          />
-                        </g>
-                      </svg>
-
-                      <p className="text-sm my-auto text-left text-black">
-                        This archive file contains no errors.
-                      </p>
-                    </div>
-                  )}
-                  {!uploading && warning && (
-                    <div className="px-4 py-3 rounded mb-4 flex gap-4 form-info-box">
-                      <svg
-                        className="flex-none"
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <path
-                          d="M9.99998 14.7307C10.2288 14.7307 10.4207 14.6533 10.5755 14.4985C10.7303 14.3437 10.8077 14.1519 10.8077 13.9231C10.8077 13.6942 10.7303 13.5024 10.5755 13.3476C10.4207 13.1928 10.2288 13.1154 9.99998 13.1154C9.77113 13.1154 9.5793 13.1928 9.4245 13.3476C9.2697 13.5024 9.1923 13.6942 9.1923 13.9231C9.1923 14.1519 9.2697 14.3437 9.4245 14.4985C9.5793 14.6533 9.77113 14.7307 9.99998 14.7307ZM9.25 11.0769H10.75V5.0769H9.25V11.0769ZM10.0017 19.5C8.68772 19.5 7.45268 19.2506 6.29655 18.752C5.1404 18.2533 4.13472 17.5765 3.2795 16.7217C2.42427 15.8669 1.74721 14.8616 1.24833 13.706C0.749442 12.5504 0.5 11.3156 0.5 10.0017C0.5 8.68772 0.749334 7.45268 1.248 6.29655C1.74667 5.1404 2.42342 4.13472 3.27825 3.2795C4.1331 2.42427 5.13834 1.74721 6.29398 1.24833C7.44959 0.749443 8.68437 0.5 9.9983 0.5C11.3122 0.5 12.5473 0.749334 13.7034 1.248C14.8596 1.74667 15.8652 2.42342 16.7205 3.27825C17.5757 4.1331 18.2527 5.13834 18.7516 6.29398C19.2505 7.44959 19.5 8.68437 19.5 9.9983C19.5 11.3122 19.2506 12.5473 18.752 13.7034C18.2533 14.8596 17.5765 15.8652 16.7217 16.7205C15.8669 17.5757 14.8616 18.2527 13.706 18.7516C12.5504 19.2505 11.3156 19.5 10.0017 19.5Z"
-                          fill="#FFD028"
-                        />
-                      </svg>
-
-                      <p className="text-sm text-left my-auto text-black">
-                        This archive file can only re-sync from block{" "}
-                        {archive.last} and may not be able to re-sync all coins,
-                        consider using a different archive file.
-                      </p>
-                    </div>
-                  )}
                   {!uploading && error && (
                     <div className="px-4 py-3 mb-4 rounded flex  gap-4 form-error-box">
                       <svg
