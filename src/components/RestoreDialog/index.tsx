@@ -523,6 +523,7 @@ const RestoreDialog = () => {
                     />
 
                     <Input
+                      disabled={isSubmitting}
                       error={
                         formik.errors.password ? formik.errors.password : false
                       }
@@ -578,6 +579,7 @@ const RestoreDialog = () => {
                         )}
                         <div>
                           <Input
+                            disabled={isSubmitting}
                             id="host"
                             name="host"
                             placeholder="host (optional)"

@@ -47,7 +47,8 @@ const List = ({ options, setForm, disabled }: IProps) => {
 
   useEffect(() => {
     if (selected === "") {
-      handleSelect(options.length ? options[0].name : "No backups available");
+      console.log("setting archive again...");
+      handleSelect(options.length ? options[0].name : "");
       setForm(options.length ? options[0].name : "");
     }
   }, [options]);
@@ -60,12 +61,24 @@ const List = ({ options, setForm, disabled }: IProps) => {
             options.length ? setModal((prevState) => !prevState) : null;
           }
         }}
-        className={`${styles.picker} hover:cursor-pointer hover:bg-slate-200`}
+        className={`${
+          styles.picker
+        } hover:cursor-pointer hover:bg-slate-200 relative ${
+          disabled ? "hover:cursor-not-allowed" : ""
+        }`}
       >
-        <span className="color-black font-sm">{selected}</span>
+        <span
+          className={`color-black font-sm ${disabled ? "text-disabled" : ""}`}
+        >
+          {!!selected.length && selected}
+          {!selected.length && "No files available"}
+        </span>
+
         {!disabled && (
           <svg
-            className={openModal ? styles.active : ""}
+            className={`${
+              openModal ? styles.active : ""
+            } top-6 absolute right-4`}
             width="16"
             height="10"
             viewBox="0 0 16 10"

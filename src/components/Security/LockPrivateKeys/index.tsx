@@ -57,7 +57,7 @@ const LockPrivateKeys = () => {
   const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(false);
 
   useEffect(() => {
-    setBackButton({ display: true, to: "/dashboard", title: "Security" });
+    setBackButton({ display: true, to: "/dashboard", title: "Back" });
   }, [location]);
 
   const UnlockDialog = {
@@ -166,7 +166,7 @@ const LockPrivateKeys = () => {
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
-              <BackButton to="/dashboard" title="Security" />
+              <BackButton to="/dashboard" title="Back" />
             )}
 
             <div className="mt-6 text-2xl mb-8 text-left bg-inherit">
@@ -195,6 +195,7 @@ const LockPrivateKeys = () => {
                   className="flex flex-col gap-4"
                 >
                   <Input
+                    disabled={formik.isSubmitting}
                     extraClass="core-black-contrast"
                     handleEndIconClick={() =>
                       togglePasswordVisibility((prevState) => !prevState)
@@ -210,6 +211,7 @@ const LockPrivateKeys = () => {
                     endIcon={<TogglePasswordIcon toggle={hidePassword} />}
                   />
                   <Input
+                    disabled={formik.isSubmitting}
                     extraClass="core-black-contrast"
                     handleEndIconClick={() =>
                       toggleConfirmPasswordVisiblity((prevState) => !prevState)

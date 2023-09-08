@@ -55,7 +55,7 @@ const IntegrityCheck = () => {
   } = useContext(appContext);
 
   useEffect(() => {
-    setBackButton({ display: true, to: "/dashboard", title: "Security" });
+    setBackButton({ display: true, to: -1, title: "Back" });
   }, []);
 
   useEffect(() => {
@@ -122,9 +122,7 @@ const IntegrityCheck = () => {
 
   return (
     <div className="flex flex-col h-full bg-black px-4 pb-4">
-      {!displayHeaderBackButton && (
-        <BackButton to="/dashboard" title="Security" />
-      )}
+      {!displayHeaderBackButton && <BackButton to="-1" title="Back" />}
 
       <h1 className="mt-6 text-2xl mb-8 text-left bg-inherit">
         Archive integrity check

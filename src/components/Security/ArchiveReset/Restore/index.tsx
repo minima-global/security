@@ -11,9 +11,22 @@ import BackButton from "../../../UI/BackButton";
 import { useAuth } from "../../../../providers/authProvider";
 import { useNavigate } from "react-router-dom";
 import Button from "../../../UI/Button";
-import PERMISSIONS from "../../../../permissions";
 import { useArchiveContext } from "../../../../providers/archiveProvider";
-import SelectInternalArchive from "../Archives/SelectInternalArchive";
+import { createPortal } from "react-dom";
+import SharedDialog from "../../../SharedDialog";
+import { Formik } from "formik";
+import List from "../../../UI/List";
+
+import * as utils from "../../../../utils";
+import * as rpc from "../../../../__minima__/libs/RPC";
+import * as fM from "../../../../__minima__/libs/fileManager";
+import FileChooser from "../../../UI/FileChooser";
+import Input from "../../../UI/Input";
+import TogglePasswordIcon from "../../../UI/TogglePasswordIcon/TogglePasswordIcon";
+
+import Lottie from "lottie-react";
+import Loading from "../../../../assets/loading.json";
+import Logs from "../../../Logs";
 
 const ArchiveReset = () => {
   const {
@@ -23,11 +36,24 @@ const ArchiveReset = () => {
   } = useContext(appContext);
   const { authNavigate } = useAuth();
   const navigate = useNavigate();
+  const { archives, getArchives, backups } = useContext(appContext);
 
   const inputRef: RefObject<HTMLInputElement> = useRef(null);
 
   const { handleUploadContext } = useArchiveContext();
-  const [selectInternalArchive, setSelectInternalArchive] = useState(false);
+
+  const [progress, setProgress] = useState(0);
+  const [uploadComplete, setUploadComplete] = useState(false);
+  const [fileUpload, setFileUpload] = useState(false);
+  const [resetFileField, setResetFileField] = useState(0);
+  const [beginRestoring, setBeginRestoring] = useState(false);
+  const [error, setError] = useState<false | string>(false);
+  const [archiveFileSelection, setArchiveFileSelection] = useState("local");
+  const [haveArchive, setHaveArchive] = useState(false);
+
+  const [backupSelect, setBackupSelect] = useState(false);
+  const [backupSteps, setBackupSteps] = useState(0);
+  const [hidePassword, togglePasswordVisibility] = useState(false);
 
   useEffect(() => {
     setBackButton({
@@ -37,125 +63,764 @@ const ArchiveReset = () => {
     });
   }, []);
 
-  const InformativeDialog = {
-    content: (
-      <div>
-        <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
-        <h1 className="text-2xl mb-8">Please note</h1>
-        <p className="mb-6">
-          Restoring from a backup is irreversible. <br /> Make sure you have
-          your seed phrase written down before restoring.
-        </p>
-      </div>
-    ),
-    primaryActions: (
-      <>
-        <input
-          accept=".gzip"
-          type="file"
-          className="hidden"
-          ref={inputRef}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files) {
-              const file = e.target.files[0];
-              handleUploadContext(file, "restore");
-              authNavigate("/upload", [PERMISSIONS["CAN_VIEW_UPLOADING"]], {
-                state: { context: "restore" },
-              });
-            }
-          }}
-        />
-        <Button onClick={() => inputRef.current?.click()}>
-          Upload archive file
-        </Button>
-      </>
-    ),
-    secondaryActions: (
-      <Button
-        onClick={() =>
-          authNavigate("/dashboard/archivereset/restorebackup", [])
-        }
-      >
-        Cancel
-      </Button>
-    ),
-  };
-
-  const NoArchiveDialog = {
-    content: (
-      <div>
-        <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
-        <h1 className="text-2xl mb-8">Restore without archive file</h1>
-        <p className="mb-6">
-          Restoring without an archive file can take much longer to re-sync the
-          chain. <br /> <br />
-          Please ensure you have a stable internet connection and plug your
-          device into a power source before continuing.
-        </p>
-      </div>
-    ),
-    primaryActions: (
-      <>
-        <Button
-          onClick={() =>
-            authNavigate("/dashboard/restore/frombackup", [
-              PERMISSIONS["CAN_VIEW_RESTORE"],
-            ])
-          }
-        >
-          Continue
-        </Button>
-      </>
-    ),
-    secondaryActions: (
-      <Button
-        onClick={() =>
-          authNavigate("/dashboard/archivereset/restorebackup", [])
-        }
-      >
-        Cancel
-      </Button>
-    ),
-  };
-
-  const handleUploadClick = () => {
-    authNavigate("/dashboard/modal", [PERMISSIONS.CAN_VIEW_MODAL]);
-    setModal({
-      content: InformativeDialog.content,
-      primaryActions: InformativeDialog.primaryActions,
-      secondaryActions: InformativeDialog.secondaryActions,
-    });
-  };
-
-  const handleNoArchiveClick = () => {
-    authNavigate("/dashboard/modal", [PERMISSIONS.CAN_VIEW_MODAL]);
-    setModal({
-      content: NoArchiveDialog.content,
-      primaryActions: NoArchiveDialog.primaryActions,
-      secondaryActions: NoArchiveDialog.secondaryActions,
-    });
-  };
-
-  const handleInternalArchive = () => {
-    setSelectInternalArchive(true);
+  const handleArchiveSelector = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    console.log("Setting archive file selector");
+    setArchiveFileSelection(event.target.value);
   };
 
   return (
     <>
-      <SelectInternalArchive
-        open={selectInternalArchive}
-        context="restore"
-        cancel={() => setSelectInternalArchive(false)}
-      />
+      {haveArchive &&
+        createPortal(
+          <SharedDialog
+            main={
+              <>
+                <Formik
+                  initialValues={{
+                    file: "",
+                    upload: null,
+                    password: "",
+                    backupfilepath: "",
+                  }}
+                  onSubmit={async (formData) => {
+                    setBeginRestoring(true);
+                    console.log("archive file path", formData.file);
+                    console.log("backup file path", formData.backupfilepath);
+
+                    try {
+                      // do your thing
+                      const {
+                        file: archivefilepath,
+                        backupfilepath,
+                        password,
+                      } = formData;
+                      await rpc
+                        .reset(archivefilepath, backupfilepath, password)
+                        .catch((error) => {
+                          throw error;
+                        });
+                    } catch (error) {
+                      setError(error as string);
+                    }
+                  }}
+                >
+                  {({
+                    handleSubmit,
+                    setFieldValue,
+                    errors,
+                    touched,
+                    status,
+                    values,
+                    handleBlur,
+                    handleChange,
+                    isValid,
+                    isSubmitting,
+                    resetForm,
+                    submitForm,
+                  }) => (
+                    <form onSubmit={handleSubmit}>
+                      <h1 className="text-2xl mb-8 text-center">
+                        Select an archive
+                      </h1>
+                      <p className="mb-6 text-center">
+                        Select a local archive or upload a new one
+                      </p>
+
+                      <div className="relative mb-4">
+                        <select
+                          disabled={fileUpload}
+                          defaultValue={archiveFileSelection}
+                          onChange={(e) => {
+                            handleArchiveSelector(e);
+                            resetForm();
+                          }}
+                          className="p-4 hover:cursor-pointer rounded w-full hover:opacity-80"
+                        >
+                          <option id="value" value="local">
+                            Select an internal archive file
+                          </option>
+                          <option id="split" value="upload">
+                            Upload an archive file
+                          </option>
+                        </select>
+
+                        <svg
+                          className="my-auto absolute right-2 top-[12px]"
+                          width="32"
+                          height="33"
+                          viewBox="0 0 32 33"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <mask
+                            id="mask0_2226_53255"
+                            maskUnits="userSpaceOnUse"
+                            x="0"
+                            y="0"
+                            width="32"
+                            height="33"
+                          >
+                            <rect
+                              y="0.550781"
+                              width="32"
+                              height="32"
+                              fill="#D9D9D9"
+                            />
+                          </mask>
+                          <g mask="url(#mask0_2226_53255)">
+                            <path
+                              d="M16.0004 20.6172L8.4668 13.0508L9.6668 11.8844L16.0004 18.2172L22.334 11.8844L23.534 13.0844L16.0004 20.6172Z"
+                              fill="#FaFaFF"
+                            />
+                          </g>
+                        </svg>
+                      </div>
+
+                      {!backupSelect && (
+                        <>
+                          {archiveFileSelection === "local" && (
+                            <>
+                              <List
+                                disabled={archives.length === 0}
+                                options={archives}
+                                setForm={async (option) => {
+                                  if (option.length) {
+                                    const fullPath = await fM.getPath(
+                                      "/archives/" + option
+                                    );
+
+                                    console.log("archive fpath", fullPath);
+
+                                    setFieldValue("file", fullPath);
+                                  }
+                                }}
+                              />
+                              {archives.length === 0 && (
+                                <p className="text-sm mt-2 text-good">
+                                  No archives found in your internal files.
+                                  Upload a new one!
+                                </p>
+                              )}
+                            </>
+                          )}
+                          {!fileUpload && archiveFileSelection === "upload" && (
+                            <FileChooser
+                              disabled={isSubmitting}
+                              keyValue={resetFileField}
+                              handleEndIconClick={() => {
+                                setResetFileField((prev) => prev + 1);
+                                setFieldValue("upload", undefined);
+                              }}
+                              error={
+                                errors.upload && errors.upload
+                                  ? errors.upload
+                                  : false
+                              }
+                              extraClass="core-grey-20"
+                              accept=".gzip"
+                              onChange={(
+                                e: React.ChangeEvent<HTMLInputElement>
+                              ) => {
+                                if (e.target.files) {
+                                  setFieldValue("upload", e.target.files[0]);
+                                }
+                              }}
+                              onBlur={handleBlur}
+                              placeholder="Select file"
+                              type="file"
+                              id="upload"
+                              name="upload"
+                              endIcon={
+                                values.upload && (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="25"
+                                    height="24"
+                                    viewBox="0 0 25 24"
+                                    fill="none"
+                                  >
+                                    <mask
+                                      id="mask0_645_17003"
+                                      maskUnits="userSpaceOnUse"
+                                      x="0"
+                                      y="0"
+                                      width="25"
+                                      height="24"
+                                    >
+                                      <rect
+                                        x="0.5"
+                                        width="24"
+                                        height="24"
+                                        fill="#D9D9D9"
+                                      />
+                                    </mask>
+                                    <g mask="url(#mask0_645_17003)">
+                                      <path
+                                        d="M9.89997 16.1539L12.5 13.5539L15.1 16.1539L16.1538 15.1001L13.5538 12.5001L16.1538 9.90005L15.1 8.84623L12.5 11.4462L9.89997 8.84623L8.84615 9.90005L11.4461 12.5001L8.84615 15.1001L9.89997 16.1539ZM7.8077 20.5C7.30257 20.5 6.875 20.325 6.525 19.975C6.175 19.625 6 19.1975 6 18.6923V6.00005H5V4.50008H9.49997V3.61548H15.5V4.50008H20V6.00005H19V18.6923C19 19.1975 18.825 19.625 18.475 19.975C18.125 20.325 17.6974 20.5 17.1922 20.5H7.8077ZM17.5 6.00005H7.49997V18.6923C7.49997 18.7693 7.53203 18.8398 7.59613 18.9039C7.66024 18.968 7.73077 19.0001 7.8077 19.0001H17.1922C17.2692 19.0001 17.3397 18.968 17.4038 18.9039C17.4679 18.8398 17.5 18.7693 17.5 18.6923V6.00005Z"
+                                        fill="#91919D"
+                                      />
+                                    </g>
+                                  </svg>
+                                )
+                              }
+                            />
+                          )}
+                          {fileUpload && archiveFileSelection === "upload" && (
+                            <div className="core-black-contrast-2 h-[56px] rounded p-4 mt-4 relative">
+                              <div className="absolute text-left blend z-10 left-[16px] top-[15px] font-black">
+                                {(Number(progress) * 100).toFixed(0)}%
+                              </div>
+                              <div
+                                className="bg-white absolute w-full h-[56px] rounded transition-all origin-left"
+                                style={{
+                                  transform: `scaleX(${progress})`,
+                                  left: "-1px",
+                                  top: "-2px",
+                                  width: "calc(100% + 1px)",
+                                }}
+                              ></div>
+                            </div>
+                          )}
+                          {fileUpload && values.upload && (
+                            <p className="text-sm mt-2">
+                              Uploading{" "}
+                              {values.upload.name
+                                ? values.upload.name + "..."
+                                : ""}
+                            </p>
+                          )}
+                          {values.upload && (
+                            <>
+                              <Button
+                                disabled={fileUpload}
+                                variant="primary"
+                                extraClass="mt-4"
+                                onClick={async () => {
+                                  setFileUpload(true);
+                                  setFieldValue("file", "");
+
+                                  (window as any).MDS.file.upload(
+                                    values.upload,
+                                    async function (resp: any) {
+                                      if (resp.allchunks >= 10) {
+                                        setProgress(
+                                          resp.chunk / resp.allchunks
+                                        );
+                                      }
+                                      const fileName = resp.filename;
+                                      if (resp.allchunks === resp.chunk) {
+                                        setFileUpload(false);
+
+                                        // Move uploaded file to internal, then set full path to prepare for reset command
+                                        (window as any).MDS.file.move(
+                                          "/fileupload/" + fileName,
+                                          "/archives/" + fileName,
+                                          (resp: any) => {
+                                            if (resp.status) {
+                                              setFieldValue(
+                                                "file",
+                                                "/archives/" + fileName
+                                              );
+                                              setFieldValue(
+                                                "upload",
+                                                undefined
+                                              );
+                                              setFileUpload(false);
+                                              getArchives();
+                                            }
+                                          }
+                                        );
+                                      }
+                                    }
+                                  );
+                                }}
+                              >
+                                {fileUpload ? "Uploading..." : "Upload"}
+                              </Button>
+                            </>
+                          )}
+                          {values.file && values.file.length > 0 && (
+                            <Button
+                              onClick={() => setBackupSelect(true)}
+                              variant="primary"
+                              extraClass="mt-4"
+                            >
+                              Continue
+                            </Button>
+                          )}
+                        </>
+                      )}
+
+                      {!!backupSelect && (
+                        <>
+                          {backupSteps === 0 && (
+                            <SharedDialog
+                              main={
+                                <div className="flex flex-col items-center">
+                                  <img
+                                    className="mb-4"
+                                    alt="informative"
+                                    src="./assets/error.svg"
+                                  />{" "}
+                                  <h1 className="text-2xl mb-8">
+                                    Restore from backup
+                                  </h1>
+                                  <p className="mb-6 text-center">
+                                    Select a backup stored internally within the
+                                    app or upload a new backup from an external
+                                    location.
+                                  </p>
+                                </div>
+                              }
+                              primary={
+                                <>
+                                  <Button
+                                    extraClass="mb-4"
+                                    onClick={() => {
+                                      setFieldValue("backupfilepath", "");
+                                      setBackupSteps(1);
+                                    }}
+                                  >
+                                    Select an internal backup
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      setFieldValue("backupfilepath", "");
+                                      setBackupSteps(2);
+                                    }}
+                                  >
+                                    Upload an external backup
+                                  </Button>
+                                </>
+                              }
+                              secondary={
+                                <Button
+                                  variant="secondary"
+                                  onClick={() => setBackupSelect(false)}
+                                  extraClass="mt-4"
+                                >
+                                  Cancel
+                                </Button>
+                              }
+                            />
+                          )}
+                          {/* Internal */}
+                          {backupSteps === 1 && (
+                            <SharedDialog
+                              main={
+                                <div className="flex flex-col gap-4">
+                                  <h1 className="text-2xl mb-4 text-center">
+                                    Restore from backup
+                                  </h1>
+                                  <p className="mb-12 text-center">
+                                    Once restored, the node will attempt to{" "}
+                                    <br /> sync to the latest block, please be
+                                    patient.
+                                  </p>
+                                  <div className="p-4 core-grey-20 text-black rounded truncate whitespace-normal break-all">
+                                    {values.file.split("/archives/")[1]}
+                                  </div>
+                                  <List
+                                    options={backups}
+                                    setForm={async (option) => {
+                                      const fullPath = await fM.getPath(
+                                        "/backups/" + option
+                                      );
+
+                                      setFieldValue("backupfilepath", fullPath);
+                                    }}
+                                  />
+
+                                  <Input
+                                    disabled={isSubmitting}
+                                    error={
+                                      errors.password ? errors.password : false
+                                    }
+                                    autoComplete="new-password"
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="Enter password"
+                                    handleEndIconClick={() =>
+                                      togglePasswordVisibility(
+                                        (prevState) => !prevState
+                                      )
+                                    }
+                                    type={!hidePassword ? "password" : "text"}
+                                    id="password"
+                                    name="password"
+                                    value={values.password}
+                                    endIcon={
+                                      <TogglePasswordIcon
+                                        toggle={hidePassword}
+                                      />
+                                    }
+                                  />
+
+                                  <Button
+                                    disabled={!isValid || isSubmitting}
+                                    onClick={submitForm}
+                                  >
+                                    Restore
+                                  </Button>
+                                </div>
+                              }
+                              primary={<></>}
+                              secondary={
+                                <Button
+                                  variant="secondary"
+                                  onClick={() => setBackupSteps(0)}
+                                  extraClass="mt-4"
+                                >
+                                  Cancel
+                                </Button>
+                              }
+                            />
+                          )}
+                          {/* Upload */}
+                          {backupSteps === 2 && (
+                            <SharedDialog
+                              bg="primary"
+                              main={
+                                <>
+                                  <div>
+                                    <h1 className="text-2xl mb-4 text-center">
+                                      Restore from backup
+                                    </h1>
+                                    <p className="mb-12 text-center">
+                                      Once restored, the node will attempt to{" "}
+                                      <br /> sync to the latest block, please be
+                                      patient.
+                                    </p>
+                                    <div className="p-4 mb-4 core-grey-20 text-black rounded truncate whitespace-normal break-all">
+                                      {values.file.split("/archives/")[1]}
+                                    </div>
+                                    <FileChooser
+                                      disabled={isSubmitting}
+                                      keyValue={resetFileField}
+                                      handleEndIconClick={() => {
+                                        setResetFileField((prev) => prev + 1);
+                                        setFieldValue("upload", undefined);
+                                      }}
+                                      error={
+                                        errors.file && errors.file
+                                          ? errors.file
+                                          : false
+                                      }
+                                      extraClass="core-grey-20"
+                                      accept=".bak"
+                                      onChange={(
+                                        e: React.ChangeEvent<HTMLInputElement>
+                                      ) => {
+                                        if (e.target.files) {
+                                          setFieldValue(
+                                            "upload",
+                                            e.target.files[0]
+                                          );
+                                          setFieldValue("backupfilepath", "");
+                                        }
+                                      }}
+                                      onBlur={handleBlur}
+                                      placeholder="Select file"
+                                      type="file"
+                                      id="upload"
+                                      name="upload"
+                                      endIcon={
+                                        values.upload && (
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="25"
+                                            height="24"
+                                            viewBox="0 0 25 24"
+                                            fill="none"
+                                          >
+                                            <mask
+                                              id="mask0_645_17003"
+                                              maskUnits="userSpaceOnUse"
+                                              x="0"
+                                              y="0"
+                                              width="25"
+                                              height="24"
+                                            >
+                                              <rect
+                                                x="0.5"
+                                                width="24"
+                                                height="24"
+                                                fill="#D9D9D9"
+                                              />
+                                            </mask>
+                                            <g mask="url(#mask0_645_17003)">
+                                              <path
+                                                d="M9.89997 16.1539L12.5 13.5539L15.1 16.1539L16.1538 15.1001L13.5538 12.5001L16.1538 9.90005L15.1 8.84623L12.5 11.4462L9.89997 8.84623L8.84615 9.90005L11.4461 12.5001L8.84615 15.1001L9.89997 16.1539ZM7.8077 20.5C7.30257 20.5 6.875 20.325 6.525 19.975C6.175 19.625 6 19.1975 6 18.6923V6.00005H5V4.50008H9.49997V3.61548H15.5V4.50008H20V6.00005H19V18.6923C19 19.1975 18.825 19.625 18.475 19.975C18.125 20.325 17.6974 20.5 17.1922 20.5H7.8077ZM17.5 6.00005H7.49997V18.6923C7.49997 18.7693 7.53203 18.8398 7.59613 18.9039C7.66024 18.968 7.73077 19.0001 7.8077 19.0001H17.1922C17.2692 19.0001 17.3397 18.968 17.4038 18.9039C17.4679 18.8398 17.5 18.7693 17.5 18.6923V6.00005Z"
+                                                fill="#91919D"
+                                              />
+                                            </g>
+                                          </svg>
+                                        )
+                                      }
+                                    />
+
+                                    <Input
+                                      disabled={isSubmitting}
+                                      mb="mb-4"
+                                      mt="mt-4"
+                                      error={
+                                        errors.password
+                                          ? errors.password
+                                          : false
+                                      }
+                                      autoComplete="new-password"
+                                      onChange={handleChange}
+                                      onBlur={handleBlur}
+                                      placeholder="Enter password"
+                                      handleEndIconClick={() =>
+                                        togglePasswordVisibility(
+                                          (prevState) => !prevState
+                                        )
+                                      }
+                                      type={!hidePassword ? "password" : "text"}
+                                      id="password"
+                                      name="password"
+                                      value={values.password}
+                                      endIcon={
+                                        <TogglePasswordIcon
+                                          toggle={hidePassword}
+                                        />
+                                      }
+                                    />
+                                    <>
+                                      {values.backupfilepath.length > 0 &&
+                                        values.file.length > 0 && (
+                                          <div className="flex gap-2 justify-center">
+                                            <p className="mb-2 text-good text-center flex items-center justify-center gap-1">
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                height="24"
+                                                viewBox="0 -960 960 960"
+                                                width="24"
+                                              >
+                                                <path
+                                                  fill="#4FE3C1"
+                                                  d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
+                                                />
+                                              </svg>
+                                              Archive ready!
+                                            </p>
+                                            <p className="mb-2 text-good text-center flex items-center justify-center gap-1">
+                                              <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                height="24"
+                                                viewBox="0 -960 960 960"
+                                                width="24"
+                                              >
+                                                <path
+                                                  fill="#4FE3C1"
+                                                  d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
+                                                />
+                                              </svg>
+                                              Backup ready!
+                                            </p>
+                                          </div>
+                                        )}
+
+                                      {values.backupfilepath.length > 0 && (
+                                        <Button
+                                          type="submit"
+                                          disabled={!isValid || isSubmitting}
+                                        >
+                                          Restore
+                                        </Button>
+                                      )}
+                                      {values.backupfilepath.length === 0 && (
+                                        <Button
+                                          disabled={fileUpload}
+                                          onClick={async () => {
+                                            // upload file here and then add as backupfilepath
+                                            setFileUpload(true);
+                                            try {
+                                              const arrayBuffer =
+                                                await utils.blobToArrayBuffer(
+                                                  values.upload
+                                                );
+                                              const hex =
+                                                utils.bufferToHex(arrayBuffer);
+                                              await fM.saveFileAsBinary(
+                                                "/backups/" +
+                                                  (values.upload as any).name,
+                                                hex
+                                              );
+                                              const fullPath = await fM.getPath(
+                                                "/backups/" +
+                                                  (values.upload as any).name
+                                              );
+
+                                              setFieldValue("upload", null);
+                                              setFieldValue(
+                                                "backupfilepath",
+                                                fullPath
+                                              );
+                                            } catch (error) {
+                                              setError(error as string);
+                                            } finally {
+                                              setFileUpload(false);
+                                            }
+                                          }}
+                                        >
+                                          {fileUpload ? "Upload..." : "Upload"}
+                                        </Button>
+                                      )}
+                                    </>
+                                  </div>
+                                </>
+                              }
+                              primary={null}
+                              secondary={
+                                <>
+                                  {!beginRestoring && (
+                                    <Button
+                                      variant="secondary"
+                                      extraClass="mt-2"
+                                      onClick={() => setBackupSteps(0)}
+                                    >
+                                      Cancel
+                                    </Button>
+                                  )}
+                                </>
+                              }
+                            />
+                          )}
+                        </>
+                      )}
+                    </form>
+                  )}
+                </Formik>
+              </>
+            }
+            primary={<div />}
+            secondary={
+              <>
+                {error && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setError(false);
+                      setBeginRestoring(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                )}
+                {!fileUpload && !error && (
+                  <Button
+                    variant="secondary"
+                    extraClass="mt-4"
+                    onClick={() => setHaveArchive(false)}
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </>
+            }
+          />,
+          document.body
+        )}
+
+      {error &&
+        createPortal(
+          <SharedDialog
+            main={
+              <div className="flex flex-col items-center">
+                <svg
+                  className="mb-3 inline"
+                  width="64"
+                  height="64"
+                  viewBox="0 0 64 64"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    id="mask0_594_13339"
+                    maskUnits="userSpaceOnUse"
+                    x="0"
+                    y="0"
+                    width="64"
+                    height="64"
+                  >
+                    <rect width="64" height="64" fill="#D9D9D9" />
+                  </mask>
+                  <g mask="url(#mask0_594_13339)">
+                    <path
+                      d="M31.9998 44.6151C32.61 44.6151 33.1216 44.4087 33.5344 43.9959C33.9472 43.5831 34.1536 43.0715 34.1536 42.4613C34.1536 41.851 33.9472 41.3395 33.5344 40.9267C33.1216 40.5139 32.61 40.3075 31.9998 40.3075C31.3895 40.3075 30.878 40.5139 30.4652 40.9267C30.0524 41.3395 29.846 41.851 29.846 42.4613C29.846 43.0715 30.0524 43.5831 30.4652 43.9959C30.878 44.4087 31.3895 44.6151 31.9998 44.6151ZM29.9998 34.8716H33.9997V18.8716H29.9998V34.8716ZM32.0042 57.333C28.5004 57.333 25.207 56.6682 22.124 55.3384C19.0409 54.0086 16.3591 52.2039 14.0785 49.9244C11.7979 47.6448 9.99239 44.9641 8.66204 41.8824C7.33168 38.8008 6.6665 35.5081 6.6665 32.0042C6.6665 28.5004 7.33139 25.207 8.66117 22.124C9.99095 19.0409 11.7956 16.3591 14.0752 14.0785C16.3548 11.7979 19.0354 9.9924 22.1171 8.66204C25.1987 7.33168 28.4915 6.6665 31.9953 6.6665C35.4991 6.6665 38.7926 7.3314 41.8756 8.66117C44.9586 9.99095 47.6405 11.7956 49.921 14.0752C52.2017 16.3548 54.0072 19.0354 55.3375 22.1171C56.6679 25.1988 57.333 28.4915 57.333 31.9953C57.333 35.4991 56.6682 38.7925 55.3384 41.8756C54.0086 44.9586 52.2039 47.6405 49.9244 49.921C47.6448 52.2017 44.9641 54.0072 41.8824 55.3375C38.8008 56.6679 35.5081 57.333 32.0042 57.333Z"
+                      fill="#F4F4F5"
+                    />
+                  </g>
+                </svg>
+
+                <h1 className="text-2xl mb-8 text-center">
+                  Hmm.. something went wrong.
+                </h1>
+
+                <p className="mb-8 text-center text-error truncate whitespace-normal break-all">
+                  {error.includes("GZIP")
+                    ? "Invalid password."
+                    : error.includes("connectdata")
+                    ? "Host is invalid."
+                    : error.includes("Incorrect Password!")
+                    ? "Incorrect password!"
+                    : error}
+                </p>
+              </div>
+            }
+            primary={null}
+            secondary={
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setError(false);
+                  setBeginRestoring(false);
+                }}
+              >
+                Cancel
+              </Button>
+            }
+          />,
+          document.body
+        )}
+
+      {beginRestoring &&
+        createPortal(
+          <SharedDialog
+            main={
+              <div className="flex flex-col align-center">
+                <Lottie
+                  className="mb-4 inline"
+                  width={4}
+                  height={4}
+                  style={{ maxWidth: 80, alignSelf: "center" }}
+                  animationData={Loading}
+                />
+                <h1 className="text-2xl mb-8 text-center">Restoring</h1>
+
+                <p className="mb-8 text-center">
+                  Please don’t leave this screen whilst the chain is re-syncing.
+                  <br /> <br />
+                  Your node will reboot once it is complete.
+                </p>
+
+                <Logs />
+              </div>
+            }
+            primary={null}
+            secondary={null}
+          />,
+          document.body
+        )}
+
       <SlideIn isOpen={true} delay={0}>
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
-            {!displayHeaderBackButton && (
-              <BackButton
-                onClickHandler={() => navigate("/dashboard/archivereset")}
-                title="Archive Reset"
-              />
-            )}
+            {!displayHeaderBackButton && <BackButton to="-1" title="Back" />}
             <div className="mt-6 text-2xl mb-8 text-left">Restore</div>
             <div className="mb-4">
               <div className="mb-3 text-left">
@@ -213,14 +878,14 @@ const ArchiveReset = () => {
               </p>
             </div>
 
-            <Button extraClass="mb-4" onClick={handleInternalArchive}>
-              Use internal archive
+            <Button extraClass="mb-4" onClick={() => setHaveArchive(true)}>
+              I have an archive
             </Button>
 
-            <Button onClick={handleUploadClick} extraClass="mb-4">
-              Upload archive file
-            </Button>
-            <Button variant="tertiary" onClick={handleNoArchiveClick}>
+            <Button
+              variant="tertiary"
+              onClick={() => navigate("/dashboard/restore")}
+            >
               I don't have an archive file
             </Button>
           </div>

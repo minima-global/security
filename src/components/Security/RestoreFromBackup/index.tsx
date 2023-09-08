@@ -40,7 +40,7 @@ const RestoreFromBackup = () => {
   const [resetFileField, setResetFileField] = useState(0);
 
   useEffect(() => {
-    setBackButton({ display: true, to: "/dashboard", title: "Security" });
+    setBackButton({ display: true, to: -1, title: "Back" });
   }, [location]);
 
   return (
@@ -579,11 +579,7 @@ const RestoreFromBackup = () => {
                               }
                             />
                           </div>
-                          {status && (
-                            <div className="text-white">
-                              {status.message ? status.message : "boop"}
-                            </div>
-                          )}
+
                           <Button
                             type="submit"
                             disabled={!isValid || isSubmitting}
@@ -691,9 +687,7 @@ const RestoreFromBackup = () => {
 
       <div className="flex flex-col h-full bg-black px-4 pb-4">
         <div className="flex flex-col h-full">
-          {!displayHeaderBackButton && (
-            <BackButton to="/dashboard" title="Security" />
-          )}
+          {!displayHeaderBackButton && <BackButton to={-1} title="Back" />}
           <div className="mt-6 text-2xl mb-8 text-left">
             Restore from backup
           </div>

@@ -61,7 +61,7 @@ const ArchiveReset = () => {
     setBackButton({
       display: true,
       to: "/dashboard",
-      title: "Security",
+      title: "Back",
     });
   }, []);
 
@@ -72,7 +72,7 @@ const ArchiveReset = () => {
           <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
               {!displayHeaderBackButton && (
-                <BackButton to="/dashboard" title="Security" />
+                <BackButton to="/dashboard" title="Back" />
               )}
               <div className="mt-6 text-2xl mb-8 text-left">Reset node</div>
               <div className="text-left flex gap-2 mb-8">

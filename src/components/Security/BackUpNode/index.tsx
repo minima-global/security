@@ -66,7 +66,7 @@ const BackupNode = () => {
       return setBackButton({
         display: true,
         to: "/dashboard",
-        title: "Security",
+        title: "Back",
       });
     }
 
@@ -330,7 +330,7 @@ const BackupNode = () => {
           <div className="flex flex-col h-full bg-black px-4 pb-4">
             <div className="flex flex-col h-full">
               {!displayHeaderBackButton && (
-                <BackButton to="/dashboard" title="Security" />
+                <BackButton to="/dashboard" title="Back" />
               )}
               <div className="mt-6 text-2xl mb-8 text-left">Backup node</div>
               <div className="flex flex-col gap-5">

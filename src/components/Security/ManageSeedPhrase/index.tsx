@@ -19,7 +19,7 @@ const ManageSeedPhrase = () => {
   } = useContext(appContext);
 
   useEffect(() => {
-    setBackButton({ display: true, to: "/dashboard", title: "Security" });
+    setBackButton({ display: true, to: "/dashboard", title: "Back" });
   }, [location]);
 
   return (
@@ -28,7 +28,7 @@ const ManageSeedPhrase = () => {
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
             {!displayHeaderBackButton && (
-              <BackButton to="/dashboard" title="Security" />
+              <BackButton to="/dashboard" title="Back" />
             )}
             <div className="mt-6 text-2xl mb-8 text-left">
               Manage seed phrase
