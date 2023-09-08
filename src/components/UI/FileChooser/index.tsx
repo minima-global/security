@@ -18,6 +18,7 @@ interface IProps {
   webbie?: boolean;
   onKeyUp?: any;
   handleEndIconClick?: () => void;
+  disabled: boolean;
 }
 const FileChooser = ({
   accept,
@@ -34,10 +35,11 @@ const FileChooser = ({
   handleEndIconClick,
   onKeyUp,
   keyValue,
+  disabled,
 }: IProps) => {
   const [focus, setFocus] = useState(false);
 
-  let wrapperBase = "flex flex-row";
+  let wrapperBase = "flex flex-row relative";
 
   let base =
     "core-grey-20 font-medium color-black w-full px-4 py-3.5 rounded rounded-r-none disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none";
@@ -61,6 +63,7 @@ const FileChooser = ({
     <div className={`flex flex-col gap-2`}>
       <div className={wrapperBase}>
         <input
+          disabled={disabled}
           key={keyValue}
           autoComplete={autoComplete ? autoComplete : ""}
           onBlur={onBlur}
@@ -68,7 +71,7 @@ const FileChooser = ({
           id={id}
           type={type}
           placeholder={placeholder}
-          className={base}
+          className={`${base} ${endIcon ? "pr-12" : ""}`}
           onChange={onChange}
           accept={accept}
           onKeyUp={onKeyUp}
@@ -77,8 +80,8 @@ const FileChooser = ({
 
         {!!endIcon && (
           <div
-            onClick={handleEndIconClick}
-            className="core-grey-20 rounded-r flex flex-col justify-center pr-4"
+            onClick={disabled ? undefined : handleEndIconClick}
+            className="pr-4 absolute right-[1px] top-[12.5px] bottom-0"
           >
             {endIcon}
           </div>

@@ -64,11 +64,19 @@ const List = ({ options, setForm, disabled }: IProps) => {
       >
         <span className="color-black font-sm">{selected}</span>
         {!disabled && (
-          <img
+          <svg
             className={openModal ? styles.active : ""}
-            alt="arrow-d"
-            src="./assets/expand_more.svg"
-          />
+            width="16"
+            height="10"
+            viewBox="0 0 16 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.0004 9.06678L0.466797 1.50038L1.6668 0.333984L8.0004 6.66678L14.334 0.333984L15.534 1.53398L8.0004 9.06678Z"
+              fill="#91919D"
+            />
+          </svg>
         )}
       </div>
       {openModal && (
@@ -97,6 +105,7 @@ const List = ({ options, setForm, disabled }: IProps) => {
                 <>
                   <div className="mb-6">
                     <Input
+                      disabled={false}
                       id="search"
                       name="search"
                       type="text"

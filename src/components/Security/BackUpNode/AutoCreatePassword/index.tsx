@@ -153,6 +153,7 @@ const AutoCreatePassword = () => {
               className="flex flex-col gap-4"
             >
               <Input
+                disabled={formik.isSubmitting}
                 extraClass="core-black-contrast"
                 autoComplete="new-password"
                 handleEndIconClick={() =>
@@ -169,6 +170,7 @@ const AutoCreatePassword = () => {
                 endIcon={<TogglePasswordIcon toggle={hidePassword} />}
               />
               <Input
+                disabled={formik.isSubmitting}
                 extraClass="core-black-contrast"
                 autoComplete="new-password"
                 handleEndIconClick={() =>

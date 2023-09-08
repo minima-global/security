@@ -10,7 +10,11 @@ export const restoreFromBackup = (
       } file:"${filepath}" password:"${password.length ? password : "minima"}"`,
       (response: any) => {
         if (!response.status)
-          return reject(response.error ? response.error : "RPC FAILED");
+          return reject(
+            response.error
+              ? response.error
+              : "Restoring from backup failed, please try again"
+          );
 
         resolve(response);
       }

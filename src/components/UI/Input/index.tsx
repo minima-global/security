@@ -16,6 +16,9 @@ interface IProps {
   onKeyUp?: any;
   onKeyPress?: any;
   handleEndIconClick?: () => void;
+  disabled: boolean;
+  mt?: string;
+  mb?: string;
 }
 const Input = ({
   accept,
@@ -34,8 +37,11 @@ const Input = ({
   handleEndIconClick,
   onKeyUp,
   onKeyPress,
+  disabled,
+  mt,
+  mb,
 }: IProps) => {
-  let wrapperBase = "flex flex-row";
+  let wrapperBase = `flex flex-row ${mt} ${mb}`;
 
   let base =
     "core-black-contrast-2 w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none !focus:border-[#fff] !border-[#fff]";
@@ -56,6 +62,7 @@ const Input = ({
           </div>
         )}
         <input
+          disabled={disabled}
           onKeyDown={onKeyPress}
           autoComplete={autoComplete ? autoComplete : ""}
           onBlur={onBlur}
@@ -66,7 +73,7 @@ const Input = ({
           placeholder={placeholder}
           className={`${base} focus:border-[#464C4F] ${
             startIcon ? "pl-10" : ""
-          }`}
+          } ${endIcon ? "pr-12" : ""}`}
           onChange={onChange}
           accept={accept}
           onKeyUp={onKeyUp}
@@ -74,8 +81,8 @@ const Input = ({
 
         {!!endIcon && (
           <div
-            onClick={handleEndIconClick}
-            className="pr-4 absolute right-[1px] top-4 bottom-0"
+            onClick={disabled ? undefined : handleEndIconClick}
+            className="pr-4 my-auto absolute right-[1px] top-4 bottom-0"
           >
             {endIcon}
           </div>

@@ -304,7 +304,7 @@ const RestoreDialog = () => {
                     className="flex flex-col gap-4"
                     onSubmit={formik.handleSubmit}
                   >
-                    <FileChooser
+                    {/* <FileChooser
                       keyValue={resetFileField}
                       handleEndIconClick={() => {
                         setResetFileField((prev) => prev + 1);
@@ -356,8 +356,8 @@ const RestoreDialog = () => {
                           </svg>
                         )
                       }
-                    />
-
+                    /> */}
+                    {/* 
                     <Input
                       error={
                         formik.errors.password ? formik.errors.password : false
@@ -374,7 +374,7 @@ const RestoreDialog = () => {
                       name="password"
                       value={formik.values.password}
                       endIcon={<TogglePasswordIcon toggle={hidePassword} />}
-                    />
+                    /> */}
 
                     {!userWantsToArchiveReset && (
                       <>
@@ -422,7 +422,7 @@ const RestoreDialog = () => {
                           />
                         </CSSTransition>
                         <div>
-                          <Input
+                          {/* <Input
                             id="host"
                             name="host"
                             placeholder="host (optional)"
@@ -436,7 +436,7 @@ const RestoreDialog = () => {
                                 ? formik.errors.host
                                 : false
                             }
-                          />
+                          /> */}
                         </div>
                       </>
                     )}
@@ -565,17 +565,8 @@ const RestoreDialog = () => {
                             />
                           )}
                         </span>
-                        <CSSTransition
-                          in={tooltip.host}
-                          unmountOnExit
-                          timeout={200}
-                          classNames={{
-                            enter: styles.backdropEnter,
-                            enterDone: styles.backdropEnterActive,
-                            exit: styles.backdropExit,
-                            exitActive: styles.backdropExitActive,
-                          }}
-                        >
+
+                        {tooltip.host && (
                           <Tooltip
                             extraClass="!mb-0 !mt-0"
                             onClick={() =>
@@ -584,7 +575,7 @@ const RestoreDialog = () => {
                             content=" ip:port of the archive node to sync from. Use 'auto' to connect to a default archive node."
                             position={148}
                           />
-                        </CSSTransition>
+                        )}
                         <div>
                           <Input
                             id="host"
