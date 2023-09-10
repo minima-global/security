@@ -41,10 +41,12 @@ const Input = ({
   mt,
   mb,
 }: IProps) => {
-  let wrapperBase = `flex flex-row ${mt} ${mb}`;
+  let wrapperBase = `${mt} ${mb} ${
+    startIcon ? "grid grid-cols-[1fr_auto] grid-rows-1" : "flex"
+  }`;
 
   let base =
-    "core-black-contrast-2 w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none !focus:border-[#fff] !border-[#fff]";
+    "core-black-contrast-2 w-full px-4 py-3.5 rounded disabled:opacity-40 disabled:cursor-not-allowed focus:outline-none focus:border-[#fff] border-[#fff] focus:border-[#464C4F]";
 
   if (extraClass) {
     base += ` ${extraClass}`;
@@ -56,11 +58,6 @@ const Input = ({
   return (
     <div className={`flex flex-col gap-2`}>
       <div className={`${wrapperBase} relative`}>
-        {!!startIcon && (
-          <div className="absolute text-base top-[15px] left-[15px]">
-            {startIcon}
-          </div>
-        )}
         <input
           disabled={disabled}
           onKeyDown={onKeyPress}
@@ -71,14 +68,16 @@ const Input = ({
           value={value}
           type={type}
           placeholder={placeholder}
-          className={`${base} focus:border-[#464C4F] ${
-            startIcon ? "pl-10" : ""
-          } ${endIcon ? "pr-12" : ""}`}
+          className={`${base} ${startIcon ? "pl-10" : ""} ${
+            endIcon ? "pr-12" : ""
+          }`}
           onChange={onChange}
           accept={accept}
           onKeyUp={onKeyUp}
         />
+        {startIcon}
 
+        {/* <div className="fa absolute text-base top-[15px] left-[15px]"> </div> */}
         {!!endIcon && (
           <div
             onClick={disabled ? undefined : handleEndIconClick}

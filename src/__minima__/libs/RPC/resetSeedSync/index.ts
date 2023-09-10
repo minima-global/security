@@ -1,7 +1,7 @@
 export const resetSeedSync = (
   archivefile: string,
   phrase: string,
-  keyuses: string
+  keyuses: number
 ) => {
   return new Promise((resolve, reject) => {
     (window as any).MDS.cmd(

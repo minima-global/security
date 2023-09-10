@@ -1,17 +1,9 @@
-import React, {
-  useContext,
-  useRef,
-  RefObject,
-  useEffect,
-  useState,
-} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import SlideIn from "../../../UI/Animations/SlideIn";
 import { appContext } from "../../../../AppContext";
 import BackButton from "../../../UI/BackButton";
-import { useAuth } from "../../../../providers/authProvider";
 import { useNavigate } from "react-router-dom";
 import Button from "../../../UI/Button";
-import { useArchiveContext } from "../../../../providers/archiveProvider";
 import { createPortal } from "react-dom";
 import SharedDialog from "../../../SharedDialog";
 import { Formik } from "formik";
@@ -29,21 +21,16 @@ import Loading from "../../../../assets/loading.json";
 import Logs from "../../../Logs";
 
 const ArchiveReset = () => {
-  const {
-    displayBackButton: displayHeaderBackButton,
-    setModal,
-    setBackButton,
-  } = useContext(appContext);
-  const { authNavigate } = useAuth();
+  const { displayBackButton: displayHeaderBackButton, setBackButton } =
+    useContext(appContext);
+
   const navigate = useNavigate();
-  const { archives, getArchives, backups } = useContext(appContext);
+  const { archives, getArchives, backups, shuttingDown } =
+    useContext(appContext);
 
-  const inputRef: RefObject<HTMLInputElement> = useRef(null);
-
-  const { handleUploadContext } = useArchiveContext();
+  const [MDSShutdown, setMDSShutdown] = useState(false);
 
   const [progress, setProgress] = useState(0);
-  const [uploadComplete, setUploadComplete] = useState(false);
   const [fileUpload, setFileUpload] = useState(false);
   const [resetFileField, setResetFileField] = useState(0);
   const [beginRestoring, setBeginRestoring] = useState(false);
@@ -56,6 +43,11 @@ const ArchiveReset = () => {
   const [hidePassword, togglePasswordVisibility] = useState(false);
 
   useEffect(() => {
+    if (shuttingDown) {
+      setMDSShutdown(true);
+    }
+  }, [shuttingDown]);
+  useEffect(() => {
     setBackButton({
       display: true,
       onClickHandler: () => navigate("/dashboard/archivereset"),
@@ -66,7 +58,6 @@ const ArchiveReset = () => {
   const handleArchiveSelector = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    console.log("Setting archive file selector");
     setArchiveFileSelection(event.target.value);
   };
 
@@ -86,8 +77,6 @@ const ArchiveReset = () => {
                   }}
                   onSubmit={async (formData) => {
                     setBeginRestoring(true);
-                    console.log("archive file path", formData.file);
-                    console.log("backup file path", formData.backupfilepath);
 
                     try {
                       // do your thing
@@ -110,8 +99,6 @@ const ArchiveReset = () => {
                     handleSubmit,
                     setFieldValue,
                     errors,
-                    touched,
-                    status,
                     values,
                     handleBlur,
                     handleChange,
@@ -136,7 +123,7 @@ const ArchiveReset = () => {
                             handleArchiveSelector(e);
                             resetForm();
                           }}
-                          className="p-4 hover:cursor-pointer rounded w-full hover:opacity-80"
+                          className="p-4 bg-black hover:cursor-pointer rounded w-full hover:opacity-80"
                         >
                           <option id="value" value="local">
                             Select an internal archive file
@@ -191,8 +178,6 @@ const ArchiveReset = () => {
                                       "/archives/" + option
                                     );
 
-                                    console.log("archive fpath", fullPath);
-
                                     setFieldValue("file", fullPath);
                                   }
                                 }}
@@ -205,68 +190,70 @@ const ArchiveReset = () => {
                               )}
                             </>
                           )}
-                          {!fileUpload && archiveFileSelection === "upload" && (
-                            <FileChooser
-                              disabled={isSubmitting}
-                              keyValue={resetFileField}
-                              handleEndIconClick={() => {
-                                setResetFileField((prev) => prev + 1);
-                                setFieldValue("upload", undefined);
-                              }}
-                              error={
-                                errors.upload && errors.upload
-                                  ? errors.upload
-                                  : false
-                              }
-                              extraClass="core-grey-20"
-                              accept=".gzip"
-                              onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                              ) => {
-                                if (e.target.files) {
-                                  setFieldValue("upload", e.target.files[0]);
+                          {!fileUpload &&
+                            archiveFileSelection === "upload" &&
+                            !values.file.length && (
+                              <FileChooser
+                                disabled={isSubmitting}
+                                keyValue={resetFileField}
+                                handleEndIconClick={() => {
+                                  setResetFileField((prev) => prev + 1);
+                                  setFieldValue("upload", undefined);
+                                }}
+                                error={
+                                  errors.upload && errors.upload
+                                    ? errors.upload
+                                    : false
                                 }
-                              }}
-                              onBlur={handleBlur}
-                              placeholder="Select file"
-                              type="file"
-                              id="upload"
-                              name="upload"
-                              endIcon={
-                                values.upload && (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="25"
-                                    height="24"
-                                    viewBox="0 0 25 24"
-                                    fill="none"
-                                  >
-                                    <mask
-                                      id="mask0_645_17003"
-                                      maskUnits="userSpaceOnUse"
-                                      x="0"
-                                      y="0"
+                                extraClass="core-grey-20"
+                                accept=".gzip"
+                                onChange={(
+                                  e: React.ChangeEvent<HTMLInputElement>
+                                ) => {
+                                  if (e.target.files) {
+                                    setFieldValue("upload", e.target.files[0]);
+                                  }
+                                }}
+                                onBlur={handleBlur}
+                                placeholder="Select file"
+                                type="file"
+                                id="upload"
+                                name="upload"
+                                endIcon={
+                                  values.upload && (
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
                                       width="25"
                                       height="24"
+                                      viewBox="0 0 25 24"
+                                      fill="none"
                                     >
-                                      <rect
-                                        x="0.5"
-                                        width="24"
+                                      <mask
+                                        id="mask0_645_17003"
+                                        maskUnits="userSpaceOnUse"
+                                        x="0"
+                                        y="0"
+                                        width="25"
                                         height="24"
-                                        fill="#D9D9D9"
-                                      />
-                                    </mask>
-                                    <g mask="url(#mask0_645_17003)">
-                                      <path
-                                        d="M9.89997 16.1539L12.5 13.5539L15.1 16.1539L16.1538 15.1001L13.5538 12.5001L16.1538 9.90005L15.1 8.84623L12.5 11.4462L9.89997 8.84623L8.84615 9.90005L11.4461 12.5001L8.84615 15.1001L9.89997 16.1539ZM7.8077 20.5C7.30257 20.5 6.875 20.325 6.525 19.975C6.175 19.625 6 19.1975 6 18.6923V6.00005H5V4.50008H9.49997V3.61548H15.5V4.50008H20V6.00005H19V18.6923C19 19.1975 18.825 19.625 18.475 19.975C18.125 20.325 17.6974 20.5 17.1922 20.5H7.8077ZM17.5 6.00005H7.49997V18.6923C7.49997 18.7693 7.53203 18.8398 7.59613 18.9039C7.66024 18.968 7.73077 19.0001 7.8077 19.0001H17.1922C17.2692 19.0001 17.3397 18.968 17.4038 18.9039C17.4679 18.8398 17.5 18.7693 17.5 18.6923V6.00005Z"
-                                        fill="#91919D"
-                                      />
-                                    </g>
-                                  </svg>
-                                )
-                              }
-                            />
-                          )}
+                                      >
+                                        <rect
+                                          x="0.5"
+                                          width="24"
+                                          height="24"
+                                          fill="#D9D9D9"
+                                        />
+                                      </mask>
+                                      <g mask="url(#mask0_645_17003)">
+                                        <path
+                                          d="M9.89997 16.1539L12.5 13.5539L15.1 16.1539L16.1538 15.1001L13.5538 12.5001L16.1538 9.90005L15.1 8.84623L12.5 11.4462L9.89997 8.84623L8.84615 9.90005L11.4461 12.5001L8.84615 15.1001L9.89997 16.1539ZM7.8077 20.5C7.30257 20.5 6.875 20.325 6.525 19.975C6.175 19.625 6 19.1975 6 18.6923V6.00005H5V4.50008H9.49997V3.61548H15.5V4.50008H20V6.00005H19V18.6923C19 19.1975 18.825 19.625 18.475 19.975C18.125 20.325 17.6974 20.5 17.1922 20.5H7.8077ZM17.5 6.00005H7.49997V18.6923C7.49997 18.7693 7.53203 18.8398 7.59613 18.9039C7.66024 18.968 7.73077 19.0001 7.8077 19.0001H17.1922C17.2692 19.0001 17.3397 18.968 17.4038 18.9039C17.4679 18.8398 17.5 18.7693 17.5 18.6923V6.00005Z"
+                                          fill="#91919D"
+                                        />
+                                      </g>
+                                    </svg>
+                                  )
+                                }
+                              />
+                            )}
                           {fileUpload && archiveFileSelection === "upload" && (
                             <div className="core-black-contrast-2 h-[56px] rounded p-4 mt-4 relative">
                               <div className="absolute text-left blend z-10 left-[16px] top-[15px] font-black">
@@ -286,59 +273,78 @@ const ArchiveReset = () => {
                           {fileUpload && values.upload && (
                             <p className="text-sm mt-2">
                               Uploading{" "}
-                              {values.upload.name
-                                ? values.upload.name + "..."
+                              {(values.upload as any).name
+                                ? (values.upload as any).name + "..."
                                 : ""}
                             </p>
                           )}
+                          {!fileUpload &&
+                            !!values.file.length &&
+                            archiveFileSelection === "upload" && (
+                              <p className="text-sm text-good flex items-center mt-2">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  height="24"
+                                  viewBox="0 -960 960 960"
+                                  width="24"
+                                >
+                                  <path
+                                    fill="#4FE3C1"
+                                    d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
+                                  />
+                                </svg>
+                                {values.file.split("/archives/")[1]}
+                              </p>
+                            )}
                           {values.upload && (
                             <>
-                              <Button
-                                disabled={fileUpload}
-                                variant="primary"
-                                extraClass="mt-4"
-                                onClick={async () => {
-                                  setFileUpload(true);
-                                  setFieldValue("file", "");
+                              {!fileUpload && (
+                                <Button
+                                  variant="primary"
+                                  extraClass="mt-4"
+                                  onClick={async () => {
+                                    setFileUpload(true);
+                                    setFieldValue("file", "");
 
-                                  (window as any).MDS.file.upload(
-                                    values.upload,
-                                    async function (resp: any) {
-                                      if (resp.allchunks >= 10) {
-                                        setProgress(
-                                          resp.chunk / resp.allchunks
-                                        );
-                                      }
-                                      const fileName = resp.filename;
-                                      if (resp.allchunks === resp.chunk) {
-                                        setFileUpload(false);
+                                    (window as any).MDS.file.upload(
+                                      values.upload,
+                                      async function (resp: any) {
+                                        if (resp.allchunks >= 10) {
+                                          setProgress(
+                                            resp.chunk / resp.allchunks
+                                          );
+                                        }
+                                        const fileName = resp.filename;
+                                        if (resp.allchunks === resp.chunk) {
+                                          setFileUpload(false);
 
-                                        // Move uploaded file to internal, then set full path to prepare for reset command
-                                        (window as any).MDS.file.move(
-                                          "/fileupload/" + fileName,
-                                          "/archives/" + fileName,
-                                          (resp: any) => {
-                                            if (resp.status) {
-                                              setFieldValue(
-                                                "file",
-                                                "/archives/" + fileName
-                                              );
-                                              setFieldValue(
-                                                "upload",
-                                                undefined
-                                              );
-                                              setFileUpload(false);
-                                              getArchives();
+                                          // Move uploaded file to internal, then set full path to prepare for reset command
+                                          (window as any).MDS.file.move(
+                                            "/fileupload/" + fileName,
+                                            "/archives/" + fileName,
+                                            (resp: any) => {
+                                              if (resp.status) {
+                                                setFieldValue(
+                                                  "file",
+                                                  "/archives/" + fileName
+                                                );
+                                                setFieldValue(
+                                                  "upload",
+                                                  undefined
+                                                );
+                                                setFileUpload(false);
+                                                getArchives();
+                                              }
                                             }
-                                          }
-                                        );
+                                          );
+                                        }
                                       }
-                                    }
-                                  );
-                                }}
-                              >
-                                {fileUpload ? "Uploading..." : "Upload"}
-                              </Button>
+                                    );
+                                  }}
+                                >
+                                  Upload
+                                </Button>
+                              )}
                             </>
                           )}
                           {values.file && values.file.length > 0 && (
@@ -350,6 +356,17 @@ const ArchiveReset = () => {
                               Continue
                             </Button>
                           )}
+                          {!fileUpload &&
+                            archiveFileSelection === "upload" &&
+                            !!values.file.length && (
+                              <Button
+                                onClick={() => setFieldValue("file", "")}
+                                variant="tertiary"
+                                extraClass="mt-4"
+                              >
+                                Upload a different file
+                              </Button>
+                            )}
                         </>
                       )}
 
@@ -397,7 +414,7 @@ const ArchiveReset = () => {
                               }
                               secondary={
                                 <Button
-                                  variant="secondary"
+                                  variant="tertiary"
                                   onClick={() => setBackupSelect(false)}
                                   extraClass="mt-4"
                                 >
@@ -469,7 +486,7 @@ const ArchiveReset = () => {
                               primary={<></>}
                               secondary={
                                 <Button
-                                  variant="secondary"
+                                  variant="tertiary"
                                   onClick={() => setBackupSteps(0)}
                                   extraClass="mt-4"
                                 >
@@ -679,7 +696,7 @@ const ArchiveReset = () => {
                                 <>
                                   {!beginRestoring && (
                                     <Button
-                                      variant="secondary"
+                                      variant="tertiary"
                                       extraClass="mt-2"
                                       onClick={() => setBackupSteps(0)}
                                     >
@@ -702,7 +719,7 @@ const ArchiveReset = () => {
               <>
                 {error && (
                   <Button
-                    variant="secondary"
+                    variant="tertiary"
                     onClick={() => {
                       setError(false);
                       setBeginRestoring(false);
@@ -713,7 +730,7 @@ const ArchiveReset = () => {
                 )}
                 {!fileUpload && !error && (
                   <Button
-                    variant="secondary"
+                    variant="tertiary"
                     extraClass="mt-4"
                     onClick={() => setHaveArchive(false)}
                   >
@@ -775,7 +792,7 @@ const ArchiveReset = () => {
             primary={null}
             secondary={
               <Button
-                variant="secondary"
+                variant="tertiary"
                 onClick={() => {
                   setError(false);
                   setBeginRestoring(false);
@@ -820,7 +837,7 @@ const ArchiveReset = () => {
       <SlideIn isOpen={true} delay={0}>
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
-            {!displayHeaderBackButton && <BackButton to="-1" title="Back" />}
+            {!displayHeaderBackButton && <BackButton to={-1} title="Back" />}
             <div className="mt-6 text-2xl mb-8 text-left">Restore</div>
             <div className="mb-4">
               <div className="mb-3 text-left">
@@ -891,6 +908,68 @@ const ArchiveReset = () => {
           </div>
         </div>
       </SlideIn>
+
+      {MDSShutdown &&
+        createPortal(
+          <SharedDialog
+            bg="primary"
+            main={
+              <div className="flex flex-col items-center justify-center">
+                <svg
+                  className="mb-3 inline"
+                  width="64"
+                  height="64"
+                  viewBox="0 0 64 64"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    id="mask0_1102_25908"
+                    maskUnits="userSpaceOnUse"
+                    x="0"
+                    y="0"
+                    width="64"
+                    height="64"
+                  >
+                    <rect width="64" height="64" fill="#D9D9D9" />
+                  </mask>
+                  <g mask="url(#mask0_1102_25908)">
+                    <path
+                      d="M28.2157 43.3436L46.1438 25.4154L43.3336 22.6052L28.2157 37.7232L20.6157 30.1232L17.8055 32.9334L28.2157 43.3436ZM32.0047 57.3333C28.5009 57.3333 25.2075 56.6684 22.1245 55.3386C19.0414 54.0088 16.3596 52.2042 14.079 49.9246C11.7984 47.645 9.99288 44.9644 8.66253 41.8827C7.33217 38.801 6.66699 35.5083 6.66699 32.0045C6.66699 28.5007 7.33188 25.2072 8.66166 22.1242C9.99144 19.0411 11.7961 16.3593 14.0757 14.0788C16.3553 11.7981 19.0359 9.99264 22.1176 8.66228C25.1992 7.33193 28.492 6.66675 31.9958 6.66675C35.4996 6.66675 38.793 7.33164 41.8761 8.66142C44.9591 9.9912 47.641 11.7959 49.9215 14.0754C52.2022 16.355 54.0076 19.0357 55.338 22.1174C56.6684 25.199 57.3335 28.4917 57.3335 31.9956C57.3335 35.4994 56.6686 38.7928 55.3389 41.8758C54.0091 44.9589 52.2044 47.6407 49.9249 49.9213C47.6453 52.2019 44.9646 54.0074 41.8829 55.3378C38.8013 56.6681 35.5085 57.3333 32.0047 57.3333Z"
+                      fill="#F4F4F5"
+                    />
+                  </g>
+                </svg>
+
+                <h1 className="text-2xl mb-4 font-semibold text-center">
+                  Re-sync complete
+                </h1>
+                <p className="font-medium mb-6 mt-6 text-center">
+                  Your node was successfully re-synced and will shutdown.
+                  Restart Minima for the re-sync to take effect.
+                </p>
+              </div>
+            }
+            secondary={<div />}
+            primary={
+              <Button
+                variant="primary"
+                onClick={() => {
+                  if (window.navigator.userAgent.includes("Minima Browser")) {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    return Android.shutdownMinima();
+                  }
+
+                  return window.close();
+                }}
+              >
+                Close application
+              </Button>
+            }
+          />,
+          document.body
+        )}
     </>
   );
 };

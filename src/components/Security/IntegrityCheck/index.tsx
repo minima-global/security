@@ -122,7 +122,7 @@ const IntegrityCheck = () => {
 
   return (
     <div className="flex flex-col h-full bg-black px-4 pb-4">
-      {!displayHeaderBackButton && <BackButton to="-1" title="Back" />}
+      {!displayHeaderBackButton && <BackButton to={-1} title="Back" />}
 
       <h1 className="mt-6 text-2xl mb-8 text-left bg-inherit">
         Archive integrity check
@@ -453,7 +453,7 @@ const IntegrityCheck = () => {
                       />
                       <Button
                         onClick={() => inputRef.current?.click()}
-                        variant="secondary"
+                        variant="tertiary"
                         extraClass="mt-2"
                       >
                         {!archives.length

@@ -4,6 +4,7 @@ export const resetChainResync = (archivefile: string | null) => {
     (window as any).MDS.cmd(
       `reset archivefile:"${archivefile}" action:chainsync`,
       (resp: any) => {
+        console.log(resp);
         if (!resp.status)
           reject(resp.error ? resp.error : "Archive chain re-sync failed");
 

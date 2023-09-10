@@ -13,11 +13,10 @@ import Dashboard from "./pages/Dashboard/index.tsx";
 import LockPrivateKeys from "./components/Security/LockPrivateKeys/index.tsx";
 import BackupNode from "./components/Security/BackUpNode/index.tsx";
 import RestoreFromBackup from "./components/Security/RestoreFromBackup/index.tsx";
-import RestoreDialog from "./components/RestoreDialog/index.tsx";
-import ChainResync from "./components/Security/ChainResync/index.tsx";
+
 import ChainResyncReset from "./components/Security/ArchiveReset/ChainResync/index.tsx";
 import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
-import ResyncDialog from "./components/Security/ResyncDialog/index.tsx";
+
 import EnterSeedPhrase from "./components/Security/ManageSeedPhrase/EnterSeedPhrase/index.tsx";
 import WipeThisNode from "./components/Security/ManageSeedPhrase/WipeThisNode/index.tsx";
 import ViewSeedPhrase from "./components/Security/ViewSeedPhrase/index.tsx";
@@ -132,20 +131,7 @@ const router = createHashRouter(
             </Route>
           </Route>
         </Route>
-        <Route
-          element={
-            <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESYNCING"]]} />
-          }
-        >
-          <Route
-            path="resyncing"
-            element={
-              <FadeIn delay={100}>
-                <ResyncDialog />
-              </FadeIn>
-            }
-          />
-        </Route>
+
         <Route
           path="lockprivatekeys"
           element={
@@ -206,14 +192,7 @@ const router = createHashRouter(
             />
           </Route>
         </Route>
-        <Route
-          path="resync"
-          element={
-            <SlideIn delay={100}>
-              <ChainResync />
-            </SlideIn>
-          }
-        />
+
         <Route path="manageseedphrase">
           <Route
             index
@@ -292,20 +271,6 @@ const router = createHashRouter(
               </SlideIn>
             }
           />
-          <Route
-            element={
-              <Authorisation permissions={[PERMISSIONS["CAN_VIEW_RESTORE"]]} />
-            }
-          >
-            <Route
-              path="frombackup"
-              element={
-                <FadeIn delay={100}>
-                  <RestoreDialog />
-                </FadeIn>
-              }
-            />
-          </Route>
         </Route>
 
         <Route

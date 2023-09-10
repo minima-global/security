@@ -33,7 +33,7 @@ export const Modal = ({
               </div>
               {closeAtBottom && (
                 <div className="absolute bottom-10 w-full px-8 z-[90]">
-                  <Button variant="secondary" onClick={closeAtBottom}>
+                  <Button variant="tertiary" onClick={closeAtBottom}>
                     Cancel
                   </Button>
                 </div>

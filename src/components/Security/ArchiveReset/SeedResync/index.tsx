@@ -1,32 +1,321 @@
-import React, {
-  useContext,
-  useRef,
-  RefObject,
-  useEffect,
-  useState,
-} from "react";
+import { useContext, useEffect, useState } from "react";
 import SlideIn from "../../../UI/Animations/SlideIn";
 import { appContext } from "../../../../AppContext";
 import BackButton from "../../../UI/BackButton";
-import { useAuth } from "../../../../providers/authProvider";
+
 import { useNavigate } from "react-router-dom";
 import Button from "../../../UI/Button";
-import PERMISSIONS from "../../../../permissions";
-import { useArchiveContext } from "../../../../providers/archiveProvider";
-import SelectInternalArchive from "../Archives/SelectInternalArchive";
+
+import { createPortal } from "react-dom";
+import { Formik, getIn } from "formik";
+import SharedDialog from "../../../SharedDialog";
+import List from "../../../UI/List";
+import * as yup from "yup";
+
+import * as rpc from "../../../../__minima__/libs/RPC";
+import * as fM from "../../../../__minima__/libs/fileManager";
+import FileChooser from "../../../UI/FileChooser";
+
+import Lottie from "lottie-react";
+import Loading from "../../../../assets/loading.json";
+import Logs from "../../../Logs";
+import FadeIn from "../../../UI/Animations/FadeIn";
+import Input from "../../../UI/Input";
+import Tooltip from "../../../UI/Tooltip";
+import bip39 from "../../../../utils/bip39";
+
+const validationSchema = yup.object().shape({
+  seedPhrase: yup.object({
+    "1": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "2": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "3": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "4": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "5": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "6": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "7": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "8": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "9": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "10": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "11": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "12": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "13": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "14": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "15": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "16": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "17": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "18": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "19": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "20": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "21": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "22": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "23": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "24": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+  }),
+  keyuses: yup
+    .number()
+    .required(
+      "Please enter the maximum times you have signed a transaction.  Otherwise leave the default 1000 if you think you haven't signed over 1000 transactions"
+    ),
+});
+const validationSchemaNoArchive = yup.object().shape({
+  seedPhrase: yup.object({
+    "1": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "2": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "3": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "4": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "5": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "6": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "7": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "8": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "9": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "10": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "11": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "12": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "13": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "14": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "15": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "16": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "17": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "18": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "19": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "20": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "21": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "22": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "23": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+    "24": yup
+      .string()
+      .uppercase()
+      .oneOf(bip39, "Invalid word.")
+      .required("Looks like you missed a word"),
+  }),
+  keyuses: yup
+    .number()
+    .required(
+      "Please enter the maximum times you have signed a transaction.  Otherwise leave the default 1000 if you think you haven't signed over 1000 transactions"
+    ),
+  host: yup.string().required("A host is required"),
+});
 
 const SeedResyncReset = () => {
   const {
     setBackButton,
     displayBackButton: displayHeaderBackButton,
-    setModal,
+    shuttingDown,
   } = useContext(appContext);
-  const { authNavigate } = useAuth();
-  const navigate = useNavigate();
-  const inputRef: RefObject<HTMLInputElement> = useRef(null);
-  const { handleUploadContext } = useArchiveContext();
 
-  const [selectInternalArchive, setSelectInternalArchive] = useState(false);
+  const { archives, getArchives } = useContext(appContext);
+
+  const [MDSShutdown, setMDSShutdown] = useState(false);
+
+  const [haveArchive, setHaveArchive] = useState(false);
+  const [noHaveArchive, setNoHaveArchive] = useState(false);
+
+  const [resetFileField, setResetFileField] = useState(0);
+  const [archiveFileSelection, setArchiveFileSelection] = useState("local");
+  const [beginResyncing, setBeginResyncing] = useState(false);
+  const [error, setError] = useState<false | string>(false);
+  const [progress, setProgress] = useState(0);
+  const [fileUpload, setFileUpload] = useState(false);
+
+  const [step, setStep] = useState(0);
+  const [stepNo, setStepNo] = useState(0);
+  const [tooltip, setTooltip] = useState({ host: false, keyuses: false });
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (shuttingDown) {
+      setMDSShutdown(true);
+    }
+  }, [shuttingDown]);
 
   useEffect(() => {
     setBackButton({
@@ -36,113 +325,1281 @@ const SeedResyncReset = () => {
     });
   }, []);
 
-  const InformativeDialog = {
-    content: (
-      <div>
-        <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
-        <h1 className="text-2xl mb-8">Please note</h1>
-        <p className="mb-6">
-          Importing a seed phrase is irreversible. Consider taking a backup of
-          this node before restoring.
-        </p>
-      </div>
-    ),
-    primaryActions: (
-      <>
-        <input
-          accept=".gzip"
-          type="file"
-          className="hidden"
-          ref={inputRef}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files) {
-              const file = e.target.files[0];
-              handleUploadContext(file, "seedresync");
-              authNavigate("/upload", [PERMISSIONS["CAN_VIEW_UPLOADING"]], {
-                state: { context: "seedresync" },
-              });
-            }
-          }}
-        />
-
-        <Button onClick={() => inputRef.current?.click()}>
-          Upload archive file
-        </Button>
-      </>
-    ),
-    secondaryActions: (
-      <Button
-        onClick={() => authNavigate("/dashboard/archivereset/seedresync", [])}
-      >
-        Cancel
-      </Button>
-    ),
-  };
-
-  const NoArchiveDialog = {
-    content: (
-      <div>
-        <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
-        <h1 className="text-2xl mb-8">Restore without archive file</h1>
-        <p className="mb-6">
-          Restoring without an archive file can take much longer to re-sync the
-          chain. <br /> <br />
-          Please ensure you have a stable internet connection and plug your
-          device into a power source before continuing.
-        </p>
-      </div>
-    ),
-    primaryActions: (
-      <>
-        <Button
-          onClick={() =>
-            authNavigate("/dashboard/manageseedphrase/importseedphrase", [
-              PERMISSIONS["CAN_VIEW_IMPORTSEEDPHRASE"],
-            ])
-          }
-        >
-          Continue
-        </Button>
-      </>
-    ),
-    secondaryActions: (
-      <Button
-        onClick={() => authNavigate("/dashboard/archivereset/seedresync", [])}
-      >
-        Cancel
-      </Button>
-    ),
-  };
-
-  const handleUploadClick = () => {
-    authNavigate("/dashboard/modal", [PERMISSIONS.CAN_VIEW_MODAL]);
-    setModal({
-      content: InformativeDialog.content,
-      primaryActions: InformativeDialog.primaryActions,
-      secondaryActions: InformativeDialog.secondaryActions,
-    });
-  };
-
-  const handleNoArchiveClick = () => {
-    authNavigate("/dashboard/modal", [PERMISSIONS.CAN_VIEW_MODAL]);
-    setModal({
-      content: NoArchiveDialog.content,
-      primaryActions: NoArchiveDialog.primaryActions,
-      secondaryActions: NoArchiveDialog.secondaryActions,
-    });
-  };
-
-  const handleInternalArchive = () => {
-    setSelectInternalArchive(true);
+  const handleArchiveSelector = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setArchiveFileSelection(event.target.value);
   };
 
   return (
     <>
-      <SelectInternalArchive
-        open={selectInternalArchive}
-        context="seedresync"
-        cancel={() => setSelectInternalArchive(false)}
-      />
+      {haveArchive &&
+        createPortal(
+          <SharedDialog
+            main={
+              <>
+                <Formik
+                  validationSchema={validationSchema}
+                  initialValues={{
+                    seedPhrase: {
+                      1: "".toUpperCase(),
+                      2: "".toUpperCase(),
+                      3: "".toUpperCase(),
+                      4: "".toUpperCase(),
+                      5: "".toUpperCase(),
+                      6: "".toUpperCase(),
+                      7: "".toUpperCase(),
+                      8: "".toUpperCase(),
+                      9: "".toUpperCase(),
+                      10: "".toUpperCase(),
+                      11: "".toUpperCase(),
+                      12: "".toUpperCase(),
+                      13: "".toUpperCase(),
+                      14: "".toUpperCase(),
+                      15: "".toUpperCase(),
+                      16: "".toUpperCase(),
+                      17: "".toUpperCase(),
+                      18: "".toUpperCase(),
+                      19: "".toUpperCase(),
+                      20: "".toUpperCase(),
+                      21: "".toUpperCase(),
+                      22: "".toUpperCase(),
+                      23: "".toUpperCase(),
+                      24: "".toUpperCase(),
+                    },
+                    keyuses: 1000,
+                    host: "",
+                    upload: null,
+                    file: "",
+                  }}
+                  onSubmit={async (formData) => {
+                    setBeginResyncing(true);
+
+                    try {
+                      // do your thing
+                      const phraseAsString = Object.values(formData.seedPhrase)
+                        .toString()
+                        .replaceAll(",", " ");
+                      const { keyuses, file } = formData;
+
+                      await rpc
+                        .resetSeedSync(file, phraseAsString, keyuses)
+                        .catch((error) => {
+                          throw error;
+                        });
+                    } catch (error) {
+                      setError(error as string);
+                    }
+                  }}
+                >
+                  {({
+                    handleSubmit,
+                    setFieldValue,
+                    errors,
+                    touched,
+                    values,
+                    handleBlur,
+                    handleChange,
+                    isSubmitting,
+                    resetForm,
+                    isValid,
+                    dirty,
+                    submitForm,
+                  }) => (
+                    <>
+                      {step === 0 && (
+                        <div className="flex flex-col items-center mb-2">
+                          <svg
+                            width="64"
+                            height="64"
+                            viewBox="0 0 64 64"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <mask
+                              id="mask0_1546_39570"
+                              maskUnits="userSpaceOnUse"
+                              x="0"
+                              y="0"
+                              width="64"
+                              height="64"
+                            >
+                              <rect width="64" height="64" fill="#D9D9D9" />
+                            </mask>
+                            <g mask="url(#mask0_1546_39570)">
+                              <path
+                                d="M31.9993 44.6146C32.6096 44.6146 33.1211 44.4082 33.5339 43.9954C33.9467 43.5826 34.1531 43.071 34.1531 42.4608C34.1531 41.8506 33.9467 41.339 33.5339 40.9262C33.1211 40.5134 32.6096 40.307 31.9993 40.307C31.389 40.307 30.8775 40.5134 30.4647 40.9262C30.0519 41.339 29.8455 41.8506 29.8455 42.4608C29.8455 43.071 30.0519 43.5826 30.4647 43.9954C30.8775 44.4082 31.389 44.6146 31.9993 44.6146ZM29.9994 34.8711H33.9992V18.8711H29.9994V34.8711ZM32.0037 57.3326C28.4999 57.3326 25.2065 56.6677 22.1235 55.3379C19.0404 54.0081 16.3586 52.2034 14.078 49.9239C11.7974 47.6443 9.99191 44.9636 8.66155 41.882C7.33119 38.8003 6.66602 35.5076 6.66602 32.0038C6.66602 28.4999 7.3309 25.2065 8.66068 22.1235C9.99046 19.0404 11.7951 16.3586 14.0747 14.078C16.3543 11.7974 19.0349 9.99191 22.1166 8.66155C25.1983 7.3312 28.491 6.66602 31.9948 6.66602C35.4986 6.66602 38.7921 7.33091 41.8751 8.66069C44.9582 9.99046 47.64 11.7951 49.9206 14.0747C52.2012 16.3543 54.0067 19.0349 55.337 22.1166C56.6674 25.1983 57.3326 28.491 57.3326 31.9948C57.3326 35.4986 56.6677 38.7921 55.3379 41.8751C54.0081 44.9582 52.2034 47.64 49.9239 49.9206C47.6443 52.2012 44.9636 54.0067 41.882 55.337C38.8003 56.6674 35.5076 57.3326 32.0037 57.3326Z"
+                                fill="#F4F4F5"
+                              />
+                            </g>
+                          </svg>
+                          <h1 className="text-2xl mb-8 text-center">
+                            Please note
+                          </h1>
+                          <p className="mb-6 text-center">
+                            Importing a seed phrase is irreversible. Consider
+                            taking a backup of this node before restoring.
+                          </p>
+                          <Button variant="primary" onClick={() => setStep(1)}>
+                            Select archive file
+                          </Button>
+                        </div>
+                      )}
+
+                      {step === 1 && (
+                        <form onSubmit={handleSubmit}>
+                          <h1 className="text-2xl mb-8 text-center">
+                            Select an archive
+                          </h1>
+                          <p className="mb-6 text-center">
+                            Select a local archive or upload a new one
+                          </p>
+
+                          <div className="relative mb-4">
+                            <select
+                              disabled={fileUpload}
+                              defaultValue={archiveFileSelection}
+                              onChange={(e) => {
+                                handleArchiveSelector(e);
+                                resetForm();
+                              }}
+                              className="p-4 bg-black hover:cursor-pointer rounded w-full hover:opacity-80"
+                            >
+                              <option id="value" value="local">
+                                Select an internal archive file
+                              </option>
+                              <option id="split" value="upload">
+                                Upload an archive file
+                              </option>
+                            </select>
+
+                            <svg
+                              className="my-auto absolute right-2 top-[12px]"
+                              width="32"
+                              height="33"
+                              viewBox="0 0 32 33"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <mask
+                                id="mask0_2226_53255"
+                                maskUnits="userSpaceOnUse"
+                                x="0"
+                                y="0"
+                                width="32"
+                                height="33"
+                              >
+                                <rect
+                                  y="0.550781"
+                                  width="32"
+                                  height="32"
+                                  fill="#D9D9D9"
+                                />
+                              </mask>
+                              <g mask="url(#mask0_2226_53255)">
+                                <path
+                                  d="M16.0004 20.6172L8.4668 13.0508L9.6668 11.8844L16.0004 18.2172L22.334 11.8844L23.534 13.0844L16.0004 20.6172Z"
+                                  fill="#FaFaFF"
+                                />
+                              </g>
+                            </svg>
+                          </div>
+
+                          <>
+                            {archiveFileSelection === "local" && (
+                              <>
+                                <List
+                                  disabled={archives.length === 0}
+                                  options={archives}
+                                  setForm={async (option) => {
+                                    if (option.length) {
+                                      const fullPath = await fM.getPath(
+                                        "/archives/" + option
+                                      );
+
+                                      console.log("archive fpath", fullPath);
+
+                                      setFieldValue("file", fullPath);
+                                    }
+                                  }}
+                                />
+                                {archives.length === 0 && (
+                                  <p className="text-sm mt-2 text-good">
+                                    No archives found in your internal files.
+                                    Upload a new one!
+                                  </p>
+                                )}
+                              </>
+                            )}
+                            {!fileUpload &&
+                              archiveFileSelection === "upload" &&
+                              !values.file.length && (
+                                <FileChooser
+                                  disabled={isSubmitting}
+                                  keyValue={resetFileField}
+                                  handleEndIconClick={() => {
+                                    setResetFileField((prev) => prev + 1);
+                                    setFieldValue("upload", undefined);
+                                  }}
+                                  error={
+                                    errors.upload && errors.upload
+                                      ? errors.upload
+                                      : false
+                                  }
+                                  extraClass="core-grey-20"
+                                  accept=".gzip"
+                                  onChange={(
+                                    e: React.ChangeEvent<HTMLInputElement>
+                                  ) => {
+                                    if (e.target.files) {
+                                      setFieldValue(
+                                        "upload",
+                                        e.target.files[0]
+                                      );
+                                    }
+                                  }}
+                                  onBlur={handleBlur}
+                                  placeholder="Select file"
+                                  type="file"
+                                  id="upload"
+                                  name="upload"
+                                  endIcon={
+                                    values.upload && (
+                                      <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="25"
+                                        height="24"
+                                        viewBox="0 0 25 24"
+                                        fill="none"
+                                      >
+                                        <mask
+                                          id="mask0_645_17003"
+                                          maskUnits="userSpaceOnUse"
+                                          x="0"
+                                          y="0"
+                                          width="25"
+                                          height="24"
+                                        >
+                                          <rect
+                                            x="0.5"
+                                            width="24"
+                                            height="24"
+                                            fill="#D9D9D9"
+                                          />
+                                        </mask>
+                                        <g mask="url(#mask0_645_17003)">
+                                          <path
+                                            d="M9.89997 16.1539L12.5 13.5539L15.1 16.1539L16.1538 15.1001L13.5538 12.5001L16.1538 9.90005L15.1 8.84623L12.5 11.4462L9.89997 8.84623L8.84615 9.90005L11.4461 12.5001L8.84615 15.1001L9.89997 16.1539ZM7.8077 20.5C7.30257 20.5 6.875 20.325 6.525 19.975C6.175 19.625 6 19.1975 6 18.6923V6.00005H5V4.50008H9.49997V3.61548H15.5V4.50008H20V6.00005H19V18.6923C19 19.1975 18.825 19.625 18.475 19.975C18.125 20.325 17.6974 20.5 17.1922 20.5H7.8077ZM17.5 6.00005H7.49997V18.6923C7.49997 18.7693 7.53203 18.8398 7.59613 18.9039C7.66024 18.968 7.73077 19.0001 7.8077 19.0001H17.1922C17.2692 19.0001 17.3397 18.968 17.4038 18.9039C17.4679 18.8398 17.5 18.7693 17.5 18.6923V6.00005Z"
+                                            fill="#91919D"
+                                          />
+                                        </g>
+                                      </svg>
+                                    )
+                                  }
+                                />
+                              )}
+                            {fileUpload &&
+                              archiveFileSelection === "upload" && (
+                                <div className="core-black-contrast-2 h-[56px] rounded p-4 mt-4 relative">
+                                  <div className="absolute text-left blend z-10 left-[16px] top-[15px] font-black">
+                                    {(Number(progress) * 100).toFixed(0)}%
+                                  </div>
+                                  <div
+                                    className="bg-white absolute w-full h-[56px] rounded transition-all origin-left"
+                                    style={{
+                                      transform: `scaleX(${progress})`,
+                                      left: "-1px",
+                                      top: "-2px",
+                                      width: "calc(100% + 1px)",
+                                    }}
+                                  ></div>
+                                </div>
+                              )}
+                            {fileUpload && values.upload && (
+                              <p className="text-sm mt-2">
+                                Uploading{" "}
+                                {(values.upload as any).name
+                                  ? (values.upload as any).name + "..."
+                                  : ""}
+                              </p>
+                            )}
+                            {!fileUpload &&
+                              !!values.file.length &&
+                              archiveFileSelection === "upload" && (
+                                <p className="text-sm text-good flex items-center mt-2">
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    height="24"
+                                    viewBox="0 -960 960 960"
+                                    width="24"
+                                  >
+                                    <path
+                                      fill="#4FE3C1"
+                                      d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
+                                    />
+                                  </svg>
+                                  {values.file.split("/archives/")[1]}
+                                </p>
+                              )}
+                            {values.upload && (
+                              <>
+                                {!fileUpload && (
+                                  <Button
+                                    variant="primary"
+                                    extraClass="mt-4"
+                                    onClick={async () => {
+                                      setFileUpload(true);
+                                      setFieldValue("file", "");
+
+                                      (window as any).MDS.file.upload(
+                                        values.upload,
+                                        async function (resp: any) {
+                                          if (resp.allchunks >= 10) {
+                                            setProgress(
+                                              resp.chunk / resp.allchunks
+                                            );
+                                          }
+                                          const fileName = resp.filename;
+                                          if (resp.allchunks === resp.chunk) {
+                                            setFileUpload(false);
+
+                                            // Move uploaded file to internal, then set full path to prepare for reset command
+                                            (window as any).MDS.file.move(
+                                              "/fileupload/" + fileName,
+                                              "/archives/" + fileName,
+                                              (resp: any) => {
+                                                if (resp.status) {
+                                                  setFieldValue(
+                                                    "file",
+                                                    "/archives/" + fileName
+                                                  );
+                                                  setFieldValue(
+                                                    "upload",
+                                                    undefined
+                                                  );
+                                                  setFileUpload(false);
+                                                  getArchives();
+                                                }
+                                              }
+                                            );
+                                          }
+                                        }
+                                      );
+                                    }}
+                                  >
+                                    Upload
+                                  </Button>
+                                )}
+                              </>
+                            )}
+                            {values.file && values.file.length > 0 && (
+                              <Button
+                                onClick={() => setStep(2)}
+                                variant="primary"
+                                extraClass="mt-4"
+                              >
+                                Continue
+                              </Button>
+                            )}
+                            {!fileUpload &&
+                              archiveFileSelection === "upload" &&
+                              !!values.file.length && (
+                                <Button
+                                  onClick={() => setFieldValue("file", "")}
+                                  variant="tertiary"
+                                  extraClass="mt-4"
+                                >
+                                  Upload a different file
+                                </Button>
+                              )}
+                          </>
+                        </form>
+                      )}
+
+                      {step === 2 &&
+                        createPortal(
+                          <SharedDialog
+                            nav={
+                              <Button
+                                onClick={() => setStep(1)}
+                                extraClass="w-max !bg-transparent text-white border-b-1 flex items-center hover:opacity-80"
+                              >
+                                <svg
+                                  width="16"
+                                  height="17"
+                                  viewBox="0 0 16 17"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <mask
+                                    id="mask0_1546_42097"
+                                    maskUnits="userSpaceOnUse"
+                                    x="0"
+                                    y="0"
+                                    width="16"
+                                    height="17"
+                                  >
+                                    <rect
+                                      y="0.5"
+                                      width="16"
+                                      height="16"
+                                      fill="#D9D9D9"
+                                    />
+                                  </mask>
+                                  <g mask="url(#mask0_1546_42097)">
+                                    <path
+                                      d="M6.39969 14.6685L0.230469 8.4993L6.39969 2.33008L7.29582 3.22621L2.02275 8.4993L7.29582 13.7724L6.39969 14.6685Z"
+                                      fill="#F9F9FA"
+                                    />
+                                  </g>
+                                </svg>
+                                Cancel
+                              </Button>
+                            }
+                            main={
+                              <>
+                                <h1 className="text-2xl mb-8 text-center">
+                                  Enter your <br /> 24-word seed phrase
+                                </h1>
+                                <ul className="grid grid-cols-2 gap-2 mb-4">
+                                  {values.seedPhrase &&
+                                    Object.keys(values.seedPhrase).map(
+                                      (seed, i) => (
+                                        <li key={seed} className="relative">
+                                          <Input
+                                            extraClass="focus:bg-white focus:text-black focus:border focus:border-[#464C4F] focus:font-bold"
+                                            disabled={false}
+                                            placeholder=""
+                                            type="text"
+                                            value={values.seedPhrase[seed]}
+                                            id={`seedPhrase.${seed}`}
+                                            name={`seedPhrase.${seed}`}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={
+                                              getIn(
+                                                touched,
+                                                `seedPhrase.${seed}`
+                                              ) &&
+                                              getIn(
+                                                errors,
+                                                `seedPhrase.${seed}`
+                                              )
+                                                ? getIn(
+                                                    errors,
+                                                    `seedPhrase.${seed}`
+                                                  )
+                                                : false
+                                            }
+                                            startIcon={
+                                              <h4
+                                                className={`absolute top-[15px] left-[15px] ${
+                                                  getIn(
+                                                    touched,
+                                                    `seedPhrase.${seed}`
+                                                  ) &&
+                                                  getIn(
+                                                    errors,
+                                                    `seedPhrase.${seed}`
+                                                  )
+                                                    ? "fa-error"
+                                                    : "fa"
+                                                } color-core-grey text-base z-20`}
+                                              >
+                                                {seed}
+                                              </h4>
+                                            }
+                                          />
+                                        </li>
+                                      )
+                                    )}
+                                </ul>
+
+                                {dirty && isValid && (
+                                  <FadeIn delay={50}>
+                                    <Button onClick={() => setStep(3)}>
+                                      I'm ready
+                                    </Button>
+                                  </FadeIn>
+                                )}
+                              </>
+                            }
+                            primary={null}
+                            secondary={null}
+                          />,
+                          document.body
+                        )}
+                      {step === 3 &&
+                        createPortal(
+                          <SharedDialog
+                            main={
+                              <>
+                                <h1 className="text-2xl mb-8 text-center">
+                                  Final step
+                                </h1>
+
+                                <span className="mb-2 flex gap-2 items-center mt-2">
+                                  <div className="text-left">Key uses</div>
+                                  {!tooltip.keyuses && (
+                                    <img
+                                      className="w-4 h-4"
+                                      onClick={() =>
+                                        setTooltip({
+                                          ...tooltip,
+                                          keyuses: true,
+                                        })
+                                      }
+                                      alt="tooltip"
+                                      src="./assets/help_filled.svg"
+                                    />
+                                  )}
+                                  {!!tooltip.keyuses && (
+                                    <img
+                                      className="w-4 h-4"
+                                      onClick={() =>
+                                        setTooltip({
+                                          ...tooltip,
+                                          keyuses: false,
+                                        })
+                                      }
+                                      alt="tooltip-dismiss"
+                                      src="./assets/cancel_filled.svg"
+                                    />
+                                  )}
+                                </span>
+                                {tooltip.keyuses && (
+                                  <Tooltip
+                                    onClick={() =>
+                                      setTooltip({ ...tooltip, keyuses: false })
+                                    }
+                                    content="How many times at most you used your keys. Your keys are used for signing every transaction you make. Every time you import your seed phrase this needs to be higher."
+                                    position={75}
+                                  />
+                                )}
+                                <Input
+                                  extraClass="focus:bg-white focus:text-black focus:border focus:border-[#464C4F] focus:font-bold"
+                                  disabled={false}
+                                  placeholder="default 1000"
+                                  type="text"
+                                  value={values.keyuses}
+                                  id="keyuses"
+                                  name="keyuses"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  error={
+                                    errors.keyuses ? errors.keyuses : false
+                                  }
+                                />
+                                {values.keyuses && values.keyuses < 1000 && (
+                                  <p className="text-sm mt-2 opacity-50">
+                                    We suggest for you to use 1000 as a safe
+                                    number
+                                  </p>
+                                )}
+                              </>
+                            }
+                            primary={
+                              <FadeIn delay={50}>
+                                <Button
+                                  disabled={!isValid}
+                                  extraClass="mt-4"
+                                  onClick={() => setStep(4)}
+                                >
+                                  Re-sync
+                                </Button>
+                              </FadeIn>
+                            }
+                            secondary={
+                              <Button
+                                extraClass="mt-4"
+                                variant="tertiary"
+                                onClick={() => {
+                                  setStep(2);
+                                  if (!values.keyuses || errors.keyuses) {
+                                    setFieldValue("keyuses", 1000);
+                                  }
+                                }}
+                              >
+                                Cancel
+                              </Button>
+                            }
+                          />,
+                          document.body
+                        )}
+                      {step === 4 &&
+                        createPortal(
+                          <SharedDialog
+                            main={
+                              <>
+                                <>
+                                  <h1 className="text-2xl mb-8 text-center">
+                                    Wipe this node?
+                                  </h1>
+                                  <p className="text-center mb-4">
+                                    This node will be wiped and recreated with
+                                    the given seed phrase. <br />
+                                    <br /> This process can take up to an hour,
+                                    please connect your device to a power source
+                                    before you continue.
+                                  </p>
+                                </>
+                              </>
+                            }
+                            primary={
+                              <FadeIn delay={50}>
+                                <Button
+                                  disabled={!isValid}
+                                  onClick={() => submitForm()}
+                                >
+                                  Start re-sync
+                                </Button>
+                              </FadeIn>
+                            }
+                            secondary={
+                              <Button
+                                extraClass="mt-4"
+                                variant="tertiary"
+                                onClick={() => setStep(3)}
+                              >
+                                Cancel
+                              </Button>
+                            }
+                          />,
+                          document.body
+                        )}
+                    </>
+                  )}
+                </Formik>
+              </>
+            }
+            primary={<div />}
+            secondary={
+              <>
+                {error && (
+                  <Button
+                    variant="tertiary"
+                    onClick={() => {
+                      setError(false);
+                      setBeginResyncing(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                )}
+                {!fileUpload && !error && (
+                  <Button
+                    variant="tertiary"
+                    extraClass="mt-2"
+                    onClick={() => {
+                      setHaveArchive(false);
+                      setStep(0);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                )}
+              </>
+            }
+          />,
+          document.body
+        )}
+
+      {noHaveArchive &&
+        createPortal(
+          <SharedDialog
+            main={
+              <>
+                <Formik
+                  validationSchema={validationSchemaNoArchive}
+                  initialValues={{
+                    seedPhrase: {
+                      1: "".toUpperCase(),
+                      2: "".toUpperCase(),
+                      3: "".toUpperCase(),
+                      4: "".toUpperCase(),
+                      5: "".toUpperCase(),
+                      6: "".toUpperCase(),
+                      7: "".toUpperCase(),
+                      8: "".toUpperCase(),
+                      9: "".toUpperCase(),
+                      10: "".toUpperCase(),
+                      11: "".toUpperCase(),
+                      12: "".toUpperCase(),
+                      13: "".toUpperCase(),
+                      14: "".toUpperCase(),
+                      15: "".toUpperCase(),
+                      16: "".toUpperCase(),
+                      17: "".toUpperCase(),
+                      18: "".toUpperCase(),
+                      19: "".toUpperCase(),
+                      20: "".toUpperCase(),
+                      21: "".toUpperCase(),
+                      22: "".toUpperCase(),
+                      23: "".toUpperCase(),
+                      24: "".toUpperCase(),
+                    },
+                    keyuses: 1000,
+                    host: "",
+                  }}
+                  onSubmit={async (formData) => {
+                    setBeginResyncing(true);
+
+                    try {
+                      // do your thing
+                      const phraseAsString = Object.values(formData.seedPhrase)
+                        .toString()
+                        .replaceAll(",", " ");
+                      const { keyuses, host } = formData;
+
+                      await rpc
+                        .importSeedPhrase(phraseAsString, host, keyuses)
+                        .catch((error) => {
+                          throw error;
+                        });
+                    } catch (error) {
+                      setError(error as string);
+                    }
+                  }}
+                >
+                  {({
+                    dirty,
+                    handleSubmit,
+                    values,
+                    handleChange,
+                    handleBlur,
+                    touched,
+                    submitForm,
+                    isValid,
+                    errors,
+                  }) => (
+                    <form onSubmit={handleSubmit}>
+                      {stepNo === 0 && (
+                        <FadeIn delay={0}>
+                          <div className="flex flex-col items-center">
+                            <svg
+                              className="mb-2"
+                              width="64"
+                              height="64"
+                              viewBox="0 0 64 64"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <mask
+                                id="mask0_1607_21111"
+                                maskUnits="userSpaceOnUse"
+                                x="0"
+                                y="0"
+                                width="64"
+                                height="64"
+                              >
+                                <rect width="64" height="64" fill="#D9D9D9" />
+                              </mask>
+                              <g mask="url(#mask0_1607_21111)">
+                                <path
+                                  d="M31.9993 44.6146C32.6096 44.6146 33.1211 44.4082 33.5339 43.9954C33.9467 43.5826 34.1531 43.071 34.1531 42.4608C34.1531 41.8506 33.9467 41.339 33.5339 40.9262C33.1211 40.5134 32.6096 40.307 31.9993 40.307C31.389 40.307 30.8775 40.5134 30.4647 40.9262C30.0519 41.339 29.8455 41.8506 29.8455 42.4608C29.8455 43.071 30.0519 43.5826 30.4647 43.9954C30.8775 44.4082 31.389 44.6146 31.9993 44.6146ZM29.9994 34.8711H33.9992V18.8711H29.9994V34.8711ZM32.0037 57.3326C28.4999 57.3326 25.2065 56.6677 22.1235 55.3379C19.0404 54.0081 16.3586 52.2034 14.078 49.9239C11.7974 47.6443 9.99191 44.9636 8.66155 41.882C7.33119 38.8003 6.66602 35.5076 6.66602 32.0038C6.66602 28.4999 7.3309 25.2065 8.66068 22.1235C9.99046 19.0404 11.7951 16.3586 14.0747 14.078C16.3543 11.7974 19.0349 9.99191 22.1166 8.66155C25.1983 7.3312 28.491 6.66602 31.9948 6.66602C35.4986 6.66602 38.7921 7.33091 41.8751 8.66069C44.9582 9.99046 47.64 11.7951 49.9206 14.0747C52.2012 16.3543 54.0067 19.0349 55.337 22.1166C56.6674 25.1983 57.3326 28.491 57.3326 31.9948C57.3326 35.4986 56.6677 38.7921 55.3379 41.8751C54.0081 44.9582 52.2034 47.64 49.9239 49.9206C47.6443 52.2012 44.9636 54.0067 41.882 55.337C38.8003 56.6674 35.5076 57.3326 32.0037 57.3326Z"
+                                  fill="#F4F4F5"
+                                />
+                              </g>
+                            </svg>
+
+                            <h1 className="text-2xl mb-8 text-center">
+                              Restore without archive file
+                            </h1>
+                            <p className="mb-6 text-center">
+                              Restoring without an archive file can take much
+                              longer to re-sync the chain. <br />
+                              <br /> Please ensure you have a stable internet
+                              connection and plug your device into a power
+                              source before continuing.
+                            </p>
+                          </div>
+                          <Button
+                            variant="primary"
+                            type="submit"
+                            onClick={() => setStepNo(1)}
+                          >
+                            Continue
+                          </Button>
+                        </FadeIn>
+                      )}
+                      {stepNo === 1 &&
+                        createPortal(
+                          <SharedDialog
+                            nav={
+                              <Button
+                                onClick={() => {
+                                  setStepNo(0);
+                                  setNoHaveArchive(false);
+                                }}
+                                extraClass="w-max !bg-transparent text-white border-b-1 flex items-center hover:opacity-80"
+                              >
+                                <svg
+                                  width="16"
+                                  height="17"
+                                  viewBox="0 0 16 17"
+                                  fill="none"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <mask
+                                    id="mask0_1546_42097"
+                                    maskUnits="userSpaceOnUse"
+                                    x="0"
+                                    y="0"
+                                    width="16"
+                                    height="17"
+                                  >
+                                    <rect
+                                      y="0.5"
+                                      width="16"
+                                      height="16"
+                                      fill="#D9D9D9"
+                                    />
+                                  </mask>
+                                  <g mask="url(#mask0_1546_42097)">
+                                    <path
+                                      d="M6.39969 14.6685L0.230469 8.4993L6.39969 2.33008L7.29582 3.22621L2.02275 8.4993L7.29582 13.7724L6.39969 14.6685Z"
+                                      fill="#F9F9FA"
+                                    />
+                                  </g>
+                                </svg>
+                                Cancel
+                              </Button>
+                            }
+                            main={
+                              <>
+                                <h1 className="text-2xl mb-8 text-center">
+                                  Enter your <br /> 24-word seed phrase{" "}
+                                </h1>
+                                <ul className="grid grid-cols-2 gap-2 mb-4">
+                                  {values.seedPhrase &&
+                                    Object.keys(values.seedPhrase).map(
+                                      (seed) => (
+                                        <li key={seed} className="relative">
+                                          <Input
+                                            extraClass="focus:bg-white focus:text-black focus:border focus:border-[#464C4F] focus:font-bold"
+                                            disabled={false}
+                                            placeholder=""
+                                            type="text"
+                                            value={values.seedPhrase[seed]}
+                                            id={`seedPhrase.${seed}`}
+                                            name={`seedPhrase.${seed}`}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                            error={
+                                              getIn(
+                                                touched,
+                                                `seedPhrase.${seed}`
+                                              ) &&
+                                              getIn(
+                                                errors,
+                                                `seedPhrase.${seed}`
+                                              )
+                                                ? getIn(
+                                                    errors,
+                                                    `seedPhrase.${seed}`
+                                                  )
+                                                : false
+                                            }
+                                            startIcon={
+                                              <h4
+                                                className={`absolute top-[15px] left-[15px] ${
+                                                  getIn(
+                                                    touched,
+                                                    `seedPhrase.${seed}`
+                                                  ) &&
+                                                  getIn(
+                                                    errors,
+                                                    `seedPhrase.${seed}`
+                                                  )
+                                                    ? "fa-error"
+                                                    : "fa"
+                                                } color-core-grey text-base z-20`}
+                                              >
+                                                {seed}
+                                              </h4>
+                                            }
+                                          />
+                                        </li>
+                                      )
+                                    )}
+                                </ul>
+
+                                {dirty && !errors.seedPhrase && (
+                                  <FadeIn delay={50}>
+                                    <Button onClick={() => setStepNo(2)}>
+                                      I'm ready
+                                    </Button>
+                                  </FadeIn>
+                                )}
+                              </>
+                            }
+                            primary={null}
+                            secondary={null}
+                          />,
+                          document.body
+                        )}
+                      {stepNo === 2 &&
+                        createPortal(
+                          <SharedDialog
+                            main={
+                              <>
+                                <h1 className="text-2xl mb-8 text-center">
+                                  Final step
+                                </h1>
+
+                                <span className="mb-2 flex gap-2 items-center mt-2">
+                                  <div className="text-left">Archive host</div>
+                                  {!tooltip.host && (
+                                    <img
+                                      className="w-4 h-4"
+                                      onClick={() =>
+                                        setTooltip({
+                                          ...tooltip,
+                                          host: true,
+                                        })
+                                      }
+                                      alt="tooltip"
+                                      src="./assets/help_filled.svg"
+                                    />
+                                  )}
+                                  {!!tooltip.host && (
+                                    <img
+                                      className="w-4 h-4"
+                                      onClick={() =>
+                                        setTooltip({
+                                          ...tooltip,
+                                          host: false,
+                                        })
+                                      }
+                                      alt="tooltip-dismiss"
+                                      src="./assets/cancel_filled.svg"
+                                    />
+                                  )}
+                                </span>
+                                {tooltip.host && (
+                                  <Tooltip
+                                    onClick={() =>
+                                      setTooltip({ ...tooltip, host: false })
+                                    }
+                                    content="Enter an ip:port of the archive node to sync from."
+                                    position={75}
+                                  />
+                                )}
+                                <Input
+                                  extraClass="focus:bg-white focus:text-black focus:border focus:border-[#464C4F] focus:font-bold"
+                                  disabled={false}
+                                  placeholder=""
+                                  type="text"
+                                  value={values.host}
+                                  id="host"
+                                  name="host"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  error={errors.host ? errors.host : false}
+                                />
+
+                                <span className="mb-2 flex gap-2 items-center mt-2">
+                                  <div className="text-left">Key uses</div>
+                                  {!tooltip.keyuses && (
+                                    <img
+                                      className="w-4 h-4"
+                                      onClick={() =>
+                                        setTooltip({
+                                          ...tooltip,
+                                          keyuses: true,
+                                        })
+                                      }
+                                      alt="tooltip"
+                                      src="./assets/help_filled.svg"
+                                    />
+                                  )}
+                                  {!!tooltip.keyuses && (
+                                    <img
+                                      className="w-4 h-4"
+                                      onClick={() =>
+                                        setTooltip({
+                                          ...tooltip,
+                                          keyuses: false,
+                                        })
+                                      }
+                                      alt="tooltip-dismiss"
+                                      src="./assets/cancel_filled.svg"
+                                    />
+                                  )}
+                                </span>
+                                {tooltip.keyuses && (
+                                  <Tooltip
+                                    onClick={() =>
+                                      setTooltip({ ...tooltip, keyuses: false })
+                                    }
+                                    content="How many times at most you used your keys. Your keys are used for signing every transaction you make. Every time you import your seed phrase this needs to be higher."
+                                    position={75}
+                                  />
+                                )}
+                                <Input
+                                  extraClass="focus:bg-white focus:text-black focus:border focus:border-[#464C4F] focus:font-bold"
+                                  disabled={false}
+                                  placeholder="default 1000"
+                                  type="text"
+                                  value={values.keyuses}
+                                  id="keyuses"
+                                  name="keyuses"
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  error={
+                                    errors.keyuses ? errors.keyuses : false
+                                  }
+                                />
+                                {values.keyuses && values.keyuses < 1000 && (
+                                  <p className="text-sm mt-2 opacity-50">
+                                    We suggest for you to use 1000 as a safe
+                                    number
+                                  </p>
+                                )}
+                              </>
+                            }
+                            primary={
+                              <FadeIn delay={50}>
+                                <Button
+                                  disabled={!isValid}
+                                  extraClass="mt-4"
+                                  onClick={() => setStepNo(3)}
+                                >
+                                  Re-sync
+                                </Button>
+                              </FadeIn>
+                            }
+                            secondary={
+                              <Button
+                                extraClass="mt-4"
+                                variant="tertiary"
+                                onClick={() => setStepNo(1)}
+                              >
+                                Cancel
+                              </Button>
+                            }
+                          />,
+                          document.body
+                        )}
+                      {stepNo === 3 &&
+                        createPortal(
+                          <SharedDialog
+                            main={
+                              <>
+                                <>
+                                  <h1 className="text-2xl mb-8 text-center">
+                                    Wipe this node?
+                                  </h1>
+                                  <p className="text-center mb-4">
+                                    This node will be wiped and recreated with
+                                    the given seed phrase. <br />
+                                    <br /> This process can take up to an hour,
+                                    please connect your device to a power source
+                                    before you continue.
+                                  </p>
+                                </>
+                              </>
+                            }
+                            primary={
+                              <FadeIn delay={50}>
+                                <Button
+                                  disabled={!isValid}
+                                  onClick={() => submitForm()}
+                                >
+                                  Start re-sync
+                                </Button>
+                              </FadeIn>
+                            }
+                            secondary={
+                              <Button
+                                extraClass="mt-4"
+                                variant="tertiary"
+                                onClick={() => setStepNo(2)}
+                              >
+                                Cancel
+                              </Button>
+                            }
+                          />,
+                          document.body
+                        )}
+                    </form>
+                  )}
+                </Formik>
+              </>
+            }
+            primary={<div />}
+            secondary={
+              <>
+                <Button
+                  extraClass="mt-4"
+                  variant="tertiary"
+                  onClick={() => {
+                    {
+                      stepNo === 0 ? setNoHaveArchive(false) : setStepNo(0);
+                    }
+                  }}
+                >
+                  Cancel
+                </Button>
+              </>
+            }
+          />,
+          document.body
+        )}
+
+      {error &&
+        createPortal(
+          <SharedDialog
+            main={
+              <div className="flex flex-col items-center">
+                <svg
+                  className="mb-3 inline"
+                  width="64"
+                  height="64"
+                  viewBox="0 0 64 64"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    id="mask0_594_13339"
+                    maskUnits="userSpaceOnUse"
+                    x="0"
+                    y="0"
+                    width="64"
+                    height="64"
+                  >
+                    <rect width="64" height="64" fill="#D9D9D9" />
+                  </mask>
+                  <g mask="url(#mask0_594_13339)">
+                    <path
+                      d="M31.9998 44.6151C32.61 44.6151 33.1216 44.4087 33.5344 43.9959C33.9472 43.5831 34.1536 43.0715 34.1536 42.4613C34.1536 41.851 33.9472 41.3395 33.5344 40.9267C33.1216 40.5139 32.61 40.3075 31.9998 40.3075C31.3895 40.3075 30.878 40.5139 30.4652 40.9267C30.0524 41.3395 29.846 41.851 29.846 42.4613C29.846 43.0715 30.0524 43.5831 30.4652 43.9959C30.878 44.4087 31.3895 44.6151 31.9998 44.6151ZM29.9998 34.8716H33.9997V18.8716H29.9998V34.8716ZM32.0042 57.333C28.5004 57.333 25.207 56.6682 22.124 55.3384C19.0409 54.0086 16.3591 52.2039 14.0785 49.9244C11.7979 47.6448 9.99239 44.9641 8.66204 41.8824C7.33168 38.8008 6.6665 35.5081 6.6665 32.0042C6.6665 28.5004 7.33139 25.207 8.66117 22.124C9.99095 19.0409 11.7956 16.3591 14.0752 14.0785C16.3548 11.7979 19.0354 9.9924 22.1171 8.66204C25.1987 7.33168 28.4915 6.6665 31.9953 6.6665C35.4991 6.6665 38.7926 7.3314 41.8756 8.66117C44.9586 9.99095 47.6405 11.7956 49.921 14.0752C52.2017 16.3548 54.0072 19.0354 55.3375 22.1171C56.6679 25.1988 57.333 28.4915 57.333 31.9953C57.333 35.4991 56.6682 38.7925 55.3384 41.8756C54.0086 44.9586 52.2039 47.6405 49.9244 49.921C47.6448 52.2017 44.9641 54.0072 41.8824 55.3375C38.8008 56.6679 35.5081 57.333 32.0042 57.333Z"
+                      fill="#F4F4F5"
+                    />
+                  </g>
+                </svg>
+
+                <h1 className="text-2xl mb-8 text-center">
+                  Hmm.. something went wrong.
+                </h1>
+
+                <p className="mb-8 text-center text-error truncate whitespace-normal break-all">
+                  {error.includes("GZIP")
+                    ? "Invalid password."
+                    : error.includes("connectdata")
+                    ? "Host is invalid."
+                    : error.includes("Incorrect Password!")
+                    ? "Incorrect password!"
+                    : error}
+                </p>
+              </div>
+            }
+            primary={null}
+            secondary={
+              <Button
+                variant="tertiary"
+                onClick={() => {
+                  setError(false);
+                  setBeginResyncing(false);
+                }}
+              >
+                Cancel
+              </Button>
+            }
+          />,
+          document.body
+        )}
+
+      {beginResyncing &&
+        createPortal(
+          <SharedDialog
+            main={
+              <div className="flex flex-col align-center">
+                <Lottie
+                  className="mb-4 inline"
+                  width={4}
+                  height={4}
+                  style={{ maxWidth: 80, alignSelf: "center" }}
+                  animationData={Loading}
+                />
+                <h1 className="text-2xl mb-8 text-center">Re-syncing</h1>
+
+                <p className="mb-8 text-center">
+                  Please don’t leave this screen whilst the chain is re-syncing.
+                  <br /> <br />
+                  Your node will reboot once it is complete.
+                </p>
+
+                <Logs />
+              </div>
+            }
+            primary={null}
+            secondary={null}
+          />,
+          document.body
+        )}
+
+      {MDSShutdown &&
+        createPortal(
+          <SharedDialog
+            bg="primary"
+            main={
+              <div className="flex flex-col items-center justify-center">
+                <svg
+                  className="mb-3 inline"
+                  width="64"
+                  height="64"
+                  viewBox="0 0 64 64"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    id="mask0_1102_25908"
+                    maskUnits="userSpaceOnUse"
+                    x="0"
+                    y="0"
+                    width="64"
+                    height="64"
+                  >
+                    <rect width="64" height="64" fill="#D9D9D9" />
+                  </mask>
+                  <g mask="url(#mask0_1102_25908)">
+                    <path
+                      d="M28.2157 43.3436L46.1438 25.4154L43.3336 22.6052L28.2157 37.7232L20.6157 30.1232L17.8055 32.9334L28.2157 43.3436ZM32.0047 57.3333C28.5009 57.3333 25.2075 56.6684 22.1245 55.3386C19.0414 54.0088 16.3596 52.2042 14.079 49.9246C11.7984 47.645 9.99288 44.9644 8.66253 41.8827C7.33217 38.801 6.66699 35.5083 6.66699 32.0045C6.66699 28.5007 7.33188 25.2072 8.66166 22.1242C9.99144 19.0411 11.7961 16.3593 14.0757 14.0788C16.3553 11.7981 19.0359 9.99264 22.1176 8.66228C25.1992 7.33193 28.492 6.66675 31.9958 6.66675C35.4996 6.66675 38.793 7.33164 41.8761 8.66142C44.9591 9.9912 47.641 11.7959 49.9215 14.0754C52.2022 16.355 54.0076 19.0357 55.338 22.1174C56.6684 25.199 57.3335 28.4917 57.3335 31.9956C57.3335 35.4994 56.6686 38.7928 55.3389 41.8758C54.0091 44.9589 52.2044 47.6407 49.9249 49.9213C47.6453 52.2019 44.9646 54.0074 41.8829 55.3378C38.8013 56.6681 35.5085 57.3333 32.0047 57.3333Z"
+                      fill="#F4F4F5"
+                    />
+                  </g>
+                </svg>
+
+                <h1 className="text-2xl mb-4 font-semibold text-center">
+                  Seed phrase imported
+                </h1>
+                <p className="font-medium mb-6 mt-6 text-center">
+                  Your node will shutdown, restart it for the restore to take
+                  effect.
+                </p>
+              </div>
+            }
+            secondary={<div />}
+            primary={
+              <Button
+                variant="primary"
+                onClick={() => {
+                  if (window.navigator.userAgent.includes("Minima Browser")) {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    return Android.shutdownMinima();
+                  }
+
+                  return window.close();
+                }}
+              >
+                Close application
+              </Button>
+            }
+          />,
+          document.body
+        )}
+
       <SlideIn isOpen={true} delay={0}>
         <div className="flex flex-col h-full bg-black px-4 pb-4">
           <div className="flex flex-col h-full">
@@ -211,14 +1668,11 @@ const SeedResyncReset = () => {
               </p>
             </div>
 
-            <Button extraClass="mb-4" onClick={handleInternalArchive}>
-              Use internal archive
+            <Button extraClass="mb-4" onClick={() => setHaveArchive(true)}>
+              I have an archive
             </Button>
 
-            <Button onClick={handleUploadClick} extraClass="mb-4">
-              Upload archive file
-            </Button>
-            <Button variant="tertiary" onClick={handleNoArchiveClick}>
+            <Button variant="tertiary" onClick={() => setNoHaveArchive(true)}>
               I don't have an archive file
             </Button>
           </div>
