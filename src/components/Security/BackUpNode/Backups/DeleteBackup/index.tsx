@@ -87,6 +87,7 @@ const DeleteBackup = () => {
           <div className={`${styles.desktop_only} ${styles.secondaryActions}`}>
             {!loading && (
               <Button
+                variant="tertiary"
                 onClick={() => authNavigate("/dashboard/backup/backups", [])}
               >
                 Cancel
@@ -98,7 +99,10 @@ const DeleteBackup = () => {
       {/* buttons area rendered only for mobile-view */}
       <div className={`${styles.mobile_only} ${styles.secondaryActions}`}>
         {!loading && (
-          <Button onClick={() => authNavigate("/dashboard/backup/backups", [])}>
+          <Button
+            variant="tertiary"
+            onClick={() => authNavigate("/dashboard/backup/backups", [])}
+          >
             Cancel
           </Button>
         )}

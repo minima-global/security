@@ -148,7 +148,10 @@ const BackupNode = () => {
                 ),
                 primaryActions: <div></div>,
                 secondaryActions: (
-                  <Button onClick={() => authNavigate("/dashboard/backup", [])}>
+                  <Button
+                    variant="tertiary"
+                    onClick={() => authNavigate("/dashboard/backup", [])}
+                  >
                     Cancel
                   </Button>
                 ),
@@ -159,7 +162,10 @@ const BackupNode = () => {
           </Button>
         ),
         secondaryActions: (
-          <Button onClick={() => authNavigate("/dashboard/backup", [])}>
+          <Button
+            variant="tertiary"
+            onClick={() => authNavigate("/dashboard/backup", [])}
+          >
             Cancel
           </Button>
         ),
@@ -195,7 +201,7 @@ const BackupNode = () => {
     return {
       content: (
         <div className="mb-8">
-          <img alt="download" src="./assets/download.svg" />{" "}
+          <img className="mb-2" alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Download your backup</h1>
           <p>
             Download your backup file and save it in <br />a secure location.
@@ -220,7 +226,9 @@ const BackupNode = () => {
         </Button>
       ),
       secondaryActions: (
-        <Button onClick={() => authNavigate(-1, [])}>Close</Button>
+        <Button variant="tertiary" onClick={() => authNavigate(-1, [])}>
+          Close
+        </Button>
       ),
     };
   };
@@ -228,7 +236,7 @@ const BackupNode = () => {
     return {
       content: (
         <div className="mb-8">
-          <img alt="download" src="./assets/download.svg" />{" "}
+          <img className="mb-2" alt="download" src="./assets/download.svg" />{" "}
           <h1 className="text-2xl mb-8">Download your backup</h1>
           <p>
             Download your backup file and save it in <br />a secure location.
@@ -265,7 +273,9 @@ const BackupNode = () => {
         </div>
       ),
       secondaryActions: (
-        <Button onClick={() => authNavigate(-1, [])}>Close</Button>
+        <Button variant="tertiary" onClick={() => authNavigate(-1, [])}>
+          Close
+        </Button>
       ),
     };
   };
@@ -482,6 +492,7 @@ const BackupNode = () => {
                     className="flex flex-col gap-4"
                   >
                     <Input
+                      disabled={formik.isSubmitting}
                       extraClass="core-black-contrast"
                       autoComplete="new-password"
                       handleEndIconClick={() =>
@@ -498,6 +509,7 @@ const BackupNode = () => {
                       endIcon={<TogglePasswordIcon toggle={hidePassword} />}
                     />
                     <Input
+                      disabled={formik.isSubmitting}
                       extraClass="core-black-contrast"
                       autoComplete="new-password"
                       handleEndIconClick={() =>

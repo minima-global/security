@@ -15,16 +15,11 @@ import BackupNode from "./components/Security/BackUpNode/index.tsx";
 import RestoreFromBackup from "./components/Security/RestoreFromBackup/index.tsx";
 
 import ChainResyncReset from "./components/Security/ArchiveReset/ChainResync/index.tsx";
-import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
-
-import EnterSeedPhrase from "./components/Security/ManageSeedPhrase/EnterSeedPhrase/index.tsx";
-import WipeThisNode from "./components/Security/ManageSeedPhrase/WipeThisNode/index.tsx";
 import ViewSeedPhrase from "./components/Security/ViewSeedPhrase/index.tsx";
 import Authorisation from "./authorisation/index.tsx";
 import PERMISSIONS from "./permissions.ts";
 
 import * as utils from "./utils";
-import ImportSeedPhrase from "./components/Security/ManageSeedPhrase/ImportSeedPhrase/index.tsx";
 import Backups from "./components/Security/BackUpNode/Backups/index.tsx";
 import Security from "./components/Security/index.tsx";
 import Dialog from "./components/Dialog/index.tsx";
@@ -39,6 +34,7 @@ import Uploading from "./components/Uploading/index.tsx";
 import SeedResyncReset from "./components/Security/ArchiveReset/SeedResync/index.tsx";
 import Archives from "./components/Security/ArchiveReset/Archives/index.tsx";
 import IntegrityCheck from "./components/Security/IntegrityCheck/index.tsx";
+import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -68,8 +64,6 @@ const router = createHashRouter(
             </FadeIn>
           }
         />
-
-        <Route path="integritycheck" element={<IntegrityCheck />} />
 
         <Route path="archivereset">
           <Route
@@ -130,6 +124,7 @@ const router = createHashRouter(
               />
             </Route>
           </Route>
+          <Route path="integritycheck" element={<IntegrityCheck />} />
         </Route>
 
         <Route
@@ -205,22 +200,6 @@ const router = createHashRouter(
           <Route
             element={
               <Authorisation
-                permissions={[PERMISSIONS["CAN_VIEW_IMPORTSEEDPHRASE"]]}
-              />
-            }
-          >
-            <Route
-              path="importseedphrase"
-              element={
-                <SlideIn delay={100}>
-                  <ImportSeedPhrase />
-                </SlideIn>
-              }
-            />
-          </Route>
-          <Route
-            element={
-              <Authorisation
                 permissions={[PERMISSIONS["CAN_VIEW_VIEWSEEDPHRASE"]]}
               />
             }
@@ -233,33 +212,6 @@ const router = createHashRouter(
                 </SlideIn>
               }
             />
-          </Route>
-          <Route
-            element={
-              <Authorisation
-                permissions={[PERMISSIONS["CAN_VIEW_ENTERSEEDPHRASE"]]}
-              />
-            }
-          >
-            <Route path="enterseedphrase">
-              <Route
-                index
-                element={
-                  <FadeIn delay={0}>
-                    <EnterSeedPhrase />
-                  </FadeIn>
-                }
-              />
-              <Route
-                element={
-                  <Authorisation
-                    permissions={[PERMISSIONS["CAN_VIEW_WIPETHISNODE"]]}
-                  />
-                }
-              >
-                <Route path="wipethisnode" element={<WipeThisNode />} />
-              </Route>
-            </Route>
           </Route>
         </Route>
         <Route path="restore">

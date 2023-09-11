@@ -111,6 +111,7 @@ const AutoCreatePassword = () => {
         primaryActions: <div />,
         secondaryActions: (
           <Button
+            variant="tertiary"
             onClick={() => {
               authNavigate("dashboard/backup", []);
             }}

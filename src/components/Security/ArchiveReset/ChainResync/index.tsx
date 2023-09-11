@@ -46,7 +46,6 @@ const ChainResyncReset = () => {
   const [progress, setProgress] = useState(0);
   const [fileUpload, setFileUpload] = useState(false);
 
-  const [step, setStep] = useState(0);
   const [stepNo, setStepNo] = useState(0);
   const [tooltip, setTooltip] = useState({ host: false });
 
@@ -172,11 +171,7 @@ const ChainResyncReset = () => {
                               options={archives}
                               setForm={async (option) => {
                                 if (option.length) {
-                                  const fullPath = await fM.getPath(
-                                    "/archives/" + option
-                                  );
-
-                                  setFieldValue("file", fullPath);
+                                  setFieldValue("file", "/archives/" + option);
                                 }
                               }}
                             />
@@ -391,7 +386,6 @@ const ChainResyncReset = () => {
                     extraClass="mt-4"
                     onClick={() => {
                       setHaveArchive(false);
-                      setStep(0);
                     }}
                   >
                     Cancel

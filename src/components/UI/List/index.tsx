@@ -47,7 +47,6 @@ const List = ({ options, setForm, disabled }: IProps) => {
 
   useEffect(() => {
     if (selected === "") {
-      console.log("setting archive again...");
       handleSelect(options.length ? options[0].name : "");
       setForm(options.length ? options[0].name : "");
     }

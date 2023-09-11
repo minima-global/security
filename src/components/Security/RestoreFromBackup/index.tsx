@@ -84,7 +84,7 @@ const RestoreFromBackup = () => {
               <Button
                 variant="tertiary"
                 onClick={() => setStep(false)}
-                extraClass="mt-2"
+                extraClass="mt-4"
               >
                 Cancel
               </Button>
@@ -114,7 +114,7 @@ const RestoreFromBackup = () => {
             primary={
               <>
                 <Button
-                  extraClass="mb-4"
+                  extraClass="mb-2"
                   onClick={() => {
                     setStep(3);
                     getBackups();
@@ -133,7 +133,7 @@ const RestoreFromBackup = () => {
             }
             secondary={
               <Button
-                variant="secondary"
+                variant="tertiary"
                 onClick={() => setStep(step - 1)}
                 extraClass="mt-4"
               >
@@ -204,11 +204,13 @@ const RestoreFromBackup = () => {
                           <List
                             options={backups}
                             setForm={async (option) => {
-                              const fullPath = await fM.getPath(
-                                "/backups/" + option
-                              );
+                              if (option.length) {
+                                const fullPath = await fM.getPath(
+                                  "/backups/" + option
+                                );
 
-                              setFieldValue("file", fullPath);
+                                setFieldValue("file", fullPath);
+                              }
                             }}
                           />
 
@@ -286,7 +288,7 @@ const RestoreFromBackup = () => {
                             />
                           </div>
                           <Button
-                            disabled={!isValid || isSubmitting}
+                            disabled={!isValid || isSubmitting || !values.file}
                             type="submit"
                           >
                             Restore
@@ -328,7 +330,7 @@ const RestoreFromBackup = () => {
                       Hmm.. something went wrong.
                     </h1>
 
-                    <p className="mb-8 text-center text-error">
+                    <p className="mb-8 text-center text-error break-all">
                       {error.includes("GZIP")
                         ? "Invalid password."
                         : error.includes("connectdata")
@@ -366,8 +368,8 @@ const RestoreFromBackup = () => {
               <>
                 {!beginRestoring && (
                   <Button
-                    variant="secondary"
-                    extraClass="mt-2"
+                    variant="tertiary"
+                    extraClass="mt-4"
                     onClick={() => setStep(2)}
                   >
                     Cancel
@@ -376,7 +378,7 @@ const RestoreFromBackup = () => {
 
                 {error && (
                   <Button
-                    variant="secondary"
+                    variant="tertiary"
                     onClick={() => {
                       setError(false);
                       setBeginRestoring(false);
@@ -441,7 +443,6 @@ const RestoreFromBackup = () => {
                       setFieldValue,
                       errors,
                       touched,
-                      status,
                       values,
                       handleBlur,
                       handleChange,
@@ -669,8 +670,8 @@ const RestoreFromBackup = () => {
               <>
                 {!beginRestoring && (
                   <Button
-                    variant="secondary"
-                    extraClass="mt-2"
+                    variant="tertiary"
+                    extraClass="mt-4"
                     onClick={() => setStep(2)}
                   >
                     Cancel
@@ -678,7 +679,7 @@ const RestoreFromBackup = () => {
                 )}
                 {error && (
                   <Button
-                    variant="secondary"
+                    variant="tertiary"
                     onClick={() => {
                       setError(false);
                       setBeginRestoring(false);
@@ -795,8 +796,11 @@ const validationSchema = yup.object().shape({
       const { path, createError } = this;
       const re = /(?:\.([^.]+))?$/;
 
-      if (val === undefined || val === null) {
-        return false;
+      if (val === undefined || val === null || val.length === 0) {
+        return createError({
+          path: "file",
+          message: "Please select a valid (.bak) file",
+        });
       }
 
       if (val && val.name && typeof val.name === "string") {

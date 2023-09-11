@@ -382,8 +382,10 @@ const SeedResyncReset = () => {
                         .replaceAll(",", " ");
                       const { keyuses, file } = formData;
 
+                      const fullPath = await fM.getPath(file);
+
                       await rpc
-                        .resetSeedSync(file, phraseAsString, keyuses)
+                        .resetSeedSync(fullPath, phraseAsString, keyuses)
                         .catch((error) => {
                           throw error;
                         });
@@ -513,13 +515,14 @@ const SeedResyncReset = () => {
                                   options={archives}
                                   setForm={async (option) => {
                                     if (option.length) {
-                                      const fullPath = await fM.getPath(
+                                      // const fullPath = await fM.getPath(
+                                      //   "/archives/" + option
+                                      // );
+
+                                      setFieldValue(
+                                        "file",
                                         "/archives/" + option
                                       );
-
-                                      console.log("archive fpath", fullPath);
-
-                                      setFieldValue("file", fullPath);
                                     }
                                   }}
                                 />
@@ -638,6 +641,7 @@ const SeedResyncReset = () => {
                                       d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
                                     />
                                   </svg>
+
                                   {values.file.split("/archives/")[1]}
                                 </p>
                               )}
@@ -764,7 +768,7 @@ const SeedResyncReset = () => {
                                 <ul className="grid grid-cols-2 gap-2 mb-4">
                                   {values.seedPhrase &&
                                     Object.keys(values.seedPhrase).map(
-                                      (seed, i) => (
+                                      (seed) => (
                                         <li key={seed} className="relative">
                                           <Input
                                             extraClass="focus:bg-white focus:text-black focus:border focus:border-[#464C4F] focus:font-bold"

@@ -30,3 +30,11 @@
 
 - Added import internal archives for seed re-sync, restore, chain re-sync/no need to re-upload
 - Added archive inspect section
+
+##### [0.26.0] - 11 September 23
+
+- Re-worked all the archive reset logic
+- Re-worked all the restore from back up logic
+- Archive integrity moved into Archive reset
+- Re-worked the inspect external logic
+- Other tweaks & fixes

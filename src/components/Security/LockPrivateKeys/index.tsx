@@ -298,6 +298,7 @@ const LockPrivateKeys = () => {
                   className="flex flex-col gap-4"
                 >
                   <Input
+                    disabled={formik.isSubmitting}
                     extraClass="core-black-contrast"
                     autoComplete="new-password"
                     handleEndIconClick={() =>

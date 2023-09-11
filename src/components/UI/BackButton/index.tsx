@@ -1,4 +1,4 @@
-import { To, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   title: string;

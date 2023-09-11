@@ -65,6 +65,7 @@ const Backups = () => {
           <>
             <div className="mb-6">
               <Input
+                disabled={false}
                 id="search"
                 name="search"
                 type="text"
@@ -338,6 +339,7 @@ const Backups = () => {
           <>
             <div className="mb-6">
               <Input
+                disabled={false}
                 id="search"
                 name="search"
                 type="text"

@@ -8,6 +8,7 @@ import { createPortal } from "react-dom";
 import SharedDialog from "../../../SharedDialog";
 import { Formik } from "formik";
 import List from "../../../UI/List";
+import * as yup from "yup";
 
 import * as utils from "../../../../utils";
 import * as rpc from "../../../../__minima__/libs/RPC";
@@ -69,6 +70,7 @@ const ArchiveReset = () => {
             main={
               <>
                 <Formik
+                  validationSchema={validationSchema}
                   initialValues={{
                     file: "",
                     upload: null,
@@ -442,11 +444,16 @@ const ArchiveReset = () => {
                                   <List
                                     options={backups}
                                     setForm={async (option) => {
-                                      const fullPath = await fM.getPath(
-                                        "/backups/" + option
-                                      );
+                                      if (option.length) {
+                                        const fullPath = await fM.getPath(
+                                          "/backups/" + option
+                                        );
 
-                                      setFieldValue("backupfilepath", fullPath);
+                                        setFieldValue(
+                                          "backupfilepath",
+                                          fullPath
+                                        );
+                                      }
                                     }}
                                   />
 
@@ -474,7 +481,6 @@ const ArchiveReset = () => {
                                       />
                                     }
                                   />
-
                                   <Button
                                     disabled={!isValid || isSubmitting}
                                     onClick={submitForm}
@@ -651,7 +657,9 @@ const ArchiveReset = () => {
                                       )}
                                       {values.backupfilepath.length === 0 && (
                                         <Button
-                                          disabled={fileUpload}
+                                          disabled={
+                                            fileUpload || !values.upload
+                                          }
                                           onClick={async () => {
                                             // upload file here and then add as backupfilepath
                                             setFileUpload(true);
@@ -975,3 +983,38 @@ const ArchiveReset = () => {
 };
 
 export default ArchiveReset;
+
+const validationSchema = yup.object().shape({
+  backupfilepath: yup
+    .mixed()
+    .required("Please select a (.bak) file")
+    .test("Test extension", function (val: any) {
+      const { path, createError } = this;
+      const re = /(?:\.([^.]+))?$/;
+
+      if (val === undefined || val === null || val.length === 0) {
+        return createError({
+          path: "file",
+          message: "Please select a valid (.bak) file",
+        });
+      }
+
+      if (val && val.name && typeof val.name === "string") {
+        const extension = re.exec(val.name);
+
+        if (
+          extension &&
+          typeof extension[1] === "string" &&
+          extension[1] !== "bak"
+        ) {
+          return createError({
+            path,
+            message: "Please select a valid file extension type.",
+          });
+        }
+      }
+
+      return true;
+    }),
+  password: yup.string(),
+});
