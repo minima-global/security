@@ -87,7 +87,10 @@ const DeleteArchive = () => {
           <div className={`${styles.desktop_only} ${styles.secondaryActions}`}>
             {!loading && (
               <Button
-                onClick={() => authNavigate("/dashboard/backup/backups", [])}
+                variant="tertiary"
+                onClick={() =>
+                  authNavigate("/dashboard/archivereset/archives", [])
+                }
               >
                 Cancel
               </Button>
@@ -98,7 +101,10 @@ const DeleteArchive = () => {
       {/* buttons area rendered only for mobile-view */}
       <div className={`${styles.mobile_only} ${styles.secondaryActions}`}>
         {!loading && (
-          <Button onClick={() => authNavigate("/dashboard/backup/backups", [])}>
+          <Button
+            variant="tertiary"
+            onClick={() => authNavigate("/dashboard/archivereset/archives", [])}
+          >
             Cancel
           </Button>
         )}

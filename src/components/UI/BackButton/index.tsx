@@ -1,8 +1,8 @@
-import { To, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface IProps {
   title: string;
-  to?: To;
+  to?: any;
   onClickHandler?: () => void;
 }
 const BackButton = ({ title, to, onClickHandler }: IProps) => {

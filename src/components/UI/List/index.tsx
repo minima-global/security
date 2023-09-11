@@ -47,7 +47,7 @@ const List = ({ options, setForm, disabled }: IProps) => {
 
   useEffect(() => {
     if (selected === "") {
-      handleSelect(options.length ? options[0].name : "No backups available");
+      handleSelect(options.length ? options[0].name : "");
       setForm(options.length ? options[0].name : "");
     }
   }, [options]);
@@ -60,15 +60,35 @@ const List = ({ options, setForm, disabled }: IProps) => {
             options.length ? setModal((prevState) => !prevState) : null;
           }
         }}
-        className={`${styles.picker} hover:cursor-pointer hover:bg-slate-200`}
+        className={`${
+          styles.picker
+        } hover:cursor-pointer hover:bg-slate-200 relative ${
+          disabled ? "hover:cursor-not-allowed" : ""
+        }`}
       >
-        <span className="color-black font-sm">{selected}</span>
+        <span
+          className={`color-black font-sm ${disabled ? "text-disabled" : ""}`}
+        >
+          {!!selected.length && selected}
+          {!selected.length && "No files available"}
+        </span>
+
         {!disabled && (
-          <img
-            className={openModal ? styles.active : ""}
-            alt="arrow-d"
-            src="./assets/expand_more.svg"
-          />
+          <svg
+            className={`${
+              openModal ? styles.active : ""
+            } top-6 absolute right-4`}
+            width="16"
+            height="10"
+            viewBox="0 0 16 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.0004 9.06678L0.466797 1.50038L1.6668 0.333984L8.0004 6.66678L14.334 0.333984L15.534 1.53398L8.0004 9.06678Z"
+              fill="#91919D"
+            />
+          </svg>
         )}
       </div>
       {openModal && (
@@ -97,6 +117,7 @@ const List = ({ options, setForm, disabled }: IProps) => {
                 <>
                   <div className="mb-6">
                     <Input
+                      disabled={false}
                       id="search"
                       name="search"
                       type="text"

@@ -27,11 +27,17 @@
 }
 
 
+.text-good {
+  color: var(--status-green)
+}
 .core-black-contrast-2 {
   background-color: var(--core-black-contrast-2);
 }
 .core-black-contrast {
   background-color: var(--core-black-contrast);
+}
+.core-black-contrast-3 {
+  background-color: var(--core-black-contrast-3);
 }
 
 .bg-black {
@@ -260,7 +266,7 @@ input:-webkit-autofill,
     place-content: center;
   }
   input[type="checkbox"]::before {
-    content: url(./assets//check_small.svg);
+    content: url(./assets/check_small.svg);
     width: inherit;
     height: inherit;
     border-radius: 50%;
@@ -373,4 +379,23 @@ code {
 .accordion-content[aria-expanded="true"] {
   max-height: 0px;
   transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+}
+
+select {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input:focus + .fa {
+  color: var(--core-black-contrast);
+  font-weight: 700;
+}
+
+input + .fa-error {
+  color: var(--status-red);
+  font-weight: 700;
+}
+input:focus + .fa-error {
+  color: var(--core-black-contrast);
+  font-weight: 700;
 }

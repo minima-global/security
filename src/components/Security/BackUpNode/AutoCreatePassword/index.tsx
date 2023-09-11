@@ -111,6 +111,7 @@ const AutoCreatePassword = () => {
         primaryActions: <div />,
         secondaryActions: (
           <Button
+            variant="tertiary"
             onClick={() => {
               authNavigate("dashboard/backup", []);
             }}
@@ -153,6 +154,7 @@ const AutoCreatePassword = () => {
               className="flex flex-col gap-4"
             >
               <Input
+                disabled={formik.isSubmitting}
                 extraClass="core-black-contrast"
                 autoComplete="new-password"
                 handleEndIconClick={() =>
@@ -169,6 +171,7 @@ const AutoCreatePassword = () => {
                 endIcon={<TogglePasswordIcon toggle={hidePassword} />}
               />
               <Input
+                disabled={formik.isSubmitting}
                 extraClass="core-black-contrast"
                 autoComplete="new-password"
                 handleEndIconClick={() =>
