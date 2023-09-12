@@ -51,19 +51,19 @@ var MDS = {
     //Get ther MiniDAPP UID
     MDS.minidappuid = MDS.form.getParams("uid");
 
-    // env overrides
-    if (window.DEBUG) {
-      host = window.DEBUG_HOST;
-      port = Math.floor(window.DEBUG_PORT);
-      MDS.minidappuid = window.DEBUG_UID;
-    }
-
     //HARD SET if debug mode - running from a file
     if (MDS.DEBUG_HOST != null) {
       MDS.log("DEBUG Settings Found..");
 
       host = MDS.DEBUG_HOST;
       port = MDS.DEBUG_PORT;
+    }
+
+    // env overrides
+    if (window.DEBUG) {
+      host = window.DEBUG_HOST;
+      port = Math.floor(window.DEBUG_PORT);
+      MDS.minidappuid = window.DEBUG_UID;
     }
 
     if (MDS.minidappuid == null) {
@@ -75,14 +75,9 @@ var MDS = {
       MDS.log("No MiniDAPP UID specified.. using test value");
     }
 
-    //The ports..
-    var mainport = port + 1;
-
     MDS.filehost = "https://" + host + ":" + port + "/";
-    MDS.log("MDS FILEHOST  : " + MDS.filehost);
-
-    MDS.mainhost = "https://" + host + ":" + mainport + "/";
-    MDS.log("MDS MAINHOST : " + MDS.mainhost);
+    MDS.mainhost = "https://" + host + ":" + port + "/mdscommand_/";
+    MDS.log("MDS HOST  : " + MDS.filehost);
 
     //Store this for poll messages
     MDS_MAIN_CALLBACK = callback;
@@ -106,7 +101,7 @@ var MDS = {
    */
   notify: function (output) {
     //Send via POST
-    httpPostAsync(MDS.mainhost + "notify?" + "uid=" + MDS.minidappuid, output);
+    httpPostAsync("notify", output);
   },
 
   /**
@@ -114,10 +109,7 @@ var MDS = {
    */
   notifycancel: function () {
     //Send via POST
-    httpPostAsync(
-      MDS.mainhost + "notifycancel?" + "uid=" + MDS.minidappuid,
-      "*"
-    );
+    httpPostAsync("notifycancel", "*");
   },
 
   /**
@@ -125,11 +117,7 @@ var MDS = {
    */
   cmd: function (command, callback) {
     //Send via POST
-    httpPostAsync(
-      MDS.mainhost + "cmd?" + "uid=" + MDS.minidappuid,
-      command,
-      callback
-    );
+    httpPostAsync("cmd", command, callback);
   },
 
   /**
@@ -137,11 +125,7 @@ var MDS = {
    */
   sql: function (command, callback) {
     //Send via POST
-    httpPostAsync(
-      MDS.mainhost + "sql?" + "uid=" + MDS.minidappuid,
-      command,
-      callback
-    );
+    httpPostAsync("sql", command, callback);
   },
 
   /**
@@ -149,30 +133,26 @@ var MDS = {
    */
   dapplink: function (dappname, callback) {
     //Send via POST
-    httpPostAsync(
-      MDS.mainhost + "dapplink?" + "uid=" + MDS.minidappuid,
-      dappname,
-      function (result) {
-        var linkdata = {};
-        linkdata.status = result.status;
+    httpPostAsync("dapplink", dappname, function (result) {
+      var linkdata = {};
+      linkdata.status = result.status;
 
-        //Create the link..
-        if (result.status) {
-          linkdata.uid = result.response.uid;
-          linkdata.sessionid = result.response.sessionid;
-          linkdata.base =
-            MDS.filehost +
-            linkdata.uid +
-            "/index.html?uid=" +
-            result.response.sessionid;
-        } else {
-          //Not found..
-          linkdata.error = result.error;
-        }
-
-        callback(linkdata);
+      //Create the link..
+      if (result.status) {
+        linkdata.uid = result.response.uid;
+        linkdata.sessionid = result.response.sessionid;
+        linkdata.base =
+          MDS.filehost +
+          linkdata.uid +
+          "/index.html?uid=" +
+          result.response.sessionid;
+      } else {
+        //Not found..
+        linkdata.error = result.error;
       }
-    );
+
+      callback(linkdata);
+    });
   },
 
   /**
@@ -184,11 +164,7 @@ var MDS = {
      */
     GET: function (url, callback) {
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "net?" + "uid=" + MDS.minidappuid,
-        url,
-        callback
-      );
+      httpPostAsync("net", url, callback);
     },
 
     /**
@@ -199,11 +175,7 @@ var MDS = {
       var postline = url + "&" + data;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "netpost?" + "uid=" + MDS.minidappuid,
-        postline,
-        callback
-      );
+      httpPostAsync("netpost", postline, callback);
     },
   },
 
@@ -219,11 +191,7 @@ var MDS = {
       var commsline = "get&" + key;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "keypair?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("keypair", commsline, callback);
     },
 
     /**
@@ -234,11 +202,7 @@ var MDS = {
       var commsline = "set&" + key + "&" + value;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "keypair?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("keypair", commsline, callback);
     },
   },
 
@@ -254,11 +218,7 @@ var MDS = {
       var commsline = "public&" + msg;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "comms?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("comms", commsline, callback);
     },
 
     /**
@@ -269,11 +229,7 @@ var MDS = {
       var commsline = "private&" + msg;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "comms?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("comms", commsline, callback);
     },
   },
 
@@ -289,11 +245,7 @@ var MDS = {
       var commsline = "list&" + folder;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -304,11 +256,7 @@ var MDS = {
       var commsline = "save&" + filename + "&" + text;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -319,11 +267,7 @@ var MDS = {
       var commsline = "savebinary&" + filename + "&" + hexdata;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -334,11 +278,7 @@ var MDS = {
       var commsline = "load&" + filename;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -349,11 +289,7 @@ var MDS = {
       var commsline = "loadbinary&" + filename;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -364,11 +300,7 @@ var MDS = {
       var commsline = "delete&" + filename;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -379,11 +311,7 @@ var MDS = {
       var commsline = "getpath&" + filename;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -394,11 +322,7 @@ var MDS = {
       var commsline = "makedir&" + filename;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -409,11 +333,7 @@ var MDS = {
       var commsline = "copy&" + filename + "&" + newfilename;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -424,11 +344,7 @@ var MDS = {
       var commsline = "move&" + filename + "&" + newfilename;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -439,11 +355,7 @@ var MDS = {
       var commsline = "download&" + url;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -462,11 +374,7 @@ var MDS = {
       var commsline = "copytoweb&" + file + "&" + webfile;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
 
     /**
@@ -477,11 +385,7 @@ var MDS = {
       var commsline = "deletefromweb&" + file;
 
       //Send via POST
-      httpPostAsync(
-        MDS.mainhost + "file?" + "uid=" + MDS.minidappuid,
-        commsline,
-        callback
-      );
+      httpPostAsync("file", commsline, callback);
     },
   },
 
@@ -630,9 +534,12 @@ function postMDSFail(command, params, status) {
  * @returns
  */
 function httpPostAsync(theUrl, params, callback) {
+  //Add the MiniDAPP UID..
+  var finalurl = MDS.mainhost + theUrl + "?uid=" + MDS.minidappuid;
+
   //Do we log it..
   if (MDS.logging) {
-    MDS.log("POST_RPC:" + theUrl + " PARAMS:" + params);
+    MDS.log("POST_RPC:" + finalurl + " PARAMS:" + params);
   }
 
   var xmlHttp = new XMLHttpRequest();
@@ -651,11 +558,11 @@ function httpPostAsync(theUrl, params, callback) {
         }
       } else {
         //Some error..
-        postMDSFail(theUrl, params, xmlHttp.status);
+        postMDSFail(finalurl, params, xmlHttp.status);
       }
     }
   };
-  xmlHttp.open("POST", theUrl, true); // true for asynchronous
+  xmlHttp.open("POST", finalurl, true); // true for asynchronous
   xmlHttp.overrideMimeType("text/plain; charset=UTF-8");
   xmlHttp.send(encodeURIComponent(params));
   //xmlHttp.onerror = function () {
@@ -741,7 +648,7 @@ function _recurseUploadMDS(thefullfile, chunk, callback) {
   formdata.append("fileupload", filepiece);
 
   var request = new XMLHttpRequest();
-  request.open("POST", MDS.filehost + "fileuploadchunk.html");
+  request.open("POST", "/fileuploadchunk.html");
   request.onreadystatechange = function () {
     var status = request.status;
     if (request.readyState == XMLHttpRequest.DONE) {

@@ -43,3 +43,7 @@
 
 - added margins between cancel & upload on archive integrity check dialog
 - hide cancel button while uploading archive on integrity dialog
+
+##### [0.26.2] - 12 September 23
+
+- updated mds.js
