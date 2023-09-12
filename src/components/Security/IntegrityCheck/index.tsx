@@ -827,12 +827,17 @@ const IntegrityCheck = () => {
               }
               primary={null}
               secondary={
-                <Button
-                  onClick={() => setShowExternal(false)}
-                  variant="tertiary"
-                >
-                  Cancel
-                </Button>
+                <>
+                  {!fileUpload && (
+                    <Button
+                      extraClass="mt-4"
+                      onClick={() => setShowExternal(false)}
+                      variant="tertiary"
+                    >
+                      Cancel
+                    </Button>
+                  )}
+                </>
               }
             />,
             document.body
@@ -886,15 +891,18 @@ const IntegrityCheck = () => {
               }
               primary={null}
               secondary={
-                <Button
-                  variant="tertiary"
-                  onClick={() => {
-                    setError(false);
-                    setLoading(false);
-                  }}
-                >
-                  Cancel
-                </Button>
+                <>
+                  <Button
+                    extraClass="mt-4"
+                    variant="tertiary"
+                    onClick={() => {
+                      setError(false);
+                      setLoading(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </>
               }
             />,
             document.body

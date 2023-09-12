@@ -38,3 +38,8 @@
 - Archive integrity moved into Archive reset
 - Re-worked the inspect external logic
 - Other tweaks & fixes
+
+##### [0.26.1] - 12 September 23
+
+- added margins between cancel & upload on archive integrity check dialog
+- hide cancel button while uploading archive on integrity dialog
