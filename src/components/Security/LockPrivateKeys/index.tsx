@@ -72,6 +72,7 @@ const LockPrivateKeys = () => {
     primaryActions: <div></div>,
     secondaryActions: (
       <Button
+        variant="tertiary"
         extraClass="mt-4"
         onClick={() => {
           authNavigate("/dashboard/lockprivatekeys", []);
@@ -94,6 +95,7 @@ const LockPrivateKeys = () => {
     primaryActions: <div></div>,
     secondaryActions: (
       <Button
+        variant="tertiary"
         extraClass="mt-4"
         onClick={() => {
           authNavigate("/dashboard/lockprivatekeys", []);
@@ -242,6 +244,7 @@ const LockPrivateKeys = () => {
                       }}
                     />
                     <Button
+                      variant="primary"
                       type="submit"
                       disabled={
                         !(formik.isValid && formik.values.understand) ||
@@ -315,6 +318,8 @@ const LockPrivateKeys = () => {
                   />
                   <div className="flex flex-col gap-8">
                     <Button
+                      variant="primary"
+                      extraClass="text-black"
                       type="submit"
                       disabled={!formik.isValid || formik.isSubmitting}
                     >

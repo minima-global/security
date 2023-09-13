@@ -515,10 +515,6 @@ const SeedResyncReset = () => {
                                   options={archives}
                                   setForm={async (option) => {
                                     if (option.length) {
-                                      // const fullPath = await fM.getPath(
-                                      //   "/archives/" + option
-                                      // );
-
                                       setFieldValue(
                                         "file",
                                         "/archives/" + option
@@ -642,7 +638,9 @@ const SeedResyncReset = () => {
                                     />
                                   </svg>
 
-                                  {values.file.split("/archives/")[1]}
+                                  {values.file.split("/archives/")[1].length
+                                    ? values.file.split("/archives/")[1]
+                                    : values.file.split("\\archives\\")[1]}
                                 </p>
                               )}
                             {values.upload && (

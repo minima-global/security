@@ -87,8 +87,11 @@ const ArchiveReset = () => {
                         backupfilepath,
                         password,
                       } = formData;
+
+                      const fullArchivePath = await fM.getPath(archivefilepath);
+
                       await rpc
-                        .reset(archivefilepath, backupfilepath, password)
+                        .reset(fullArchivePath, backupfilepath, password)
                         .catch((error) => {
                           throw error;
                         });
@@ -174,13 +177,12 @@ const ArchiveReset = () => {
                               <List
                                 disabled={archives.length === 0}
                                 options={archives}
-                                setForm={async (option) => {
+                                setForm={(option) => {
                                   if (option.length) {
-                                    const fullPath = await fM.getPath(
+                                    setFieldValue(
+                                      "file",
                                       "/archives/" + option
                                     );
-
-                                    setFieldValue("file", fullPath);
                                   }
                                 }}
                               />
@@ -295,7 +297,9 @@ const ArchiveReset = () => {
                                     d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
                                   />
                                 </svg>
-                                {values.file.split("/archives/")[1]}
+                                {values.file.split("/archives/")[1].length
+                                  ? values.file.split("/archives/")[1]
+                                  : values.file.split("\\archives\\")[1]}
                               </p>
                             )}
                           {values.upload && (
@@ -438,24 +442,37 @@ const ArchiveReset = () => {
                                     <br /> sync to the latest block, please be
                                     patient.
                                   </p>
-                                  <div className="p-4 core-grey-20 text-black rounded truncate whitespace-normal break-all">
-                                    {values.file.split("/archives/")[1]}
+                                  <div>
+                                    <h1 className="text-base pb-1">
+                                      Archive file
+                                    </h1>
+                                    <div className="p-4 core-grey-20 rounded truncate whitespace-normal break-all  !bg-black text-good">
+                                      {values.file.split("/archives/")[1].length
+                                        ? values.file.split("/archives/")[1]
+                                        : values.file.split("\\archives\\")[1]}
+                                    </div>
                                   </div>
-                                  <List
-                                    options={backups}
-                                    setForm={async (option) => {
-                                      if (option.length) {
-                                        const fullPath = await fM.getPath(
-                                          "/backups/" + option
-                                        );
 
-                                        setFieldValue(
-                                          "backupfilepath",
-                                          fullPath
-                                        );
-                                      }
-                                    }}
-                                  />
+                                  <div>
+                                    <h1 className="text-base pb-1">
+                                      Backup file
+                                    </h1>
+                                    <List
+                                      options={backups}
+                                      setForm={async (option) => {
+                                        if (option.length) {
+                                          const fullPath = await fM.getPath(
+                                            "/backups/" + option
+                                          );
+
+                                          setFieldValue(
+                                            "backupfilepath",
+                                            fullPath
+                                          );
+                                        }
+                                      }}
+                                    />
+                                  </div>
 
                                   <Input
                                     disabled={isSubmitting}
@@ -516,9 +533,18 @@ const ArchiveReset = () => {
                                       <br /> sync to the latest block, please be
                                       patient.
                                     </p>
-                                    <div className="p-4 mb-4 core-grey-20 text-black rounded truncate whitespace-normal break-all">
-                                      {values.file.split("/archives/")[1]}
+                                    <h1 className="text-base pb-1">
+                                      Archive file
+                                    </h1>
+                                    <div className="p-4 mb-4 core-grey-20 rounded truncate whitespace-normal break-all !bg-black text-good">
+                                      {values.file.split("/archives/")[1].length
+                                        ? values.file.split("/archives/")[1]
+                                        : values.file.split("\\archives\\")[1]}
                                     </div>
+                                    <h1 className="text-base pb-1">
+                                      Backup file
+                                    </h1>
+
                                     <FileChooser
                                       disabled={isSubmitting}
                                       keyValue={resetFileField}

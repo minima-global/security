@@ -47,3 +47,9 @@
 ##### [0.26.2] - 12 September 23
 
 - updated mds.js
+
+##### [0.26.6] - 13 September 23
+
+- added labels on restore from backup w/ archive file forms & updated designs
+- Add labels to restore from backup forms, update design
+- Fixed button colors on internal browsers

@@ -286,7 +286,9 @@ const ChainResyncReset = () => {
                                   d="M382-240 154-468l57-57 171 171 367-367 57 57-424 424Z"
                                 />
                               </svg>
-                              {values.file.split("/archives/")[1]}
+                              {values.file.split("/archives/")[1].length
+                                ? values.file.split("/archives/")[1]
+                                : values.file.split("\\archives\\")[1]}
                             </p>
                           )}
                         {values.upload && (
