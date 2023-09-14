@@ -1484,15 +1484,22 @@ const SeedResyncReset = () => {
                   Hmm.. something went wrong.
                 </h1>
 
-                <p className="mb-8 text-center text-error truncate whitespace-normal break-all">
-                  {error.includes("GZIP")
-                    ? "Invalid password."
-                    : error.includes("connectdata")
-                    ? "Host is invalid."
-                    : error.includes("Incorrect Password!")
-                    ? "Incorrect password!"
-                    : error}
-                </p>
+                {typeof error === "string" && (
+                  <p className="mb-8 text-center text-error truncate whitespace-normal break-all">
+                    {error.includes("GZIP")
+                      ? "Invalid password."
+                      : error.includes("connectdata")
+                      ? "Host is invalid."
+                      : error.includes("Incorrect Password!")
+                      ? "Incorrect password!"
+                      : error}
+                  </p>
+                )}
+                {typeof error === "object" && (
+                  <p className="mb-8 text-center text-error truncate whitespace-normal break-all">
+                    {JSON.stringify(error)}
+                  </p>
+                )}
               </div>
             }
             primary={null}
