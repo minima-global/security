@@ -6,6 +6,7 @@ interface IProps {
   primary: ReactNode;
   secondary: ReactNode;
   bg?: "primary" | "secondary";
+  size?: "md" | "lg";
 }
 
 const SharedDialog = ({
@@ -14,6 +15,7 @@ const SharedDialog = ({
   primary,
   secondary,
   bg = "primary",
+  size = "md",
 }: IProps) => {
   let background = "";
   if (bg === "secondary") {
@@ -30,7 +32,9 @@ const SharedDialog = ({
         <div className="absolute top-0 left-0 right-0 max-h-[54px]">{nav}</div>
       )}
       <div
-        className={`h-full bg-black absolute left-0 top-0 bottom-0 right-0 grid grid-cols-[1fr_minmax(0,_560px)_1fr] sm:grid-rows-1 ${
+        className={`h-full bg-black absolute left-0 top-0 bottom-0 right-0 grid grid-cols-[1fr_minmax(0,_${
+          size === "lg" ? "800" : "560"
+        }px)_1fr] sm:grid-rows-1 ${
           nav ? "top-[54px]" : "top-0"
         } overflow-scroll pb-20`}
       >

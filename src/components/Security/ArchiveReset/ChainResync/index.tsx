@@ -670,6 +670,7 @@ const ChainResyncReset = () => {
       {beginResyncing &&
         createPortal(
           <SharedDialog
+            size="lg"
             main={
               <div className="flex flex-col align-center">
                 <Lottie
@@ -684,7 +685,7 @@ const ChainResyncReset = () => {
                 <p className="mb-8 text-center">
                   Please don’t leave this screen whilst the chain is re-syncing.
                   <br /> <br />
-                  Your node will reboot once it is complete.
+                  Your node will shutdown when it is complete.
                 </p>
 
                 <Logs />

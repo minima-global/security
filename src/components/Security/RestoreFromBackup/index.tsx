@@ -364,7 +364,7 @@ const RestoreFromBackup = () => {
                       Please don’t leave this screen whilst the chain is
                       re-syncing.
                       <br /> <br />
-                      Your node will reboot once it is complete.
+                      Your node will shutdown once it is complete.
                     </p>
 
                     <Logs />
@@ -675,7 +675,7 @@ const RestoreFromBackup = () => {
                       Please don’t leave this screen whilst the chain is
                       re-syncing.
                       <br /> <br />
-                      Your node will reboot once it is complete.
+                      Your node will shutdown once it is complete.
                     </p>
 
                     <Logs />

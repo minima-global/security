@@ -53,3 +53,8 @@
 - added labels on restore from backup w/ archive file forms & updated designs
 - Add labels to restore from backup forms, update design
 - Fixed button colors on internal browsers
+
+##### [0.26.8] - 18 September 23
+
+- make the logs dialog bigger
+- update copy for shut down dialog
