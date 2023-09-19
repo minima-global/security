@@ -28,36 +28,23 @@ const ArchiveReset = () => {
   const [error, setError] = useState<false | string>(false);
   const [fileName, setFileName] = useState("");
 
-  function downloadFile(mdsfile: string) {
-    return new Promise((resolve) => {
-      // webview download support
-      // do not load binary
-      if (window.navigator.userAgent.includes("Minima Browser")) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        Android.fileDownload(MDS.minidappuid, mdsfile);
-        return resolve(true);
-      }
+  const downloadFile = (folder: string, mdsfile: string) => {
+    const origFilePath = `/${folder}/${mdsfile}`;
+    const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
 
-      const origFilePath = `/archives/${mdsfile}`;
-      const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
-
-      //Copy the original file to webfolder - WITH the special name
-      (window as any).MDS.file.copytoweb(
-        origFilePath,
-        newFilePath,
-        function () {
-          const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
-          // Now create a normal link - that when clicked downloads it..
-          const link = document.createElement("a");
-          link.href = url;
-          document.body.appendChild(link);
-          link.click();
-          resolve(true);
-        }
-      );
+    (window as any).MDS.file.copytoweb(origFilePath, newFilePath, function () {
+      const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
+      // create an a
+      const temporaryLink = document.createElement("a");
+      temporaryLink.style.display = "none";
+      temporaryLink.target = "_blank";
+      temporaryLink.href = url;
+      temporaryLink.click();
+      (window as any).MDS.file.deletefromweb(url, function () {
+        temporaryLink.remove();
+      });
     });
-  }
+  };
 
   useEffect(() => {
     setBackButton({
@@ -262,7 +249,7 @@ const ArchiveReset = () => {
 
                       (window as any).MDS.cmd(
                         `archive action:export file:"${rootPath}/archives/${fileName}"`,
-                        async function (resp) {
+                        async function (resp: any) {
                           if (!resp.status) {
                             setError(
                               resp.error
@@ -291,8 +278,19 @@ const ArchiveReset = () => {
                 {!exporting && exportedArchive !== null && (
                   <Button
                     variant="primary"
-                    onClick={async () => {
-                      await downloadFile("/archives/" + fileName);
+                    onClick={() => {
+                      if (
+                        window.navigator.userAgent.includes("Minima Browser")
+                      ) {
+                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                        // @ts-ignore
+                        return Android.fileDownload(
+                          (window as any).MDS.minidappuid,
+                          "/archives/" + fileName
+                        );
+                      }
+
+                      downloadFile("archives", fileName);
                     }}
                   >
                     Download now
@@ -345,9 +343,10 @@ const ArchiveReset = () => {
                     </svg>
                     <h1 className="text-2xl mb-8">Export completed</h1>
                     <p className="mb-6">
-                      An archive <span className="font-bold">{fileName}</span>{" "}
-                      with size {exportedArchive.size} has been saved in your
-                      internal archives directory. Click{" "}
+                      An archive <span className="text-good">{fileName}</span>{" "}
+                      with size{" "}
+                      <span className="text-good">{exportedArchive.size}</span>{" "}
+                      has been saved in your internal archives directory. Click{" "}
                       <a
                         className="cursor-pointer"
                         onClick={() =>

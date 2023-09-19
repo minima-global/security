@@ -1,7 +1,7 @@
 import Button from "../../UI/Button";
-import { RefObject, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
-import { useFormik } from "formik";
+import { Formik } from "formik";
 import * as yup from "yup";
 import Input from "../../UI/Input";
 import * as rpc from "../../../__minima__/libs/RPC";
@@ -10,7 +10,6 @@ import * as fileManager from "../../../__minima__/libs/fileManager";
 import { format } from "date-fns";
 
 import { appContext } from "../../../AppContext";
-import useIsMinimaBrowser from "../../../hooks/useIsMinimaBrowser";
 import BackButton from "../../UI/BackButton";
 import Toggle from "../../UI/Toggle";
 import PERMISSIONS from "../../../permissions";
@@ -19,6 +18,8 @@ import SlideIn from "../../UI/Animations/SlideIn";
 import FadeIn from "../../UI/Animations/FadeIn";
 import { useNavigate } from "react-router-dom";
 import TogglePasswordIcon from "../../UI/TogglePasswordIcon/TogglePasswordIcon";
+import { createPortal } from "react-dom";
+import SharedDialog from "../../SharedDialog";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -44,16 +45,33 @@ const validationSchema = yup.object().shape({
   }),
 });
 
+interface Files {
+  cascade: string;
+  chain: string;
+  p2p: string;
+  txpow: string;
+  user: string;
+  wallet: string;
+}
+interface Backup {
+  auto: boolean;
+  block: number;
+  file: string;
+  files: Files;
+  size: string;
+  uncompressed: string;
+}
 const BackupNode = () => {
   const navigate = useNavigate();
-  const [step, setStep] = useState<0 | 1>(0);
-  const linkDownload: RefObject<HTMLAnchorElement> = useRef(null);
+  const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [hidePassword, togglePasswordVisibility] = useState(false);
   const [hideConfirmPassword, toggleConfirmPasswordVisiblity] = useState(false);
   const [autoBackupStatus, setAutoBackupStatus] = useState(false);
 
+  const [error, setError] = useState<false | string>(false);
+  const [data, setData] = useState<Backup | false>(false);
   const { authNavigate } = useAuth();
-  const isMinimaBrowser = useIsMinimaBrowser();
+
   const {
     vaultLocked,
     setModal,
@@ -79,19 +97,21 @@ const BackupNode = () => {
     }
   }, [step]);
 
-  const createDownloadLink = (mdsfile: string): Promise<string> => {
-    return new Promise((resolve) => {
-      const origFilePath = `/backups/${mdsfile}`;
-      const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
+  const createDownloadLink = (folder: string, mdsfile: string) => {
+    const origFilePath = `/${folder}/${mdsfile}`;
+    const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
 
-      (window as any).MDS.file.copytoweb(
-        origFilePath,
-        newFilePath,
-        function () {
-          const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
-          resolve(url);
-        }
-      );
+    (window as any).MDS.file.copytoweb(origFilePath, newFilePath, function () {
+      const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
+      // create an a
+      const temporaryLink = document.createElement("a");
+      temporaryLink.style.display = "none";
+      temporaryLink.target = "_blank";
+      temporaryLink.href = url;
+      temporaryLink.click();
+      (window as any).MDS.file.deletefromweb(url, function () {
+        temporaryLink.remove();
+      });
     });
   };
 
@@ -181,157 +201,6 @@ const BackupNode = () => {
 
     getBackupStatus();
   };
-
-  const SomethingWentWrong = (error: string) => {
-    return {
-      content: (
-        <div>
-          <img alt="download" src="./assets/download.svg" />{" "}
-          <h1 className="text-2xl mb-8">Something went wrong!</h1>
-          <p className="mb-8">{error}</p>
-        </div>
-      ),
-      primaryActions: null,
-      secondaryActions: (
-        <Button onClick={() => authNavigate(-1, [])}>Close</Button>
-      ),
-    };
-  };
-  const downloadBackupDialog = (download: string) => {
-    return {
-      content: (
-        <div className="mb-8">
-          <img className="mb-2" alt="download" src="./assets/download.svg" />{" "}
-          <h1 className="text-2xl mb-8">Download your backup</h1>
-          <p>
-            Download your backup file and save it in <br />a secure location.
-          </p>
-        </div>
-      ),
-      primaryActions: (
-        <Button
-          onClick={() => {
-            if (linkDownload.current) {
-              linkDownload.current.click();
-            }
-          }}
-        >
-          Download
-          <a
-            ref={linkDownload}
-            className="hidden"
-            target="_blank"
-            href={download}
-          ></a>
-        </Button>
-      ),
-      secondaryActions: (
-        <Button variant="tertiary" onClick={() => authNavigate(-1, [])}>
-          Close
-        </Button>
-      ),
-    };
-  };
-  const downloadBackupDialogAndroid = (mdsfile: string) => {
-    return {
-      content: (
-        <div className="mb-8">
-          <img className="mb-2" alt="download" src="./assets/download.svg" />{" "}
-          <h1 className="text-2xl mb-8">Download your backup</h1>
-          <p>
-            Download your backup file and save it in <br />a secure location.
-          </p>
-        </div>
-      ),
-      primaryActions: (
-        <div className="flex flex-col gap-2">
-          {!!isMinimaBrowser && (
-            <Button
-              onClick={async () => {
-                const fullPath = await fileManager.getPath(
-                  "/backups/" + mdsfile
-                );
-
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
-                Android.shareFile(fullPath, "*/*");
-              }}
-            >
-              Share
-            </Button>
-          )}
-
-          <Button
-            onClick={() => {
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              Android.fileDownload(MDS.minidappuid, "/backups/" + mdsfile);
-            }}
-          >
-            Download
-          </Button>
-        </div>
-      ),
-      secondaryActions: (
-        <Button variant="tertiary" onClick={() => authNavigate(-1, [])}>
-          Close
-        </Button>
-      ),
-    };
-  };
-
-  const formik = useFormik({
-    initialValues: {
-      password: "",
-      confirmPassword: "",
-    },
-    onSubmit: async (formData) => {
-      try {
-        const now = new Date();
-        const dateCreation = format(now, "__dMMMyyyy_Hmm");
-        const fileName =
-          `minima_backup_${now.getTime()}` + dateCreation + ".bak";
-
-        const fullPath = await fileManager.getPath("/backups/" + fileName);
-
-        await rpc.createBackup(fullPath, formData.password);
-
-        if (isMinimaBrowser) {
-          const dialog = downloadBackupDialogAndroid(fileName);
-
-          authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
-          setModal({
-            content: dialog.content,
-            primaryActions: dialog.primaryActions,
-            secondaryActions: dialog.secondaryActions,
-          });
-        }
-
-        if (!isMinimaBrowser) {
-          const downloadlink = await createDownloadLink(fileName);
-          const dialog = downloadBackupDialog(downloadlink);
-
-          authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
-          setModal({
-            content: dialog.content,
-            primaryActions: dialog.primaryActions,
-            secondaryActions: dialog.secondaryActions,
-          });
-        }
-      } catch (error: any) {
-        console.error(error);
-        const somethingwrong = SomethingWentWrong(error);
-
-        authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
-        setModal({
-          content: somethingwrong.content,
-          primaryActions: <div></div>,
-          secondaryActions: somethingwrong.secondaryActions,
-        });
-      }
-    },
-    validationSchema: validationSchema,
-  });
 
   return (
     <>
@@ -485,60 +354,121 @@ const BackupNode = () => {
                     </div>
                   </div>
                 </div>
-                <div className="core-black-contrast-2 p-4 rounded flex flex-col gap-6">
-                  <form
-                    autoComplete="off"
-                    onSubmit={formik.handleSubmit}
-                    className="flex flex-col gap-4"
-                  >
-                    <Input
-                      disabled={formik.isSubmitting}
-                      extraClass="core-black-contrast"
-                      autoComplete="new-password"
-                      handleEndIconClick={() =>
-                        togglePasswordVisibility((prevState) => !prevState)
-                      }
-                      type={!hidePassword ? "password" : "text"}
-                      placeholder="Enter password"
-                      name="password"
-                      id="password"
-                      error={formik.errors.password}
-                      value={formik.values.password}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      endIcon={<TogglePasswordIcon toggle={hidePassword} />}
-                    />
-                    <Input
-                      disabled={formik.isSubmitting}
-                      extraClass="core-black-contrast"
-                      autoComplete="new-password"
-                      handleEndIconClick={() =>
-                        toggleConfirmPasswordVisiblity(
-                          (prevState) => !prevState
-                        )
-                      }
-                      type={!hideConfirmPassword ? "password" : "text"}
-                      placeholder="Confirm password"
-                      name="confirmPassword"
-                      id="confirmPassword"
-                      error={formik.errors.confirmPassword}
-                      value={formik.values.confirmPassword}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                      endIcon={
-                        <TogglePasswordIcon toggle={hideConfirmPassword} />
-                      }
-                    />
-                    <div className="flex flex-col">
-                      <Button
-                        type="submit"
-                        disabled={formik.isSubmitting || !formik.isValid}
-                      >
-                        Backup node
-                      </Button>
-                    </div>
-                  </form>
-                </div>
+                <Formik
+                  validationSchema={validationSchema}
+                  initialValues={{
+                    password: "",
+                    confirmPassword: "",
+                  }}
+                  onSubmit={async (formData) => {
+                    try {
+                      const now = new Date();
+                      const dateCreation = format(now, "__dMMMyyyy_Hmm");
+                      const fileName =
+                        `minima_backup_${now.getTime()}` +
+                        dateCreation +
+                        ".bak";
+
+                      const fullPath = await fileManager.getPath(
+                        "/backups/" + fileName
+                      );
+
+                      const { password } = formData;
+                      await rpc
+                        .createBackup(fullPath, password)
+                        .then((resp) => {
+                          setData(resp);
+                        })
+                        .catch((err) => {
+                          throw err;
+                        });
+                    } catch (error) {
+                      setError(error as string);
+                    }
+                  }}
+                >
+                  {({
+                    handleSubmit,
+                    isSubmitting,
+                    isValid,
+                    errors,
+                    values,
+                    touched,
+                    handleChange,
+                    handleBlur,
+                  }) => (
+                    <>
+                      <div className="core-black-contrast-2 p-4 rounded flex flex-col gap-6">
+                        <form
+                          autoComplete="off"
+                          onSubmit={handleSubmit}
+                          className="flex flex-col gap-4"
+                        >
+                          <Input
+                            disabled={isSubmitting}
+                            extraClass="core-black-contrast"
+                            autoComplete="new-password"
+                            handleEndIconClick={() =>
+                              togglePasswordVisibility(
+                                (prevState) => !prevState
+                              )
+                            }
+                            type={!hidePassword ? "password" : "text"}
+                            placeholder="Enter password"
+                            name="password"
+                            id="password"
+                            error={
+                              touched.password && errors.password
+                                ? errors.password
+                                : false
+                            }
+                            value={values.password}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            endIcon={
+                              <TogglePasswordIcon toggle={hidePassword} />
+                            }
+                          />
+                          <Input
+                            disabled={isSubmitting}
+                            extraClass="core-black-contrast"
+                            autoComplete="new-password"
+                            handleEndIconClick={() =>
+                              toggleConfirmPasswordVisiblity(
+                                (prevState) => !prevState
+                              )
+                            }
+                            type={!hideConfirmPassword ? "password" : "text"}
+                            placeholder="Confirm password"
+                            name="confirmPassword"
+                            id="confirmPassword"
+                            error={
+                              touched.confirmPassword && errors.confirmPassword
+                                ? errors.confirmPassword
+                                : false
+                            }
+                            value={values.confirmPassword}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            endIcon={
+                              <TogglePasswordIcon
+                                toggle={hideConfirmPassword}
+                              />
+                            }
+                          />
+                          <div className="flex flex-col">
+                            <Button
+                              type="submit"
+                              disabled={isSubmitting || !isValid}
+                            >
+                              Backup node
+                            </Button>
+                          </div>
+                        </form>
+                      </div>
+                    </>
+                  )}
+                </Formik>
 
                 <div className="text-left">
                   <p className="text-sm password-label mr-4 ml-4">
@@ -554,6 +484,158 @@ const BackupNode = () => {
           </div>
         </FadeIn>
       )}
+
+      {data &&
+        createPortal(
+          <SharedDialog
+            main={
+              <FadeIn delay={0}>
+                <div className="mb-8 flex items-center flex-col text-center">
+                  <svg
+                    className="mb-2"
+                    width="64"
+                    height="64"
+                    viewBox="0 0 64 64"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <mask
+                      id="mask0_850_14572"
+                      maskUnits="userSpaceOnUse"
+                      x="0"
+                      y="0"
+                      width="64"
+                      height="64"
+                    >
+                      <rect width="64" height="64" fill="#D9D9D9" />
+                    </mask>
+                    <g mask="url(#mask0_850_14572)">
+                      <path
+                        d="M16.8205 51.9997C15.4735 51.9997 14.3333 51.5331 13.4 50.5997C12.4667 49.6664 12 48.5262 12 47.1792V39.9998H15.9999V47.1792C15.9999 47.3844 16.0854 47.5724 16.2563 47.7434C16.4273 47.9143 16.6154 47.9998 16.8205 47.9998H47.1793C47.3845 47.9998 47.5726 47.9143 47.7435 47.7434C47.9145 47.5724 47.9999 47.3844 47.9999 47.1792V39.9998H51.9999V47.1792C51.9999 48.5262 51.5332 49.6664 50.5999 50.5997C49.6665 51.5331 48.5264 51.9997 47.1793 51.9997H16.8205ZM31.9999 41.6407L20.6155 30.2563L23.4257 27.3641L30 33.9384V11.5383H33.9999V33.9384L40.5742 27.3641L43.3844 30.2563L31.9999 41.6407Z"
+                        fill="#F4F4F5"
+                      />
+                    </g>
+                  </svg>{" "}
+                  <h1 className="text-2xl mb-8">Download your backup</h1>
+                  <p className="break-all">
+                    Download your backup file locally <br />
+                    <span className="text-good">
+                      {data.file.split("/backups/")[1]
+                        ? data.file.split("/backups/")[1]
+                        : data.file.split("\\backups\\")[1]}
+                    </span>{" "}
+                    which was create on block{" "}
+                    <span className="text-good">{data.block}</span> with a size
+                    of <span className="text-good">{data.size}</span> and save
+                    it in <br />a secure location.
+                  </p>
+                  <p className="text-sm mt-4 opacity-80">
+                    (It will already be stored in your internal backups)
+                  </p>
+                </div>
+              </FadeIn>
+            }
+            primary={
+              <Button
+                variant="primary"
+                onClick={() => {
+                  if (window.navigator.userAgent.includes("Minima Browser")) {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                    // @ts-ignore
+                    return Android.fileDownload(
+                      (window as any).MDS.minidappuid,
+                      "/backups/" + data.file.split("/backups/")[1]
+                    );
+                  }
+
+                  createDownloadLink(
+                    "backups",
+                    data.file.split("/backups/")[1]
+                      ? data.file.split("/backups/")[1]
+                      : data.file.split("\\backups\\")[1]
+                  );
+                }}
+              >
+                Download backup
+              </Button>
+            }
+            secondary={
+              <Button
+                extraClass="mt-4"
+                variant="tertiary"
+                onClick={() => {
+                  setData(false);
+                  setStep(0);
+                }}
+              >
+                Close
+              </Button>
+            }
+          />,
+          document.body
+        )}
+
+      {error &&
+        createPortal(
+          <SharedDialog
+            main={
+              <div className="flex flex-col items-center">
+                <svg
+                  className="mb-3 inline"
+                  width="64"
+                  height="64"
+                  viewBox="0 0 64 64"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <mask
+                    id="mask0_594_13339"
+                    maskUnits="userSpaceOnUse"
+                    x="0"
+                    y="0"
+                    width="64"
+                    height="64"
+                  >
+                    <rect width="64" height="64" fill="#D9D9D9" />
+                  </mask>
+                  <g mask="url(#mask0_594_13339)">
+                    <path
+                      d="M31.9998 44.6151C32.61 44.6151 33.1216 44.4087 33.5344 43.9959C33.9472 43.5831 34.1536 43.0715 34.1536 42.4613C34.1536 41.851 33.9472 41.3395 33.5344 40.9267C33.1216 40.5139 32.61 40.3075 31.9998 40.3075C31.3895 40.3075 30.878 40.5139 30.4652 40.9267C30.0524 41.3395 29.846 41.851 29.846 42.4613C29.846 43.0715 30.0524 43.5831 30.4652 43.9959C30.878 44.4087 31.3895 44.6151 31.9998 44.6151ZM29.9998 34.8716H33.9997V18.8716H29.9998V34.8716ZM32.0042 57.333C28.5004 57.333 25.207 56.6682 22.124 55.3384C19.0409 54.0086 16.3591 52.2039 14.0785 49.9244C11.7979 47.6448 9.99239 44.9641 8.66204 41.8824C7.33168 38.8008 6.6665 35.5081 6.6665 32.0042C6.6665 28.5004 7.33139 25.207 8.66117 22.124C9.99095 19.0409 11.7956 16.3591 14.0752 14.0785C16.3548 11.7979 19.0354 9.9924 22.1171 8.66204C25.1987 7.33168 28.4915 6.6665 31.9953 6.6665C35.4991 6.6665 38.7926 7.3314 41.8756 8.66117C44.9586 9.99095 47.6405 11.7956 49.921 14.0752C52.2017 16.3548 54.0072 19.0354 55.3375 22.1171C56.6679 25.1988 57.333 28.4915 57.333 31.9953C57.333 35.4991 56.6682 38.7925 55.3384 41.8756C54.0086 44.9586 52.2039 47.6405 49.9244 49.921C47.6448 52.2017 44.9641 54.0072 41.8824 55.3375C38.8008 56.6679 35.5081 57.333 32.0042 57.333Z"
+                      fill="#F4F4F5"
+                    />
+                  </g>
+                </svg>
+
+                <h1 className="text-2xl mb-8 text-center">
+                  Hmm.. something went wrong.
+                </h1>
+
+                {typeof error === "string" && (
+                  <p className="mb-8 text-center text-error truncate whitespace-normal break-all">
+                    {error}
+                  </p>
+                )}
+                {typeof error === "object" && (
+                  <p className="mb-8 text-center text-error truncate whitespace-normal break-all">
+                    {JSON.stringify(error)}
+                  </p>
+                )}
+              </div>
+            }
+            primary={null}
+            secondary={
+              <Button
+                variant="tertiary"
+                onClick={() => {
+                  setError(false);
+                }}
+              >
+                Cancel
+              </Button>
+            }
+          />,
+          document.body
+        )}
     </>
   );
 };

@@ -16,8 +16,8 @@ export function Security() {
   return (
     <div>
       <div className="pt-8 px-4 pb-4 flex flex-col h-full">
-        <div className=" flex-grow my-4 flex flex-col gap-3">
-          <div className="text-left relative core-black-contrast py-4 px-5 rounded cursor-pointer">
+        <div className=" flex-grow my-4 flex flex-col">
+          <div className="text-left relative core-black-contrast py-4 px-5 rounded cursor-pointer mb-3">
             Node status
             <FadeIn delay={500}>
               {vaultLocked !== null && !!vaultLocked && (
@@ -52,7 +52,7 @@ export function Security() {
             </FadeIn>
             <FadeIn delay={500}>
               {vaultLocked !== null && !vaultLocked && (
-                <div className="form-error-message absolute flex-row gap-2 right-0 top-0 h-full px-5 flex items-center">
+                <div className="form-error-message absolute flex-row mr-2 right-0 top-0 h-full px-5 flex items-center">
                   Unlocked
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +78,7 @@ export function Security() {
 
           <div
             onClick={() => navigate("lockprivatekeys")}
-            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer"
+            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer mb-3"
           >
             {!vaultLocked ? "Lock private keys" : "Unlock private keys"}
             <div className="absolute right-0 top-0 h-full px-5 flex items-center">
@@ -98,7 +98,7 @@ export function Security() {
           </div>
           <div
             onClick={() => navigate("backup")}
-            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer"
+            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer mb-3"
           >
             Backup node
             <div className="absolute right-0 top-0 h-full px-5 flex items-center">
@@ -118,7 +118,7 @@ export function Security() {
           </div>
           <div
             onClick={() => navigate("restore")}
-            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer"
+            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer mb-3"
           >
             Restore from backup
             <div className="absolute right-0 top-0 h-full px-5 flex items-center">
@@ -139,7 +139,7 @@ export function Security() {
 
           <div
             onClick={() => navigate("manageseedphrase")}
-            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer"
+            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer mb-3"
           >
             Manage seed phrase
             <div className="absolute right-0 top-0 h-full px-5 flex items-center">
@@ -159,7 +159,7 @@ export function Security() {
           </div>
           <div
             onClick={() => navigate("archivereset")}
-            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer"
+            className="text-left relative core-black-contrast-2 py-4 px-5 rounded cursor-pointer mb-3"
           >
             Archive reset
             <div className="absolute right-0 top-0 h-full px-5 flex items-center">

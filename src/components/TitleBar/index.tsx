@@ -42,9 +42,9 @@ const TitleBar = () => {
         </div>
       )}
       {!!displayBackButton && !backButton.display && (
-        <div className="flex items-center px-6 py-3 gap-3">
+        <div className="flex items-center px-6 py-3">
           <img
-            className="w-8 h-8"
+            className="w-8 h-8 mr-3"
             alt="security-icon"
             src="./assets/security.svg"
           />
@@ -53,9 +53,9 @@ const TitleBar = () => {
       )}
 
       {!displayBackButton && (
-        <div className="flex items-center px-6 py-3 gap-3">
+        <div className="flex items-center px-6 py-3">
           <img
-            className="w-8 h-8"
+            className="w-8 h-8 mr-3"
             alt="security-icon"
             src="./assets/security.svg"
           />

@@ -58,3 +58,8 @@
 
 - make the logs dialog bigger
 - update copy for shut down dialog
+
+##### [0.26.8] - 19 September 23
+
+- Delete archive/backup after a local download
+- Tweak download create backup page copy
