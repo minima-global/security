@@ -41,17 +41,13 @@ MDS.init(function (msg) {
     MDS.file.list("/backups", function (response) {
       if (response.status) {
         const myBackups = response.response.list.reverse();
-        log(`Your backups: ${JSON.stringify(myBackups)}`);
+
         myBackups.sort(function (a, b) {
-          MDS.log(getTimeMilliFromBackupName(a.name));
-          MDS.log(getTimeMilliFromBackupName(b.name));
           return (
             getTimeMilliFromBackupName(a.name) -
             getTimeMilliFromBackupName(b.name)
           );
         });
-
-        MDS.log(JSON.stringify(myBackups));
 
         log(`Total backups: ${myBackups.length}`);
 
