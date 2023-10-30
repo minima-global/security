@@ -1486,13 +1486,16 @@ const SeedResyncReset = () => {
 
                 {typeof error === "string" && (
                   <p className="mb-8 text-center text-error truncate whitespace-normal break-all">
-                    {error.includes("GZIP")
+                    {typeof error.includes !== "undefined" &&
+                    error.toString().includes("GZIP")
                       ? "Invalid password."
-                      : error.includes("connectdata")
+                      : typeof error.includes !== "undefined" &&
+                        error.toString().includes("connectdata")
                       ? "Host is invalid."
-                      : error.includes("Incorrect Password!")
+                      : typeof error.includes !== "undefined" &&
+                        error.toString().includes("Incorrect Password!")
                       ? "Incorrect password!"
-                      : error}
+                      : error.toString()}
                   </p>
                 )}
                 {typeof error === "object" && (
