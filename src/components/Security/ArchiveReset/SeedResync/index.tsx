@@ -23,6 +23,7 @@ import FadeIn from "../../../UI/Animations/FadeIn";
 import Input from "../../../UI/Input";
 import Tooltip from "../../../UI/Tooltip";
 import bip39 from "../../../../utils/bip39";
+import Autocomplete from "../../../UI/Autocomplete";
 
 const validationSchema = yup.object().shape({
   seedPhrase: yup.object({
@@ -546,7 +547,7 @@ const SeedResyncReset = () => {
                                       : false
                                   }
                                   extraClass="core-grey-20"
-                                  accept=".gzip"
+                                  accept=".gzip,.dat"
                                   onChange={(
                                     e: React.ChangeEvent<HTMLInputElement>
                                   ) => {
@@ -768,7 +769,7 @@ const SeedResyncReset = () => {
                                     Object.keys(values.seedPhrase).map(
                                       (seed) => (
                                         <li key={seed} className="relative">
-                                          <Input
+                                          <Autocomplete
                                             extraClass="focus:bg-white focus:text-black focus:border focus:border-[#464C4F] focus:font-bold"
                                             disabled={false}
                                             placeholder=""
@@ -776,7 +777,13 @@ const SeedResyncReset = () => {
                                             value={values.seedPhrase[seed]}
                                             id={`seedPhrase.${seed}`}
                                             name={`seedPhrase.${seed}`}
-                                            onChange={handleChange}
+                                            suggestions={bip39}
+                                            onChange={(value: string) =>
+                                              setFieldValue(
+                                                `seedPhrase.${seed}`,
+                                                value
+                                              )
+                                            }
                                             onBlur={handleBlur}
                                             error={
                                               getIn(
@@ -1064,6 +1071,7 @@ const SeedResyncReset = () => {
                   }}
                 >
                   {({
+                    setFieldValue,
                     dirty,
                     handleSubmit,
                     values,
@@ -1172,12 +1180,12 @@ const SeedResyncReset = () => {
                                 <h1 className="text-2xl mb-8 text-center">
                                   Enter your <br /> 24-word seed phrase{" "}
                                 </h1>
-                                <ul className="grid grid-cols-2 gap-2 mb-4">
+                                <ul className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
                                   {values.seedPhrase &&
                                     Object.keys(values.seedPhrase).map(
                                       (seed) => (
                                         <li key={seed} className="relative">
-                                          <Input
+                                          <Autocomplete
                                             extraClass="focus:bg-white focus:text-black focus:border focus:border-[#464C4F] focus:font-bold"
                                             disabled={false}
                                             placeholder=""
@@ -1185,7 +1193,13 @@ const SeedResyncReset = () => {
                                             value={values.seedPhrase[seed]}
                                             id={`seedPhrase.${seed}`}
                                             name={`seedPhrase.${seed}`}
-                                            onChange={handleChange}
+                                            suggestions={bip39}
+                                            onChange={(value: string) =>
+                                              setFieldValue(
+                                                `seedPhrase.${seed}`,
+                                                value
+                                              )
+                                            }
                                             onBlur={handleBlur}
                                             error={
                                               getIn(

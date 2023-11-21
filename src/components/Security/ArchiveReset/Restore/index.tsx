@@ -210,7 +210,7 @@ const ArchiveReset = () => {
                                     : false
                                 }
                                 extraClass="core-grey-20"
-                                accept=".gzip"
+                                accept=".gzip,.dat"
                                 onChange={(
                                   e: React.ChangeEvent<HTMLInputElement>
                                 ) => {
@@ -891,7 +891,7 @@ const ArchiveReset = () => {
                 need:
                 <ul className="list-disc list-inside mb-4">
                   <li className="pt-4 pl-2.5">
-                    Upload an archive file (.gzip)
+                    Upload an archive file (.gzip/.dat)
                   </li>
                   <li className="pl-2.5">
                     Upload your backup file (.bak) and provide the password if

@@ -41,7 +41,7 @@ const Input = ({
   mt,
   mb,
 }: IProps) => {
-  let wrapperBase = `${mt} ${mb} ${
+  let wrapperBase = `${mt} ${mb} relative ${
     startIcon ? "grid grid-cols-[1fr_auto] grid-rows-1" : "flex"
   }`;
 
@@ -57,11 +57,11 @@ const Input = ({
 
   return (
     <div className={`flex flex-col gap-2`}>
-      <div className={`${wrapperBase} relative`}>
+      <div className={`${wrapperBase}`}>
         <input
           disabled={disabled}
           onKeyDown={onKeyPress}
-          autoComplete={autoComplete ? autoComplete : ""}
+          autoComplete={autoComplete ? autoComplete : "off"}
           onBlur={onBlur}
           name={name}
           id={id}
@@ -75,9 +75,9 @@ const Input = ({
           accept={accept}
           onKeyUp={onKeyUp}
         />
+
         {startIcon}
 
-        {/* <div className="fa absolute text-base top-[15px] left-[15px]"> </div> */}
         {!!endIcon && (
           <div
             onClick={disabled ? undefined : handleEndIconClick}
