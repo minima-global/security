@@ -55,6 +55,7 @@ export function Security() {
                 <div className="form-error-message absolute flex-row mr-2 right-0 top-0 h-full px-5 flex items-center">
                   Unlocked
                   <svg
+                    className="ml-2"
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="20"

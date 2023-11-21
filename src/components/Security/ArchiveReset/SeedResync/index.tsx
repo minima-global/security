@@ -546,7 +546,7 @@ const SeedResyncReset = () => {
                                       : false
                                   }
                                   extraClass="core-grey-20"
-                                  accept=".gzip"
+                                  accept=".gzip,.dat"
                                   onChange={(
                                     e: React.ChangeEvent<HTMLInputElement>
                                   ) => {
