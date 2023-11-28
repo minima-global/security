@@ -764,7 +764,7 @@ const SeedResyncReset = () => {
                                 <h1 className="text-2xl mb-8 text-center">
                                   Enter your <br /> 24-word seed phrase
                                 </h1>
-                                <ul className="grid grid-cols-2 gap-2 mb-4">
+                                <ul className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
                                   {values.seedPhrase &&
                                     Object.keys(values.seedPhrase).map(
                                       (seed) => (
