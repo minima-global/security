@@ -941,7 +941,7 @@ const ArchiveReset = () => {
             </div>
 
             <Button extraClass="mb-4" onClick={() => setHaveArchive(true)}>
-              I have an archive
+              I have an archive file
             </Button>
 
             <Button
