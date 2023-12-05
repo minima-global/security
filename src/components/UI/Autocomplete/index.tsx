@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import {  useEffect, useRef, useState } from "react";
 
 interface IProps {
   placeholder: string;
@@ -23,6 +23,7 @@ interface IProps {
   disabled: boolean;
   mt?: string;
   mb?: string;
+  onPaste?: (event: React.ClipboardEvent<HTMLInputElement>) => void;
 }
 const Autocomplete = ({
   accept,
@@ -45,12 +46,13 @@ const Autocomplete = ({
   mt,
   mb,
   suggestions,
-}: IProps) => {
+  onPaste,
+}: IProps) => {  
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   // Ref for the suggestions container
   const suggestionsContainerRef = useRef(null);
 
-  let wrapperBase = `${mt} ${mb} ${
+  const wrapperBase = `${mt} ${mb} ${
     startIcon ? "grid grid-cols-[1fr_auto] grid-rows-1" : "flex"
   }`;
 
@@ -111,6 +113,7 @@ const Autocomplete = ({
       <div className={`${wrapperBase}`}>
         <div className="relative w-full">
           <input
+            onPaste={onPaste}
             disabled={disabled}
             onKeyDown={onKeyPress}
             autoComplete={autoComplete ? autoComplete : "off"}
@@ -137,6 +140,7 @@ const Autocomplete = ({
                 .filter((s) => s.startsWith(value.toUpperCase()))
                 .map((s) => (
                   <li
+                  key={`word_${s}`}
                     onClick={() => {
                       handleSelect(s);
                     }}
