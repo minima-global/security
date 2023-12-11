@@ -1,4 +1,4 @@
-import {  useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface IProps {
   placeholder: string;
@@ -18,7 +18,6 @@ interface IProps {
   startIcon?: any;
   error?: string | false;
   onKeyUp?: any;
-  onKeyPress?: any;
   handleEndIconClick?: () => void;
   disabled: boolean;
   mt?: string;
@@ -41,16 +40,16 @@ const Autocomplete = ({
   error,
   handleEndIconClick,
   onKeyUp,
-  onKeyPress,
   disabled,
   mt,
   mb,
   suggestions,
   onPaste,
-}: IProps) => {  
-  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+}: IProps) => {
   // Ref for the suggestions container
   const suggestionsContainerRef = useRef(null);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
 
   const wrapperBase = `${mt} ${mb} ${
     startIcon ? "grid grid-cols-[1fr_auto] grid-rows-1" : "flex"
@@ -63,9 +62,46 @@ const Autocomplete = ({
   if (extraClass) {
     base += ` ${extraClass}`;
   }
-  // if (error) {
-  //   wrapperBase += " form-error-border";
-  // }
+
+  const handleKeyDown = (event) => {
+    switch (event.key) {
+      case "ArrowDown":
+        setFilteredSuggestions(
+          suggestions!.filter((s) => s.startsWith(value.toUpperCase()))
+        );
+        // Move selection down
+        setSelectedIndex((prevIndex) =>
+          Math.min(prevIndex + 1, filteredSuggestions.length - 1)
+        );
+        break;
+      case "ArrowUp":
+        if (selectedIndex === 0) {
+          setFilteredSuggestions([]);
+        }
+        // Move selection up
+        setSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+        break;
+      case "Enter":
+        // Handle selection (e.g., set input value)
+        if (selectedIndex !== -1 && filteredSuggestions[selectedIndex]) {
+          onChange(filteredSuggestions[selectedIndex]);
+          setFilteredSuggestions([]);
+        }
+        break;
+      case "Tab":
+        if (selectedIndex !== -1 && filteredSuggestions[selectedIndex]) {
+          onChange(filteredSuggestions[selectedIndex]);
+          setFilteredSuggestions([]);
+        }
+
+        break;
+      case "Escape":
+        setFilteredSuggestions([]);
+        break;
+      default:
+        break;
+    }
+  };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.value;
@@ -85,6 +121,22 @@ const Autocomplete = ({
     onChange(suggestion);
     setFilteredSuggestions([]);
   };
+
+  // scroll into view while pressing key down
+  useEffect(() => {
+    // Scroll the selected suggestion into view when selectedIndex changes
+    if (suggestionsContainerRef.current && selectedIndex !== -1) {
+      const selectedSuggestion =
+        // @ts-ignore
+        suggestionsContainerRef.current.children[selectedIndex];
+      if (selectedSuggestion) {
+        selectedSuggestion.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        });
+      }
+    }
+  }, [selectedIndex]);
 
   // Effect to add a click event listener to the document
   useEffect(() => {
@@ -115,7 +167,7 @@ const Autocomplete = ({
           <input
             onPaste={onPaste}
             disabled={disabled}
-            onKeyDown={onKeyPress}
+            onKeyDown={handleKeyDown}
             autoComplete={autoComplete ? autoComplete : "off"}
             onBlur={onBlur}
             name={name}
@@ -138,13 +190,15 @@ const Autocomplete = ({
             >
               {filteredSuggestions
                 .filter((s) => s.startsWith(value.toUpperCase()))
-                .map((s) => (
+                .map((s, index) => (
                   <li
-                  key={`word_${s}`}
+                    key={`word_${s}`}
                     onClick={() => {
                       handleSelect(s);
                     }}
-                    className={`first:pb-2 last:border-b-none! hover:cursor-pointer hover:bg-slate-200 hover:font-semibold ${
+                    className={`${
+                      selectedIndex === index ? "bg-slate-200" : ""
+                    } first:pb-2 last:border-b-none! hover:cursor-pointer hover:bg-slate-200 hover:font-semibold ${
                       startIcon
                         ? "grid grid-cols-[32px_auto] grid-rows-1"
                         : "flex"
