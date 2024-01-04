@@ -59,7 +59,7 @@
   flex-direction: column;
   gap: 8px;
   text-align: left;
-  overflow-y: scroll;
+  overflow: auto;
   height: 80%;
 }
 

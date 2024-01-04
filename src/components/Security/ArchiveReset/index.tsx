@@ -244,11 +244,11 @@ const ArchiveReset = () => {
                       const fileName =
                         `archive_export_${now.getTime()}` +
                         dateCreation +
-                        ".gzip";
+                        ".raw.dat";
                       setFileName(fileName);
 
                       (window as any).MDS.cmd(
-                        `archive action:export file:"${rootPath}/archives/${fileName}"`,
+                        `archive action:exportraw file:"${rootPath}/archives/${fileName}"`,
                         async function (resp: any) {
                           if (!resp.status) {
                             setError(
