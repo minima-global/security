@@ -263,6 +263,7 @@ const AppProvider = ({ children }: IProps) => {
 
           /** create the backups folder */
           fileManager.createFolder("backups");
+          fileManager.createFolder("archives");
 
           /** get and set all current backups */
           getBackups();
