@@ -95,7 +95,7 @@ const BackupNode = () => {
         title: "Back",
       });
     }
-  }, [step]);
+  }, [step, setBackButton]);
 
   const createDownloadLink = (folder: string, mdsfile: string) => {
     const origFilePath = `/${folder}/${mdsfile}`;
