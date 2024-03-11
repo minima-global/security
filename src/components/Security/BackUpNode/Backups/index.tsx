@@ -12,7 +12,7 @@ import ConfirmDelete from "../../ConfirmDelete";
 
 const Backups = () => {
   const [searchText, setSearchText] = useState("");
-  const { getBackups, backups, _promptBackups, promptBackups } =
+  const { getBackups, backups, _promptBackups, promptBackups, loaded } =
     useContext(appContext);
 
   const [_promptDeleteFile, setPromptDeleteFile] = useState<string | false>(
@@ -57,8 +57,10 @@ const Backups = () => {
   }, [dropdownRef]);
 
   useEffect(() => {
-    getBackups();
-  }, []);
+    if (loaded && loaded.current) {
+      getBackups();
+    }
+  }, [_promptBackups, loaded]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);

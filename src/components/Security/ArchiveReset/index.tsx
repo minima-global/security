@@ -316,7 +316,7 @@ const ArchiveReset = () => {
             content={
               <>
                 {exportedArchive !== null && (
-                  <div>
+                  <div className="flex flex-col justify-center items-center text-center">
                     <svg
                       className="inline mb-6"
                       xmlns="http://www.w3.org/2000/svg"

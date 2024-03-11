@@ -64,7 +64,7 @@ interface Backup {
   uncompressed: string;
 }
 const BackupNode = () => {
-  const { promptBackups } = useContext(appContext);
+  const { promptBackups , loaded } = useContext(appContext);
   const navigate = useNavigate();
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [hidePassword, togglePasswordVisibility] = useState(false);
@@ -73,6 +73,7 @@ const BackupNode = () => {
 
   const [error, setError] = useState<false | string>(false);
   const [data, setData] = useState<Backup | false>(false);
+  const [includeTxPoWs, setIncludeTxPoWs] = useState(false);
   const { authNavigate } = useAuth();
 
   const {
@@ -132,8 +133,9 @@ const BackupNode = () => {
   };
 
   useEffect(() => {
+    if (loaded.current) 
     getBackupStatus();
-  }, []);
+  }, [loaded]);
 
   const toggleBackupStatus = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const togglingOff = e.target.checked === false;
@@ -142,7 +144,7 @@ const BackupNode = () => {
       authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
       setModal({
         content: (
-          <div>
+          <div className="flex flex-col justify-center items-center">
             <img className="mb-4" alt="informative" src="./assets/error.svg" />{" "}
             <h1 className="text-2xl mb-8">Deactivate auto backup?</h1>
             <p className="mb-6">Daily backups help protect your node.</p>
@@ -157,7 +159,7 @@ const BackupNode = () => {
 
               setModal({
                 content: (
-                  <div>
+                  <div className="flex flex-col text-center justify-center items-center">
                     <img
                       className="mb-4"
                       alt="informative"
@@ -209,7 +211,7 @@ const BackupNode = () => {
   return (
     <>
       <Backups />
-      
+
       {step === 0 && (
         <SlideIn isOpen={true} delay={0}>
           <div className="flex flex-col h-full bg-black px-4 pb-4">
@@ -323,10 +325,11 @@ const BackupNode = () => {
                     </div>
                   </div>
                   <div className="flex justify-end">
-                    <div onClick={promptBackupLogs} className="flex gap-1 items-center">
-                      <a className="text-sm cursor-pointer">
-                        View backup logs
-                      </a>
+                    <div
+                      onClick={promptBackupLogs}
+                      className="flex gap-1 items-center"
+                    >
+                      <a className="text-sm cursor-pointer">View backup logs</a>
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="16"
@@ -396,6 +399,7 @@ const BackupNode = () => {
                   initialValues={{
                     password: "",
                     confirmPassword: "",
+                    txpows: 0
                   }}
                   onSubmit={async (formData) => {
                     try {
@@ -410,9 +414,9 @@ const BackupNode = () => {
                         "/backups/" + fileName
                       );
 
-                      const { password } = formData;
+                      const { password, txpows } = formData;
                       await rpc
-                        .createBackup(fullPath, password)
+                        .createBackup(fullPath, password, txpows)
                         .then((resp) => {
                           setData(resp);
                         })
@@ -493,6 +497,41 @@ const BackupNode = () => {
                               />
                             }
                           />
+                          <div>
+                            <label
+                              htmlFor="includeTxPoWs"
+                              className="flex justify-end items-center"
+                            >
+                              <span className="mr-2 text-sm">
+                                Include TxPoWs
+                              </span>
+                              <input
+                                type="checkbox"
+                                id="includeTxPoWs"
+                                className="form-checkbox h-5 w-5 text-indigo-600"
+                                checked={includeTxPoWs}
+                                onChange={() =>
+                                  setIncludeTxPoWs(!includeTxPoWs)
+                                }
+                              />
+                            </label>
+                            {includeTxPoWs && (
+                              <div className="mt-2">
+                                <Input  
+                                  onChange={handleChange}
+                                  onBlur={handleBlur}
+                                  disabled={isSubmitting}
+                                  extraClass="core-black-contrast"
+                                  name="txpows"
+                                  id="txpows"
+                                  value={values.txpows}
+                                  type="number"
+                                  placeholder="Enter TxPoWs"                                  
+                                />
+                                <p className="text-sm pt-2 text-left">You can add X amount of transactions from your history to the backup to be recovered on your next restoration.  <b>Note,</b> the more you choose to store the longer it needs for the backup to be created.</p>
+                              </div>
+                            )}
+                          </div>
                           <div className="flex flex-col">
                             <Button
                               type="submit"

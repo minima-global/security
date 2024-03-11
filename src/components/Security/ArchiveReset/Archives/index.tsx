@@ -13,7 +13,7 @@ import ComposableModal from "../../../ComposableModal";
 
 const Archives = () => {
   const [searchText, setSearchText] = useState("");
-  const { getArchives, archives, _promptArchives, promptArchives } = useContext(appContext);
+  const { getArchives, archives, _promptArchives, promptArchives, loaded } = useContext(appContext);
   const [dropdownIndex, setDropdownIndex] = useState(-1); // State to track the index of the item with an open dropdown
   const [_promptDeleteFile, setPromptDeleteFile] = useState<string | false>(
     false
@@ -21,8 +21,9 @@ const Archives = () => {
   const dropdownRef = useRef(null); // Ref to the dropdown menu
 
   useEffect(() => {
+    if (loaded.current)
     getArchives();
-  }, [getArchives]);
+  }, [loaded]);
 
   const springProps = useSpring({
     opacity: _promptArchives ? 1 : 0,

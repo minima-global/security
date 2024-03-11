@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
 
-var backupStatus = { active: true }; // {active: boolean}
+var backupStatus = { active: false }; // {active: boolean}
 var keyPairPassword = "autopassword";
-var debugLogs = true;
-const MDS_TIMER = "MDS_TIMER_10SECONDS"; // "MDS_TIMER_1HOUR"
+var debugLogs = false;
+const MDS_TIMER = "MDS_TIMER_1HOUR"; // "MDS_TIMER_1HOUR"
 
 MDS.init(function (msg) {
   if (msg.event === "inited") {
@@ -99,12 +99,12 @@ function createBackup() {
     if (resp.status && resp.rows.length > 0) {
       const data = resp.rows[0];
       // old Logs
-      MDS.log(JSON.stringify(data));
+      log(JSON.stringify(data));
       logs = JSON.parse(data.DATA);
 
       // keep 30 logs max
       if (logs.length > 25) {
-        logs = logs.reverse().slice(0, 5);
+        logs = logs.reverse().slice(0, 25);
       }
     } else {
       logs = [];
@@ -114,7 +114,7 @@ function createBackup() {
       var tableEmpty = response.rows[0]["COUNT(*)"] === "0";
       // is it time for a new backup?
       MDS.sql(
-        "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '20' SECOND <= CURRENT_TIMESTAMP",
+        "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '1 DAY' <= CURRENT_TIMESTAMP",
         function (response) {
           // log(JSON.stringify(response));
 
