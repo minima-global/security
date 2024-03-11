@@ -150,8 +150,8 @@ body {
   background-color: var(--background-color);
   background-size: cover;
   background-repeat: no-repeat;
-  overflow: hidden;
   -webkit-tap-highlight-color: transparent;
+  background-color: #08090B;
 }
 
 

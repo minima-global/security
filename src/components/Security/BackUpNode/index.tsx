@@ -20,6 +20,8 @@ import { useNavigate } from "react-router-dom";
 import TogglePasswordIcon from "../../UI/TogglePasswordIcon/TogglePasswordIcon";
 import { createPortal } from "react-dom";
 import SharedDialog from "../../SharedDialog";
+import BackupLogs from "./Logs";
+import Backups from "./Backups";
 
 const validationSchema = yup.object().shape({
   password: yup
@@ -62,6 +64,7 @@ interface Backup {
   uncompressed: string;
 }
 const BackupNode = () => {
+  const { promptBackups } = useContext(appContext);
   const navigate = useNavigate();
   const [step, setStep] = useState<0 | 1 | 2 | 3>(0);
   const [hidePassword, togglePasswordVisibility] = useState(false);
@@ -77,6 +80,7 @@ const BackupNode = () => {
     setModal,
     setBackButton,
     displayBackButton: displayHeaderBackButton,
+    promptBackupLogs,
   } = useContext(appContext);
 
   useEffect(() => {
@@ -204,6 +208,8 @@ const BackupNode = () => {
 
   return (
     <>
+      <Backups />
+      
       {step === 0 && (
         <SlideIn isOpen={true} delay={0}>
           <div className="flex flex-col h-full bg-black px-4 pb-4">
@@ -259,7 +265,7 @@ const BackupNode = () => {
                   </p>
                 </div>
                 <div
-                  onClick={() => authNavigate("/dashboard/backup/backups", [])}
+                  onClick={promptBackups}
                   className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer"
                 >
                   Browse internal backups{" "}
@@ -278,41 +284,72 @@ const BackupNode = () => {
                     </svg>
                   </div>
                 </div>
-                <div className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer">
-                  <span className="make-svg-inline">
-                    Auto-backup{" "}
-                    <svg
-                      className="mx-2 mb-1"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                    >
-                      <mask
-                        id="mask0_583_16266"
-                        maskUnits="userSpaceOnUse"
-                        x="0"
-                        y="0"
+                <div>
+                  <div className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer">
+                    <span className="make-svg-inline">
+                      Auto-backup{" "}
+                      <svg
+                        className="mx-2 mb-1"
+                        xmlns="http://www.w3.org/2000/svg"
                         width="24"
                         height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
                       >
-                        <rect width="24" height="24" fill="#D9D9D9" />
-                      </mask>
-                      <g mask="url(#mask0_583_16266)">
-                        <path
-                          d="M6.49998 19.5C5.11794 19.5 3.9391 19.0205 2.96345 18.0617C1.98782 17.1029 1.5 15.9311 1.5 14.5461C1.5 13.3038 1.89968 12.2112 2.69905 11.2683C3.49842 10.3253 4.48976 9.76667 5.67308 9.59232C5.99359 8.09744 6.74519 6.875 7.92788 5.925C9.11056 4.975 10.4679 4.5 12 4.5C13.8107 4.5 15.3467 5.13066 16.608 6.39198C17.8693 7.65328 18.5 9.18928 18.5 11V11.5H18.8077C19.8615 11.5821 20.7403 12.0058 21.4442 12.7712C22.148 13.5365 22.5 14.4461 22.5 15.5C22.5 16.6153 22.1153 17.5609 21.3461 18.3365C20.5769 19.1121 19.6346 19.5 18.5192 19.5H13.0577C12.5525 19.5 12.125 19.325 11.775 18.975C11.425 18.625 11.25 18.1974 11.25 17.6923V12.2153L9.39998 14.0346L8.34615 12.9904L12 9.33655L15.6538 12.9904L14.6 14.0346L12.75 12.2153V17.6923C12.75 17.7692 12.782 17.8397 12.8461 17.9038C12.9102 17.9679 12.9807 18 13.0577 18H18.5C19.2 18 19.7916 17.7583 20.275 17.275C20.7583 16.7916 21 16.2 21 15.5C21 14.8 20.7583 14.2083 20.275 13.725C19.7916 13.2416 19.2 13 18.5 13H17V11C17 9.61664 16.5125 8.43748 15.5375 7.46248C14.5625 6.48748 13.3833 5.99998 12 5.99998C10.6166 5.99998 9.43748 6.48748 8.46248 7.46248C7.48748 8.43748 6.99998 9.61664 6.99998 11H6.48075C5.53332 11 4.71633 11.3416 4.02978 12.025C3.34324 12.7083 2.99998 13.5333 2.99998 14.5C2.99998 15.4666 3.34164 16.2916 4.02498 16.975C4.70831 17.6583 5.53331 18 6.49998 18H8.99998V19.5H6.49998Z"
-                          fill="#F9F9FA"
-                        />
-                      </g>
-                    </svg>
-                  </span>
+                        <mask
+                          id="mask0_583_16266"
+                          maskUnits="userSpaceOnUse"
+                          x="0"
+                          y="0"
+                          width="24"
+                          height="24"
+                        >
+                          <rect width="24" height="24" fill="#D9D9D9" />
+                        </mask>
+                        <g mask="url(#mask0_583_16266)">
+                          <path
+                            d="M6.49998 19.5C5.11794 19.5 3.9391 19.0205 2.96345 18.0617C1.98782 17.1029 1.5 15.9311 1.5 14.5461C1.5 13.3038 1.89968 12.2112 2.69905 11.2683C3.49842 10.3253 4.48976 9.76667 5.67308 9.59232C5.99359 8.09744 6.74519 6.875 7.92788 5.925C9.11056 4.975 10.4679 4.5 12 4.5C13.8107 4.5 15.3467 5.13066 16.608 6.39198C17.8693 7.65328 18.5 9.18928 18.5 11V11.5H18.8077C19.8615 11.5821 20.7403 12.0058 21.4442 12.7712C22.148 13.5365 22.5 14.4461 22.5 15.5C22.5 16.6153 22.1153 17.5609 21.3461 18.3365C20.5769 19.1121 19.6346 19.5 18.5192 19.5H13.0577C12.5525 19.5 12.125 19.325 11.775 18.975C11.425 18.625 11.25 18.1974 11.25 17.6923V12.2153L9.39998 14.0346L8.34615 12.9904L12 9.33655L15.6538 12.9904L14.6 14.0346L12.75 12.2153V17.6923C12.75 17.7692 12.782 17.8397 12.8461 17.9038C12.9102 17.9679 12.9807 18 13.0577 18H18.5C19.2 18 19.7916 17.7583 20.275 17.275C20.7583 16.7916 21 16.2 21 15.5C21 14.8 20.7583 14.2083 20.275 13.725C19.7916 13.2416 19.2 13 18.5 13H17V11C17 9.61664 16.5125 8.43748 15.5375 7.46248C14.5625 6.48748 13.3833 5.99998 12 5.99998C10.6166 5.99998 9.43748 6.48748 8.46248 7.46248C7.48748 8.43748 6.99998 9.61664 6.99998 11H6.48075C5.53332 11 4.71633 11.3416 4.02978 12.025C3.34324 12.7083 2.99998 13.5333 2.99998 14.5C2.99998 15.4666 3.34164 16.2916 4.02498 16.975C4.70831 17.6583 5.53331 18 6.49998 18H8.99998V19.5H6.49998Z"
+                            fill="#F9F9FA"
+                          />
+                        </g>
+                      </svg>
+                    </span>
 
-                  <div className="absolute right-0 top-0 h-full px-5 flex items-center">
-                    <Toggle
-                      checkedStatus={autoBackupStatus}
-                      onChange={toggleBackupStatus}
-                    />
+                    <div className="absolute right-0 top-0 h-full px-5 flex items-center">
+                      <Toggle
+                        checkedStatus={autoBackupStatus}
+                        onChange={toggleBackupStatus}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex justify-end">
+                    <div onClick={promptBackupLogs} className="flex gap-1 items-center">
+                      <a className="text-sm cursor-pointer">
+                        View backup logs
+                      </a>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        strokeWidth="1.5"
+                        stroke="#ffec00"
+                        fill="none"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                        <path d="M9 9v-1a3 3 0 0 1 6 0v1" />
+                        <path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3" />
+                        <path d="M3 13l4 0" />
+                        <path d="M17 13l4 0" />
+                        <path d="M12 20l0 -6" />
+                        <path d="M4 19l3.35 -2" />
+                        <path d="M20 19l-3.35 -2" />
+                        <path d="M4 7l3.75 2.4" />
+                        <path d="M20 7l-3.75 2.4" />
+                      </svg>
+                    </div>
                   </div>
                 </div>
 
@@ -636,6 +673,8 @@ const BackupNode = () => {
           />,
           document.body
         )}
+
+      <BackupLogs />
     </>
   );
 };

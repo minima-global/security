@@ -10,6 +10,7 @@ import {
 
 import * as rpc from "./__minima__/libs/RPC";
 import * as fileManager from "./__minima__/libs/fileManager";
+import * as utils from "./utils";
 import { To } from "react-router-dom";
 
 export const appContext = createContext({} as any);
@@ -28,6 +29,7 @@ const AppProvider = ({ children }: IProps) => {
     to: "/dashboard",
     title: "Security",
   });
+  
   const loaded = useRef(false);
   const [mode, setMode] = useState("desktop");
   const [showSecurity, setShowSecurity] = useState(true);
@@ -73,6 +75,10 @@ const AppProvider = ({ children }: IProps) => {
   });
 
   // backups stuff
+  const [_backupLogs, setBackupLogs] = useState([]);
+  const [_promptBackupLogs, setPromptBackupLogs] = useState(false);
+  const [_promptBackups, setPromptBackups] = useState(false);
+  const [_promptArchives, setPromptArchives] = useState(false);
   const [backups, setBackups] = useState<any[]>([]);
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
@@ -257,6 +263,14 @@ const AppProvider = ({ children }: IProps) => {
         }
 
         if (msg.event === "inited") {
+
+          (async () => {
+            const autoBackupLogs: any = await utils.sql("SELECT * FROM cache WHERE name = 'BACKUP_LOGS'");
+            if (autoBackupLogs) {
+              setBackupLogs(JSON.parse(autoBackupLogs.DATA));
+            }          
+          })();
+
           rpc.isWriteMode().then((appIsInWriteMode) => {
             setAppIsInWriteMode(appIsInWriteMode);
           });
@@ -276,6 +290,17 @@ const AppProvider = ({ children }: IProps) => {
       });
     }
   }, [loaded]);
+
+  const promptBackupLogs = () => {
+    setPromptBackupLogs(prevState => !prevState);
+  }
+  const promptBackups = () => {
+    setPromptBackups(prevState => !prevState);
+  }
+  
+  const promptArchives = () => {
+    setPromptArchives(prevState => !prevState);
+  }
 
   return (
     <appContext.Provider
@@ -304,6 +329,13 @@ const AppProvider = ({ children }: IProps) => {
         displayBackButton,
 
         //backups
+        _backupLogs,
+        _promptBackupLogs,
+        promptBackupLogs,
+        _promptBackups,
+        promptBackups,
+        _promptArchives,
+        promptArchives,
         backups,
         getBackups,
 
