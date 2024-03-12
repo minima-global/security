@@ -17,7 +17,7 @@ export function AppIsInReadMode() {
           <main>
             <section>
               <div className={styles["dialog"]}>
-                <div className="flex justify-center justify-items-center">
+                <div className="flex flex-col justify-center items-center text-center">
                   <img
                     className="mb-4"
                     alt="download"
