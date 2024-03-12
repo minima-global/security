@@ -114,7 +114,7 @@ function createBackup() {
       var tableEmpty = response.rows[0]["COUNT(*)"] === "0";
       // is it time for a new backup?
       MDS.sql(
-        "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '1 DAY' <= CURRENT_TIMESTAMP",
+        "SELECT * FROM BACKUPS WHERE TIMESTAMP + INTERVAL '24' HOUR <= CURRENT_TIMESTAMP",
         function (response) {
           // log(JSON.stringify(response));
 

@@ -73,7 +73,7 @@ const BackupNode = () => {
 
   const [error, setError] = useState<false | string>(false);
   const [data, setData] = useState<Backup | false>(false);
-  const [includeTxPoWs, setIncludeTxPoWs] = useState(false);
+  
   const { authNavigate } = useAuth();
 
   const {
@@ -414,9 +414,9 @@ const BackupNode = () => {
                         "/backups/" + fileName
                       );
 
-                      const { password, txpows } = formData;
+                      const { password } = formData;
                       await rpc
-                        .createBackup(fullPath, password, txpows)
+                        .createBackup(fullPath, password)
                         .then((resp) => {
                           setData(resp);
                         })
@@ -496,42 +496,7 @@ const BackupNode = () => {
                                 toggle={hideConfirmPassword}
                               />
                             }
-                          />
-                          <div>
-                            <label
-                              htmlFor="includeTxPoWs"
-                              className="flex justify-end items-center"
-                            >
-                              <span className="mr-2 text-sm">
-                                Include TxPoWs
-                              </span>
-                              <input
-                                type="checkbox"
-                                id="includeTxPoWs"
-                                className="form-checkbox h-5 w-5 text-indigo-600"
-                                checked={includeTxPoWs}
-                                onChange={() =>
-                                  setIncludeTxPoWs(!includeTxPoWs)
-                                }
-                              />
-                            </label>
-                            {includeTxPoWs && (
-                              <div className="mt-2">
-                                <Input  
-                                  onChange={handleChange}
-                                  onBlur={handleBlur}
-                                  disabled={isSubmitting}
-                                  extraClass="core-black-contrast"
-                                  name="txpows"
-                                  id="txpows"
-                                  value={values.txpows}
-                                  type="number"
-                                  placeholder="Enter TxPoWs"                                  
-                                />
-                                <p className="text-sm pt-2 text-left">You can add X amount of transactions from your history to the backup to be recovered on your next restoration.  <b>Note,</b> the more you choose to store the longer it needs for the backup to be created.</p>
-                              </div>
-                            )}
-                          </div>
+                          />                          
                           <div className="flex flex-col">
                             <Button
                               type="submit"
