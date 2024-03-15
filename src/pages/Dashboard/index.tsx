@@ -4,17 +4,19 @@ import MinidappSystemFailed from "../MinidappSystemFailed";
 import { useContext } from "react";
 import { appContext } from "../../AppContext";
 import BackButton from "../../components/UI/BackButton";
+import useCanUseTitleBar from "../../hooks/useCanUseTitleBar";
 
 const Dashboard = () => {
   const { displayBackButton, backButton } = useContext(appContext);
+  const openTitleBar  = useCanUseTitleBar();  
 
   return (
     <>
       <AppIsInReadMode />
       <MinidappSystemFailed />
 
-      <div className="grid grid-rows-[56px_1fr]">
-        <header className="grid grid-cols-[1fr_minmax(0,_560px)_1fr]">
+      <div className="grid grid-rows-[56px_1fr] h-[100vh]">
+        <header onClick={openTitleBar} className="grid grid-cols-[1fr_minmax(0,_560px)_1fr]">
           <div />
           <div className="flex justify-between items-center">
             {!!displayBackButton && !!backButton.display && (

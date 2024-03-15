@@ -1,6 +1,5 @@
 import { createPortal } from "react-dom";
 import React, { useContext, useEffect, useRef, useState } from "react";
-import styles from "./List.module.css";
 import { appContext } from "../../../../AppContext";
 
 import { animated, config, useSpring } from "react-spring";
@@ -124,7 +123,7 @@ const Backups = () => {
 
     return isAuto ? "Auto" : "";
   };
-  
+
   if (!_promptBackups) {
     return null;
   }
@@ -144,7 +143,7 @@ const Backups = () => {
             <div className="h-full flex items-center justify-center">
               <animated.div
                 style={springProps}
-                className="max-w-lg w-full bg-black rounded p-4"
+                className="max-w-lg w-full bg-black rounded p-4 min-h-[50vh] md:min-h-[350px] shadow-sm shadow-white mx-4"
               >
                 <div className="grid grid-rows-[min-content]">
                   <div className="grid grid-cols-[1fr_auto] p-4">
@@ -152,8 +151,8 @@ const Backups = () => {
                     <Cross dismiss={promptBackups} />
                   </div>
 
-                  <div className="px-4 text-sm flex-1 overflow-y-auto">
-                    <div className="overflow-y-auto max-h-[50vh]">
+                  <div className="px-4 text-sm flex-1">
+                    <div>
                       {!!backups.length && (
                         <>
                           <div className="mb-6 sticky top-0 z-10 bg-black">
@@ -168,7 +167,7 @@ const Backups = () => {
                               autoComplete="off"
                             />
                           </div>
-                          <ul className="pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          <ul className="pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full max-h-[50vh] overflow-y-scroll">
                             {searchText.length
                               ? backups
                                   .filter((o) =>
@@ -191,7 +190,7 @@ const Backups = () => {
                                           {makeTimestamp(b.name)}
                                         </p>
                                       </div>
-                                      <div className="md:hidden flex items-center justify-center">
+                                      <div className="md:hidden z-[2000] flex items-center justify-center">
                                         <svg
                                           onClick={() => toggleDropdown(i)}
                                           xmlns="http://www.w3.org/2000/svg"
@@ -278,7 +277,7 @@ const Backups = () => {
                                         {makeTimestamp(b.name)}
                                       </p>
                                     </div>
-                                    <div className="md:hidden flex items-center justify-center">
+                                    <div className="md:hidden z-[2000] flex items-center justify-center">
                                       <svg
                                         onClick={() => toggleDropdown(i)}
                                         xmlns="http://www.w3.org/2000/svg"
@@ -349,7 +348,7 @@ const Backups = () => {
                               backups.filter((o) =>
                                 makeTimestamp(o.name).includes(searchText)
                               ).length === 0 && (
-                                <p className={styles["no-results"]}>
+                                <p className="text-center">
                                   No results found
                                 </p>
                               )}
