@@ -113,6 +113,77 @@ const Archives = () => {
     return null;
   }
 
+  const renderArchiveItem = (b, i) => (
+    <li
+      onClick={() => toggleDropdown(i)}
+      className="relative font-normal p-4 pr-1 core-grey-5 rounded color-black grid grid-cols-[1fr_auto] md:grid-cols-1 h-max"
+      key={i}
+    >
+      <div>
+        <h3 className="font-bold">Archive</h3>
+        <p className="font-medium text-sm break-word">
+          {makeTimestamp(b.name)}
+        </p>
+      </div>
+      <div className="md:hidden z-[2] flex items-center justify-center">
+        <svg
+          onClick={() => toggleDropdown(i)}
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          strokeWidth="1.5"
+          stroke="#000000"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+          <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+          <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
+        </svg>
+      </div>
+      {dropdownIndex === i && (
+        <div
+          ref={dropdownRef}
+          className="absolute right-0 md:left-0 mt-2 w-auto bg-white z-[25] border border-gray-200 rounded-md shadow-md"
+        >
+          <a
+            className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
+              promptDeleteFile(b.name);
+            }}
+          >
+            Delete
+          </a>
+          <a
+            className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
+            onClick={async (e) => {
+              e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
+              const fullPath = await fileManager.getPath("/archives/" + b.name);
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore
+              Android.shareFile(fullPath, "*/*");
+            }}
+          >
+            Share
+          </a>
+          <a
+            className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
+            onClick={(e) => {
+              e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
+              downloadArchive(b.name);
+            }}
+          >
+            Download
+          </a>
+        </div>
+      )}
+    </li>
+  );
+
   return (
     <>
       {_promptDeleteFile && (
@@ -128,216 +199,54 @@ const Archives = () => {
             <div className="h-full flex items-center justify-center">
               <animated.div
                 style={springProps}
-                className="max-w-lg w-full bg-black rounded p-4 min-h-[50vh] md:min-h-[350px] shadow-sm shadow-white mx-4"
+                className="max-w-lg w-full bg-black rounded p-4 py-0 shadow-sm shadow-white mx-4 min-h-[50vh] md:min-h-[350px] max-h-32 overflow-y-auto"
               >
                 <div className="grid grid-rows-[min-content]">
-                  <div className="grid grid-cols-[1fr_auto] p-4">
-                    <h3 className="font-bold text-white">Latest Archives</h3>
-                    <Cross dismiss={promptArchives} />
+                  <div className="sticky top-0 z-10 bg-black p-4">
+                    <div className="grid grid-cols-[1fr_auto]">
+                      <h3 className="font-bold text-white">Latest Archives</h3>
+                      <Cross dismiss={promptArchives} />
+                    </div>
+                    {!!archives.length && (
+                      <div className="my-4 bg-black">
+                        <input
+                          disabled={false}
+                          id="search"
+                          name="search"
+                          type="text"
+                          placeholder="Search archives by date"
+                          onChange={handleChange}
+                          className="w-full bg-black text-white border border-gray-600 rounded px-3 py-2"
+                          autoComplete="off"
+                        />
+                      </div>
+                    )}
                   </div>
 
-                  <div className="px-4 text-sm flex-1">
-                    <div>
-                      {!!archives.length && (
-                        <>
-                          <div className="mb-6 sticky top-0 z-10 bg-black">
-                            <input
-                              disabled={false}
-                              id="search"
-                              name="search"
-                              type="text"
-                              placeholder="Search archives by date"
-                              onChange={handleChange}
-                              className="w-full sticky bg-black text-white border border-gray-600 rounded px-3 py-2"
-                              autoComplete="off"
-                            />
-                          </div>
-                          <ul className="pb-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-full max-h-[50vh] overflow-y-scroll">
-                            {searchText.length
-                              ? archives
-                                  .filter((o) =>
-                                    makeTimestamp(o.name).includes(searchText)
-                                  )
-                                  .map((b, i) => (
-                                    <li
-                                      onClick={() => toggleDropdown(i)}
-                                      className="relative font-normal p-4 pr-1 core-grey-5 rounded color-black grid grid-cols-[1fr_auto] md:grid-cols-1"
-                                      key={i}
-                                    >
-                                      <div>
-                                        <h3 className="font-bold">Archive</h3>
-                                        <p className="font-medium text-sm break-word">
-                                          {makeTimestamp(b.name)}
-                                        </p>
-                                      </div>
-                                      <div className="md:hidden z-[2000] flex items-center justify-center">
-                                        <svg
-                                          onClick={() => toggleDropdown(i)}
-                                          xmlns="http://www.w3.org/2000/svg"
-                                          width="24"
-                                          height="24"
-                                          viewBox="0 0 24 24"
-                                          strokeWidth="1.5"
-                                          stroke="#000000"
-                                          fill="none"
-                                          strokeLinecap="round"
-                                          strokeLinejoin="round"
-                                        >
-                                          <path
-                                            stroke="none"
-                                            d="M0 0h24v24H0z"
-                                            fill="none"
-                                          />
-                                          <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                          <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                          <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        </svg>
-                                      </div>
-
-                                      {dropdownIndex === i && (
-                                        <div
-                                          ref={dropdownRef}
-                                          className="absolute right-0 md:left-0 mt-2 w-auto bg-white z-[25] border border-gray-200 rounded-md shadow-md"
-                                        >
-                                          <a
-                                            className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-                                            onClick={(e) => {
-                                              e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
-                                              promptDeleteFile(b.name);
-                                            }}
-                                          >
-                                            Delete
-                                          </a>
-                                          <a
-                                            className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-                                            onClick={async (e) => {
-                                              e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
-                                              const fullPath =
-                                                await fileManager.getPath(
-                                                  "/archives/" + b.name
-                                                );
-
-                                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                              // @ts-ignore
-                                              Android.shareFile(
-                                                fullPath,
-                                                "*/*"
-                                              );
-                                            }}
-                                          >
-                                            Share
-                                          </a>
-                                          <a
-                                            className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-                                            onClick={(e) => {
-                                              e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
-                                              downloadArchive(b.name);
-                                            }}
-                                          >
-                                            Download
-                                          </a>
-                                        </div>
-                                      )}
-                                    </li>
-                                  ))
-                              : archives.map((b, i) => (
-                                  <li
-                                    onClick={() => toggleDropdown(i)}
-                                    className="relative font-normal p-4 pr-1 core-grey-5 rounded color-black grid grid-cols-[1fr_auto] md:grid-cols-1"
-                                    key={i}
-                                  >
-                                    <div>
-                                      <h3 className="font-bold">Archive</h3>
-                                      <p className="font-medium text-sm break-word">
-                                        {makeTimestamp(b.name)}
-                                      </p>
-                                    </div>
-                                    <div className="md:hidden z-[2000] flex items-center justify-center">
-                                      <svg
-                                        onClick={() => toggleDropdown(i)}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="1.5"
-                                        stroke="#000000"
-                                        fill="none"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                      >
-                                        <path
-                                          stroke="none"
-                                          d="M0 0h24v24H0z"
-                                          fill="none"
-                                        />
-                                        <path d="M12 12m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        <path d="M12 19m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                        <path d="M12 5m-1 0a1 1 0 1 0 2 0a1 1 0 1 0 -2 0" />
-                                      </svg>
-                                    </div>
-
-                                    {dropdownIndex === i && (
-                                      <div
-                                        ref={dropdownRef}
-                                        className="absolute right-0 md:left-0 mt-2 w-auto bg-white z-[25] border border-gray-200 rounded-md shadow-md"
-                                      >
-                                        <a
-                                          className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-                                          onClick={(e) => {
-                                            e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
-                                            promptDeleteFile(b.name);
-                                          }}
-                                        >
-                                          Delete
-                                        </a>
-                                        <a
-                                          className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-                                          onClick={async (e) => {
-                                            e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
-                                            const fullPath =
-                                              await fileManager.getPath(
-                                                "/archives/" + b.name
-                                              );
-
-                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                            // @ts-ignore
-                                            Android.shareFile(fullPath, "*/*");
-                                          }}
-                                        >
-                                          Share
-                                        </a>
-                                        <a
-                                          className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-                                          onClick={(e) => {
-                                            e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
-                                            downloadArchive(b.name);
-                                          }}
-                                        >
-                                          Download
-                                        </a>
-                                      </div>
-                                    )}
-                                  </li>
-                                ))}
-                            {!!searchText.length &&
-                              archives.filter((o) =>
+                  <div className="px-4 text-sm">
+                    {!!archives.length && (
+                     <ul className="pb-4 grid grid-cols-1 gap-4 mb-4">
+                        {searchText.length
+                          ? archives
+                              .filter((o) =>
                                 makeTimestamp(o.name).includes(searchText)
-                              ).length === 0 && (
-                                <p className="text-center">
-                                  No results found
-                                </p>
-                              )}
-                          </ul>
-                        </>
-                      )}
-                      {!archives.length && (
-                        <>
-                          <p className="text-center text-gray-400">
-                            You have no recent archives
-                          </p>
-                        </>
-                      )}
-                    </div>
+                              )
+                              .map(renderArchiveItem)
+                          : archives.map(renderArchiveItem)}
+                        {!!searchText.length &&
+                          archives.filter((o) =>
+                            makeTimestamp(o.name).includes(searchText)
+                          ).length === 0 && (
+                            <p className="text-center">No results found</p>
+                          )}
+                      </ul>
+                    )}
+
+                    {!archives.length && (
+                      <p className="text-center text-gray-400">
+                        You have no recent archives
+                      </p>
+                    )}
                   </div>
                 </div>
               </animated.div>

@@ -362,7 +362,7 @@ const ArchiveReset = () => {
                 )}
 
                 {exportedArchive === null && (
-                  <div className='flex items-center justify-center text-center'>
+                  <div className='flex items-center flex-col justify-center text-center'>
                     <img
                       className="mb-4 inline"
                       alt="informative"

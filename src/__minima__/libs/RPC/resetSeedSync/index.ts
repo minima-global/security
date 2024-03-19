@@ -8,10 +8,12 @@ export const resetSeedSync = (
       `reset archivefile:"${archivefile}" action:seedsync phrase:"${phrase}" keyuses:"${keyuses}"`,
       (resp: any) => {
         if (!resp.response.status) {
+          const isWrongFileType = resp.response.error && resp.response.error.includes("org.h2.jdbcSQLSyntaxErrorException");
+
           return reject(
-            resp.response.error
-              ? resp.response.error
-              : "Archive seed re-sync failed"
+            isWrongFileType
+              ? "Invalid file type, please make sure this is of type raw.dat" : resp.response.error ? resp.response.error : 
+              "Unexpected error"
           );
         }
 

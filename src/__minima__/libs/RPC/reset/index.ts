@@ -9,13 +9,16 @@ export const reset = (
         password ? password : "minima"
       }"`,
       (resp: any) => {
-        if (!resp.status)
-          return reject(
-            resp.error
-              ? resp.error
-              : `Archive restore ${archivefile} with backup file: ${backupfile} failed, please try again`
-          );
+        if (!resp.status) {
+          const isWrongFileType = resp.response.error && resp.response.error.includes("org.h2.jdbcSQLSyntaxErrorException");
 
+          return reject(
+            isWrongFileType
+              ? "Invalid file type, please make sure this is of type raw.dat" : resp.response.error ? resp.response.error : 
+              "Unexpected error"
+          );          
+        }
+        
         resolve(resp);
       }
     );
