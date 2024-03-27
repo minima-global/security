@@ -158,18 +158,22 @@ const Archives = () => {
           >
             Delete
           </a>
-          <a
-            className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-            onClick={async (e) => {
-              e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
-              const fullPath = await fileManager.getPath("/archives/" + b.name);
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              Android.shareFile(fullPath, "*/*");
-            }}
-          >
-            Share
-          </a>
+          {window.navigator.userAgent.includes("Minima Browser") && (
+            <a
+              className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
+              onClick={async (e) => {
+                e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
+                const fullPath = await fileManager.getPath(
+                  "/archives/" + b.name
+                );
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                Android.shareFile(fullPath, "*/*");
+              }}
+            >
+              Share
+            </a>
+          )}
           <a
             className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
             onClick={(e) => {
@@ -225,7 +229,7 @@ const Archives = () => {
 
                   <div className="px-4 text-sm">
                     {!!archives.length && (
-                     <ul className="pb-4 grid grid-cols-1 gap-4 mb-4">
+                      <ul className="pb-4 grid grid-cols-1 gap-4 mb-4">
                         {searchText.length
                           ? archives
                               .filter((o) =>

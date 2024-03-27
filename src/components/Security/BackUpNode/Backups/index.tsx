@@ -230,21 +230,28 @@ const Backups = () => {
                                         >
                                           Delete
                                         </a>
-                                        <a
-                                          className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-                                          onClick={async (e) => {
-                                            e.stopPropagation();
-                                            const fullPath =
-                                              await fileManager.getPath(
-                                                "/backups/" + b.name
+                                        {window.navigator.userAgent.includes(
+                                          "Minima Browser"
+                                        ) && (
+                                          <a
+                                            className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
+                                            onClick={async (e) => {
+                                              e.stopPropagation();
+                                              const fullPath =
+                                                await fileManager.getPath(
+                                                  "/backups/" + b.name
+                                                );
+                                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                              // @ts-ignore
+                                              Android.shareFile(
+                                                fullPath,
+                                                "*/*"
                                               );
-                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                            // @ts-ignore
-                                            Android.shareFile(fullPath, "*/*");
-                                          }}
-                                        >
-                                          Share
-                                        </a>
+                                            }}
+                                          >
+                                            Share
+                                          </a>
+                                        )}
                                         <a
                                           className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
                                           onClick={(e) => {
@@ -312,21 +319,25 @@ const Backups = () => {
                                       >
                                         Delete
                                       </a>
-                                      <a
-                                        className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
-                                        onClick={async (e) => {
-                                          e.stopPropagation();
-                                          const fullPath =
-                                            await fileManager.getPath(
-                                              "/backups/" + b.name
-                                            );
-                                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                          // @ts-ignore
-                                          Android.shareFile(fullPath, "*/*");
-                                        }}
-                                      >
-                                        Share
-                                      </a>
+                                      {window.navigator.userAgent.includes(
+                                        "Minima Browser"
+                                      ) && (
+                                        <a
+                                          className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
+                                          onClick={async (e) => {
+                                            e.stopPropagation();
+                                            const fullPath =
+                                              await fileManager.getPath(
+                                                "/backups/" + b.name
+                                              );
+                                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                            // @ts-ignore
+                                            Android.shareFile(fullPath, "*/*");
+                                          }}
+                                        >
+                                          Share
+                                        </a>
+                                      )}
                                       <a
                                         className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
                                         onClick={(e) => {

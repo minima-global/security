@@ -151,9 +151,7 @@ function createBackup() {
                   }
                   // create the backup
                   MDS.cmd(
-                    `backup file:${minidappPath + "/backups/" + fileName} ${
-                      backupPassword ? "password: " + backupPassword : ""
-                    }`,
+                    `backup file:${minidappPath + "/backups/" + fileName} ${backupPassword ? "password:"+backupPassword : ''}`,
                     function (response) {
                       // something went wrong
                       if (!response.status) {
@@ -169,9 +167,10 @@ function createBackup() {
                         if (tableEmpty) {
                           return MDS.sql(
                             `INSERT INTO BACKUPS (filename, block, timestamp) VALUES('${fileName}', '${response.backup.block}', CURRENT_TIMESTAMP)`,
-                            function (response) {
+                            function () {
                               newLog.status = 2;
                               newLog.message = "Backup created!";
+                              newLog.size = response.backup.size;
                               logs.push(newLog);
                               logBackup(logs);
                             }
