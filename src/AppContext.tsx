@@ -10,6 +10,7 @@ import {
 
 import * as rpc from "./__minima__/libs/RPC";
 import * as fileManager from "./__minima__/libs/fileManager";
+import * as utils from "./utils";
 import { To } from "react-router-dom";
 
 export const appContext = createContext({} as any);
@@ -18,7 +19,7 @@ interface IProps {
   children: any;
 }
 const AppProvider = ({ children }: IProps) => {
-  const [displayBackButton, setDisplayHeaderBackButton] = useState(false);
+  const [displayBackButton] = useState(false);
   const [backButton, setBackButton] = useState<{
     display: boolean;
     to: To;
@@ -28,8 +29,8 @@ const AppProvider = ({ children }: IProps) => {
     to: "/dashboard",
     title: "Security",
   });
+
   const loaded = useRef(false);
-  const [mode, setMode] = useState("desktop");
   const [showSecurity, setShowSecurity] = useState(true);
   const [vaultLocked, setVaultLocked] = useState<null | boolean>(null);
   const [logs, setLogs] = useState<string[]>([]);
@@ -73,6 +74,10 @@ const AppProvider = ({ children }: IProps) => {
   });
 
   // backups stuff
+  const [_backupLogs, setBackupLogs] = useState([]);
+  const [_promptBackupLogs, setPromptBackupLogs] = useState(false);
+  const [_promptBackups, setPromptBackups] = useState(false);
+  const [_promptArchives, setPromptArchives] = useState(false);
   const [backups, setBackups] = useState<any[]>([]);
   const [appIsInWriteMode, setAppIsInWriteMode] = useState<boolean | null>(
     null
@@ -99,39 +104,6 @@ const AppProvider = ({ children }: IProps) => {
       }
     }
   }, [vaultLocked]);
-
-  useEffect(() => {
-    if (window.innerWidth < 568) {
-      return setDisplayHeaderBackButton(true);
-    }
-
-    if (window.innerWidth > 568) {
-      return setDisplayHeaderBackButton(false);
-    }
-    (window as any).addEventListener("resize", () => {
-      if (window.innerWidth < 568) {
-        return setDisplayHeaderBackButton(true);
-      }
-
-      if (window.innerWidth > 568) {
-        return setDisplayHeaderBackButton(false);
-      }
-    });
-  }, [window]);
-
-  useEffect(() => {
-    if (window.innerWidth < 568) {
-      setMode("mobile");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (appIsInWriteMode) {
-      rpc.vault().then((response) => {
-        setVault(response as any);
-      });
-    }
-  }, [appIsInWriteMode]);
 
   const fetchVault = useCallback(() => {
     return rpc.vault().then((response) => {
@@ -200,6 +172,15 @@ const AppProvider = ({ children }: IProps) => {
     }
   };
 
+  const getBackupLogs = async () => {
+    const autoBackupLogs: any = await utils.sql(
+      "SELECT * FROM cache WHERE name = 'BACKUP_LOGS'"
+    );
+    if (autoBackupLogs) {
+      setBackupLogs(JSON.parse(autoBackupLogs.DATA));
+    }
+  };
+
   const getBackups = () => {
     fileManager.listFiles("/backups").then((response: any) => {
       if (response.status) {
@@ -243,20 +224,21 @@ const AppProvider = ({ children }: IProps) => {
     if (!loaded.current) {
       loaded.current = true;
       (window as any).MDS.init((msg: any) => {
-        if (msg.event === "MINIMALOG") {
-          const log = msg.data.message;
-          setLogs((prevState) => [...prevState, log]);
-        }
-
-        if (msg.event === "MDS_SHUTDOWN") {
-          setShuttingDown(true);
-        }
-
-        if (msg.event === "MDSFAIL") {
-          setMinidappSystemFailed(true);
-        }
 
         if (msg.event === "inited") {
+          rpc.vault().then((response) => {
+            setVault(response as any);
+          });
+
+          (async () => {
+            const autoBackupLogs: any = await utils.sql(
+              "SELECT * FROM cache WHERE name = 'BACKUP_LOGS'"
+            );
+            if (autoBackupLogs) {
+              setBackupLogs(JSON.parse(autoBackupLogs.DATA));
+            }
+          })();
+
           rpc.isWriteMode().then((appIsInWriteMode) => {
             setAppIsInWriteMode(appIsInWriteMode);
           });
@@ -273,13 +255,38 @@ const AppProvider = ({ children }: IProps) => {
           /** */
           checkVaultLocked();
         }
+        if (msg.event === "MINIMALOG") {
+          const log = msg.data.message;
+          setLogs((prevState) => [...prevState, log]);
+        }
+
+        if (msg.event === "MDS_SHUTDOWN") {
+          setShuttingDown(true);
+        }
+
+        if (msg.event === "MDSFAIL") {
+          setMinidappSystemFailed(true);
+        }
       });
     }
   }, [loaded]);
 
+  const promptBackupLogs = () => {
+    setPromptBackupLogs((prevState) => !prevState);
+  };
+  const promptBackups = () => {
+    setPromptBackups((prevState) => !prevState);
+  };
+
+  const promptArchives = () => {
+    setPromptArchives((prevState) => !prevState);
+  };
+
   return (
     <appContext.Provider
       value={{
+        loaded,
+
         showSecurity,
         setShowSecurity,
         modal,
@@ -295,8 +302,6 @@ const AppProvider = ({ children }: IProps) => {
         phraseAsArray,
         resetVault,
         fetchVault,
-        mode,
-        isMobile: mode === "mobile",
 
         // heading back button stuff
         backButton,
@@ -304,8 +309,16 @@ const AppProvider = ({ children }: IProps) => {
         displayBackButton,
 
         //backups
+        _backupLogs,
+        _promptBackupLogs,
+        promptBackupLogs,
+        _promptBackups,
+        promptBackups,
+        _promptArchives,
+        promptArchives,
         backups,
         getBackups,
+        getBackupLogs,
 
         //archives
         archives,

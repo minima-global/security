@@ -68,7 +68,7 @@ const AutoCreatePassword = () => {
       authNavigate("/dashboard/modal", PERMISSIONS.CAN_VIEW_MODAL);
       setModal({
         content: (
-          <div>
+          <div className="flex text-center flex-col items-center justify-center">
             <svg
               className="mb-3 inline"
               width="64"

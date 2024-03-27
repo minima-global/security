@@ -3,10 +3,12 @@ import { appContext } from "../../AppContext";
 
 import styles from "./ReadMode.module.css";
 import SlideScreen from "../../components/UI/SlideScreen";
+import useCanUseTitleBar from "../../hooks/useCanUseTitleBar";
 
 export function AppIsInReadMode() {
   const { appIsInWriteMode } = useContext(appContext);
   const display = appIsInWriteMode === false;
+  const openTitleBar = useCanUseTitleBar();
 
   return (
     <SlideScreen display={display}>
@@ -17,7 +19,7 @@ export function AppIsInReadMode() {
           <main>
             <section>
               <div className={styles["dialog"]}>
-                <div>
+                <div onClick={openTitleBar} className="flex flex-col justify-center items-center text-center">
                   <img
                     className="mb-4"
                     alt="download"
@@ -38,7 +40,10 @@ export function AppIsInReadMode() {
                   <div
                     className={`${styles.desktop_only} ${styles.secondaryActions}`}
                   >
-                    <button onClick={() => window.location.reload()}>
+                    <button onClick={(e) => {
+                      e.stopPropagation(); 
+                      window.location.reload();
+                    }}>
                       Reload
                     </button>
                   </div>

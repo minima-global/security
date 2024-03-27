@@ -2,7 +2,6 @@ import { useContext } from "react";
 import { appContext } from "../../AppContext";
 
 import styles from "./ReadMode.module.css";
-import FadeIn from "../../components/UI/Animations/FadeIn";
 import useIsMinimaBrowser from "../../hooks/useIsMinimaBrowser";
 
 export function MinidappSystemFailed() {
@@ -11,7 +10,7 @@ export function MinidappSystemFailed() {
   const display = minidappSystemFailed === true;
 
   return (
-    <FadeIn delay={100} isOpen={display}>
+    display && (
       <div>
         <div className={styles["backdrop"]}></div>
         <div className={styles["grid"]}>
@@ -19,11 +18,10 @@ export function MinidappSystemFailed() {
           <main>
             <section>
               <div className={styles["dialog"]}>
-                <div>
+                <div className="flex flex-col items-center justify-center">
                   <svg
                     width="116"
                     height="116"
-                    className="inline"
                     viewBox="0 0 512 512"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +83,7 @@ export function MinidappSystemFailed() {
           </main>
         </div>
       </div>
-    </FadeIn>
+    )
   );
 }
 

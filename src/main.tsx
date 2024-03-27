@@ -26,7 +26,6 @@ import Dialog from "./components/Dialog/index.tsx";
 import AutoCreatePassword from "./components/Security/BackUpNode/AutoCreatePassword/index.tsx";
 import FadeIn from "./components/UI/Animations/FadeIn/index.tsx";
 import SlideIn from "./components/UI/Animations/SlideIn/index.tsx";
-import DeleteBackup from "./components/Security/BackUpNode/Backups/DeleteBackup/index.tsx";
 import DeleteArchive from "./components/Security/ArchiveReset/Archives/DeleteArchive/index.tsx";
 import ArchiveReset from "./components/Security/ArchiveReset/index.tsx";
 import Restore from "./components/Security/ArchiveReset/Restore/index.tsx";
@@ -153,22 +152,6 @@ const router = createHashRouter(
                 </FadeIn>
               }
             />
-            <Route
-              element={
-                <Authorisation
-                  permissions={[PERMISSIONS["CAN_VIEW_DELETE_BACKUP"]]}
-                />
-              }
-            >
-              <Route
-                path="delete"
-                element={
-                  <FadeIn delay={100}>
-                    <DeleteBackup />
-                  </FadeIn>
-                }
-              />
-            </Route>
           </Route>
           <Route
             element={

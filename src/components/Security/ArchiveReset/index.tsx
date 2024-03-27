@@ -10,13 +10,14 @@ import FadeIn from "../../UI/Animations/FadeIn";
 import { format } from "date-fns";
 import * as fileManager from "../../../__minima__/libs/fileManager";
 import { useNavigate } from "react-router-dom";
+import Archives from "./Archives";
 
 interface ExportedArchive {
   fileLocation: string;
   size: string;
 }
 const ArchiveReset = () => {
-  const { displayBackButton: displayHeaderBackButton, setBackButton } =
+  const { displayBackButton: displayHeaderBackButton, setBackButton, promptArchives } =
     useContext(appContext);
   const navigate = useNavigate();
   const { authNavigate } = useAuth();
@@ -56,6 +57,8 @@ const ArchiveReset = () => {
 
   return (
     <>
+      <Archives />
+      
       {!exportingArchive && (
         <SlideIn isOpen={true} delay={0}>
           <div className="flex flex-col h-full bg-black px-4 pb-4">
@@ -173,9 +176,7 @@ const ArchiveReset = () => {
                 Archive export
               </Button>
               <div
-                onClick={() =>
-                  authNavigate("/dashboard/archivereset/archives", [])
-                }
+                onClick={promptArchives}
                 className="text-left relative core-black-contrast-2 py-4 px-4 rounded cursor-pointer mt-4"
               >
                 Browse internal archives{" "}
@@ -315,7 +316,7 @@ const ArchiveReset = () => {
             content={
               <>
                 {exportedArchive !== null && (
-                  <div>
+                  <div className="flex flex-col justify-center items-center text-center">
                     <svg
                       className="inline mb-6"
                       xmlns="http://www.w3.org/2000/svg"
@@ -361,7 +362,7 @@ const ArchiveReset = () => {
                 )}
 
                 {exportedArchive === null && (
-                  <div>
+                  <div className='flex items-center flex-col justify-center text-center'>
                     <img
                       className="mb-4 inline"
                       alt="informative"

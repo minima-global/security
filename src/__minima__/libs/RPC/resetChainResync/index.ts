@@ -3,8 +3,19 @@ export const resetChainResync = (archivefile: string | null) => {
     (window as any).MDS.cmd(
       `reset archivefile:"${archivefile}" action:chainsync`,
       (resp: any) => {
-        if (!resp.status)
-          reject(resp.error ? resp.error : "Archive chain re-sync failed");
+        if (!resp.status) {
+          const isWrongFileType =
+            resp.response.error &&
+            resp.response.error.includes("org.h2.jdbcSQLSyntaxErrorException");
+
+          reject(
+            isWrongFileType
+              ? "Invalid file type, please make sure this is of type raw.dat"
+              : resp.response.error
+              ? resp.response.error
+              : "Unexpected error"
+          );
+        }
 
         resolve(resp);
       }

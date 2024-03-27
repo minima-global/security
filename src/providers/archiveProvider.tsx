@@ -59,34 +59,6 @@ export const ArchiveProvider = ({ children }) => {
     setArchiveFileToUpload(file);
   };
 
-  // /**
-  //  *
-  //  * @param path (relative path of minima folder)
-  //  * @returns an Archive object
-  //  */
-  // const checkArchiveIntegrity = async (path: string): Promise<any> => {
-  //   const fullPath = await fM.getPath(path);
-
-  //   return new Promise((resolve, reject) => {
-  //     (window as any).MDS.cmd(
-  //       `archive action:inspect file:"${fullPath}"`,
-  //       async function (resp) {
-  //         if (!resp.status) {
-  //           // no good.. get rid of it
-  //           // deleteLastUploadedArchive(path);
-  //           reject(resp.error ? resp.error : "Checking integrity RPC failed.");
-  //         }
-  //         if (resp.status) {
-  //           // set the last successful archive file path to use down the line
-  //           setArchivePathToResetWith(fullPath);
-
-  //           resolve(resp.response.archive);
-  //         }
-  //       }
-  //     );
-  //   });
-  // };
-
   return (
     <ArchiveContext.Provider
       value={{
@@ -99,7 +71,6 @@ export const ArchiveProvider = ({ children }) => {
         handleUploadContext,
       }}
     >
-      {" "}
       {children}
     </ArchiveContext.Provider>
   );

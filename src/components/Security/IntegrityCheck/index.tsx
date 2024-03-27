@@ -536,23 +536,34 @@ const IntegrityCheck = () => {
                     try {
                       const fullPath = await fileManager.getPath(formData.file);
 
-                      (window as any).MDS.cmd(
-                        `archive action:inspect file:"${fullPath}"`,
-                        async function (resp) {
-                          if (resp.status) {
-                            setExternalInspection(resp.response);
+                      const response = await new Promise((resolve, reject) => {
+                        (window as any).MDS.cmd(
+                          `archive action:inspect file:"${fullPath}"`,
+                          function (resp) {
+                            
+                            if (!resp.status) {
+                              reject(
+                                resp.error
+                                  ? resp.error
+                                  : "Failed to inspect archive"
+                              );
+                            } else {
+                              resolve(resp.response);
+                            }
                           }
-                          if (!resp.status) {
-                            throw new Error(
-                              resp.error
-                                ? resp.error
-                                : "Failed to inspect archive"
-                            );
-                          }
-                        }
-                      );
+                        );
+                      }).catch(err => {
+                        throw new Error(err);
+                      });
+
+                      setExternalInspection(response);
                     } catch (error) {
-                      setError(error as string);
+                      
+                      setError(
+                        error instanceof Error
+                          ? error.message
+                          : "An unexpected error occurred"
+                      );
                     }
                   }}
                 >

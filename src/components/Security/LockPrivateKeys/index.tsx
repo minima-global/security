@@ -46,7 +46,6 @@ const LockPrivateKeys = () => {
     setModal,
     vaultLocked,
     checkVaultLocked,
-
     setBackButton,
     displayBackButton: displayHeaderBackButton,
   } = useContext(appContext);
@@ -62,8 +61,8 @@ const LockPrivateKeys = () => {
 
   const UnlockDialog = {
     content: (
-      <div>
-        <img className="mb-8" alt="unlock" src="./assets/lock_open.svg" />{" "}
+      <div className="flex flex-col justify-center items-center">
+        <img className="mb-8 h-[128px] w-[128px]" alt="unlock" src="./assets/lock_open.svg" />{" "}
         <h1 className="text-2xl font-semibold">
           You have unlocked <br /> your private keys
         </h1>
@@ -85,7 +84,7 @@ const LockPrivateKeys = () => {
   };
   const LockDialog = {
     content: (
-      <div>
+      <div className="flex flex-col items-center">
         <img className="mb-8" alt="unlock" src="./assets/lock.svg" />{" "}
         <h1 className="text-2xl font-semibold">
           You have locked <br /> your private keys

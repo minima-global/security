@@ -48,8 +48,7 @@ const ViewSeedPhrase = () => {
             <li key={index}>
               <div>{index + 1}</div>
               {!hide
-                ? p.toLowerCase().charAt(0).toUpperCase() +
-                  p.slice(1).toLowerCase()
+                ? p.toUpperCase()
                 : ""}
             </li>
           ))}

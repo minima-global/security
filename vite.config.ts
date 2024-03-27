@@ -27,6 +27,7 @@ export default ({ mode }) => {
       outDir: "build",
       minify: false,
     },
+    // server: { host: "192.168.0.122", port: 5173 },
     plugins: [
       react(),
       legacy({

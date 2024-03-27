@@ -93,10 +93,14 @@ const ArchiveReset = () => {
                       await rpc
                         .reset(fullArchivePath, backupfilepath, password)
                         .catch((error) => {
-                          throw error;
+                          throw new Error(error);
                         });
                     } catch (error) {
-                      setError(error as string);
+                      setError(
+                        error instanceof Error
+                          ? error.message
+                          : "An unexpected error occurred"
+                      );
                     }
                   }}
                 >
