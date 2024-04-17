@@ -62,18 +62,12 @@ const Archives = () => {
     setSearchText(e.target.value);
   };
 
-  const downloadArchive = async (backupFile: string) => {
-    if (window.navigator.userAgent.includes("Minima Browser")) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      return Android.fileDownload(MDS.minidappuid, backupFile);
-    }
-
-    const origFilePath = `/archives/${backupFile}`;
-    const newFilePath = `/my_downloads/${backupFile}_minima_download_as_file_`;
+  const createDownloadLink = (folder: string, mdsfile: string) => {
+    const origFilePath = `/${folder}/${mdsfile}`;
+    const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
 
     (window as any).MDS.file.copytoweb(origFilePath, newFilePath, function () {
-      const url = `my_downloads/${backupFile}` + "_minima_download_as_file_";
+      const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
       // create an a
       const temporaryLink = document.createElement("a");
       temporaryLink.style.display = "none";
@@ -177,8 +171,18 @@ const Archives = () => {
           <a
             className="block px-4 py-4 text-gray-800 hover:bg-gray-200"
             onClick={(e) => {
-              e.stopPropagation(); // Prevent click on dropdown from closing the dropdown
-              downloadArchive(b.name);
+              e.stopPropagation();
+
+              if (window.navigator.userAgent.includes("Minima Browser")) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                return Android.fileDownload(
+                  (window as any).MDS.minidappuid,
+                  "/archives/" + b.name
+                );
+              }
+
+              createDownloadLink("archives", b.name);
             }}
           >
             Download
