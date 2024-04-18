@@ -102,9 +102,11 @@ function createBackup() {
       log(JSON.stringify(data));
       logs = JSON.parse(data.DATA);
 
+      const maxLogs = 25;
       // keep 30 logs max
-      if (logs.length > 25) {
-        logs = logs.reverse().slice(0, 25);
+      if (logs.length > maxLogs) {
+        const logsToRemove = logs.length - maxLogs;
+        logs.splice(0, logsToRemove);
       }
     } else {
       logs = [];
@@ -151,7 +153,9 @@ function createBackup() {
                   }
                   // create the backup
                   MDS.cmd(
-                    `backup file:${minidappPath + "/backups/" + fileName} ${backupPassword ? "password:"+backupPassword : ''}`,
+                    `backup file:${minidappPath + "/backups/" + fileName} ${
+                      backupPassword ? "password:" + backupPassword : ""
+                    }`,
                     function (response) {
                       // something went wrong
                       if (!response.status) {
@@ -245,11 +249,12 @@ function logBackup(logs) {
     );
   } else {
     MDS.sql(
-      `UPDATE cache SET data = '${JSON.stringify(logs)}' WHERE name='BACKUP_LOGS'`,
+      `UPDATE cache SET data = '${JSON.stringify(
+        logs
+      )}' WHERE name='BACKUP_LOGS'`,
       function (response) {
         log(JSON.stringify(response));
       }
     );
   }
-
 }

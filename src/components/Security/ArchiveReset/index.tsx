@@ -17,8 +17,11 @@ interface ExportedArchive {
   size: string;
 }
 const ArchiveReset = () => {
-  const { displayBackButton: displayHeaderBackButton, setBackButton, promptArchives } =
-    useContext(appContext);
+  const {
+    displayBackButton: displayHeaderBackButton,
+    setBackButton,
+    promptArchives,
+  } = useContext(appContext);
   const navigate = useNavigate();
   const { authNavigate } = useAuth();
 
@@ -58,7 +61,7 @@ const ArchiveReset = () => {
   return (
     <>
       <Archives />
-      
+
       {!exportingArchive && (
         <SlideIn isOpen={true} delay={0}>
           <div className="flex flex-col h-full bg-black px-4 pb-4">
@@ -350,9 +353,11 @@ const ArchiveReset = () => {
                       has been saved in your internal archives directory. Click{" "}
                       <a
                         className="cursor-pointer"
-                        onClick={() =>
-                          authNavigate("/dashboard/archivereset/archives", [])
-                        }
+                        onClick={() => {
+                          setExportingArchive(false);
+                          setExportedArchive(null);
+                          promptArchives();
+                        }}
                       >
                         here
                       </a>{" "}
@@ -362,7 +367,7 @@ const ArchiveReset = () => {
                 )}
 
                 {exportedArchive === null && (
-                  <div className='flex items-center flex-col justify-center text-center'>
+                  <div className="flex items-center flex-col justify-center text-center">
                     <img
                       className="mb-4 inline"
                       alt="informative"

@@ -42,7 +42,7 @@ export function MinidappSystemFailed() {
                     />
                   </svg>
                   <h1 className="text-2xl mb-8">Minidapp System is offline</h1>
-                  <p>Try to re-login into your hub and re-open this app.</p>
+                  <p className="text-center">Try to re-login into your hub and re-open this app.</p>
                 </div>
                 <div className="flex flex-col gap-3">
                   <div className={`${styles.primaryActions}`}></div>

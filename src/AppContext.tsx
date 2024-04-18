@@ -94,7 +94,7 @@ const AppProvider = ({ children }: IProps) => {
 
   // apply these whenever vault is locked or unlocked
   useEffect(() => {
-    if (loaded.current) {
+    if (loaded && loaded.current) {
       if (vaultLocked) {
         resetVault();
       }
@@ -103,7 +103,7 @@ const AppProvider = ({ children }: IProps) => {
         fetchVault();
       }
     }
-  }, [vaultLocked]);
+  }, [vaultLocked, loaded]);
 
   const fetchVault = useCallback(() => {
     return rpc.vault().then((response) => {
