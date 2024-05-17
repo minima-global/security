@@ -109,7 +109,7 @@ const Host = () => {
                   setF(false);
                 }}
                 placeholder="e.g. xxx.xxx.xxx.xxx:9001"
-                className={`truncate !focus:outline-none px-4 py-3 core-black-contrast ${
+                className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
                   errors.ip && "!outline !outline-[#FF627E]"
                 }`}
               />

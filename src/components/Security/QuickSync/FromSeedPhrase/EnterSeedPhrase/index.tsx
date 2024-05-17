@@ -94,7 +94,7 @@ const EnterSeedPhrase = ({formNext, formPrev}: IProps) => {
         </p>
       )}
 
-      <ul className="grid grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+      <ul className="grid grid-cols-2 gap-2 mb-4">
         {values.seedPhrase &&
           seeds.slice(startIndex, endIndex).map((seed) => (
             <li key={`seedInputField_${seed}`} className="relative">

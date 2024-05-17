@@ -8,21 +8,15 @@ import Autocomplete from "../../../UI/Autocomplete";
 import bip39 from "../../../../utils/bip39";
 import EnterSeedPhrase from "./EnterSeedPhrase";
 
-
 const FromSeedPhrase = () => {
   const { _currentRestoreWindow } = useContext(appContext);
   const [f, setF] = useState(false);
-  const [step, setStep] = useState(1);  
-
-  const [seedPhraseStep, setSeedPhraseStep] = useState(0);
+  const [step, setStep] = useState(1);
 
   const [confirm, setConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<false | string>(false);
   const [shutdown, setShutdown] = useState(false);
-
-  
-
 
   if (_currentRestoreWindow !== "fromseedphrase") {
     return null;
@@ -44,28 +38,32 @@ const FromSeedPhrase = () => {
       <p className="text-center text-teal-300 mt-3">Step {step}/3</p>
       <div className="grid grid-cols-[auto_16px_auto_16px_auto] my-3 text-center items-center">
         <p
-          onClick={() => (!RESYNCING ? setStep(1) : null)}
-          className={`text-xs opacity-50 cursor-pointer hover:text-teal-300 ${
-            step === 1 && "opacity-100 text-teal-300"
-          }`}
+          onClick={() => (!RESYNCING && step === 2 ? setStep(1) : null)}
+          className={`text-xs opacity-50 cursor-pointer ${
+            step === 1 && "opacity-100 text-yellow-300 font-bold"
+          } ${step > 1 && "opacity-100 text-teal-300 font-bold"}`}
         >
           Enter Host
         </p>
-        <RightArrow />
+        <span className={`${step > 1 && "text-teal-300 opacity-50"}`}>
+          <RightArrow />
+        </span>
         <p
-          onClick={() => (!RESYNCING ? setStep(2) : null)}
-          className={`text-xs opacity-50 cursor-pointer hover:text-teal-300 ${
-            step === 2 && "opacity-100 text-teal-300"
-          }`}
+          onClick={() => (!RESYNCING && step === 3 ? setStep(2) : null)}
+          className={`text-xs opacity-50 cursor-pointer ${
+            step === 2 && "opacity-100 text-yellow-300"
+          } ${step > 2 && "opacity-100 text-teal-300 font-bold"}`}
         >
           Enter Seed Phrase
         </p>
-        <RightArrow />
+        <span className={`${step > 2 && "text-teal-300 opacity-50"}`}>
+          <RightArrow />
+        </span>
         <p
-          onClick={() => (!RESYNCING ? setStep(3) : null)}
-          className={`text-xs opacity-50 cursor-pointer hover:text-teal-300 ${
-            step === 3 && "opacity-100 text-teal-300"
-          }`}
+          //   onClick={() => (!RESYNCING ? setStep(3) : null)}
+          className={`text-xs opacity-50 cursor-pointer ${
+            step === 3 && "opacity-100 text-yellow-300"
+          } ${step > 2 && "opacity-100 text-teal-300 font-bold"}`}
         >
           Enter Keys
         </p>
@@ -272,20 +270,15 @@ const FromSeedPhrase = () => {
           handleSubmit,
           handleChange,
           handleBlur,
-          setFieldValue,
-          setFieldTouched,
-          setFieldError,
-          validateForm,
           errors,
           values,
-          touched,
           submitForm,
           isSubmitting,
         }) => (
           <form
             onSubmit={handleSubmit}
             className={`my-3 core-black-contrast-2 p-4 rounded ${
-              f && "outline outline-[#1B1B1B]"
+              f && "outline outline-none"
             }`}
           >
             {step === 1 && (
@@ -305,7 +298,7 @@ const FromSeedPhrase = () => {
                     setF(false);
                   }}
                   placeholder="e.g. xxx.xxx.xxx.xxx:9001"
-                  className={`truncate !focus:outline-none px-4 py-3 core-black-contrast ${
+                  className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
                     errors.ip && "!outline !outline-[#FF627E]"
                   }`}
                 />
@@ -314,9 +307,7 @@ const FromSeedPhrase = () => {
                 )}
 
                 <button
-                  onClick={() =>
-                   setStep(2) 
-                  }
+                  onClick={() => setStep(2)}
                   disabled={!!errors.ip}
                   type="button"
                   className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
@@ -328,7 +319,10 @@ const FromSeedPhrase = () => {
 
             {step === 2 && (
               <div>
-                <EnterSeedPhrase formNext={() => setStep(prevState => prevState + 1)} formPrev={() => setStep(prevState => prevState - 1)} />                
+                <EnterSeedPhrase
+                  formNext={() => setStep((prevState) => prevState + 1)}
+                  formPrev={() => setStep((prevState) => prevState - 1)}
+                />
               </div>
             )}
 
