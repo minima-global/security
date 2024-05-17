@@ -92,6 +92,8 @@ const AppProvider = ({ children }: IProps) => {
   // archive stuff
   const [archives, setArchives] = useState<any[]>([]);
 
+  const [_currentRestoreWindow, setCurrentRestoreWindow] = useState("host");
+
   // apply these whenever vault is locked or unlocked
   useEffect(() => {
     if (loaded && loaded.current) {
@@ -326,6 +328,9 @@ const AppProvider = ({ children }: IProps) => {
 
         // mds shutting down
         shuttingDown,
+
+        _currentRestoreWindow,
+        setCurrentRestoreWindow,
       }}
     >
       {children}
