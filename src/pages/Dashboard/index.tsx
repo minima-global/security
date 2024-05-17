@@ -6,9 +6,24 @@ import { appContext } from "../../AppContext";
 import BackButton from "../../components/UI/BackButton";
 import useCanUseTitleBar from "../../hooks/useCanUseTitleBar";
 
+const Brand = () => {
+  return (
+    <div className="grid grid-cols-[auto_1fr]">
+      <div className="my-auto">
+        <img
+          className="w-[32px]"
+          alt="security-icon"
+          src="./assets/security.svg"
+        />
+      </div>
+      <span className="font-bold ml-2 my-auto">Security</span>
+    </div>
+  );
+};
+
 const Dashboard = () => {
   const { displayBackButton, backButton } = useContext(appContext);
-  const openTitleBar  = useCanUseTitleBar();  
+  const openTitleBar = useCanUseTitleBar();
 
   return (
     <>
@@ -16,9 +31,11 @@ const Dashboard = () => {
       <MinidappSystemFailed />
 
       <div className="grid grid-rows-[56px_1fr] h-[100vh]">
-        <header onClick={openTitleBar} className="grid grid-cols-[1fr_minmax(0,_560px)_1fr]">
-          <div />
-          <div className="flex justify-between items-center">
+        <header
+          onClick={openTitleBar}
+          className="max-w-sm mx-auto my-auto w-full"
+        >
+          <div className="flex items-start justify-start">
             {!!displayBackButton && !!backButton.display && (
               <div className="flex items-center px-6 py-3 gap-3">
                 <BackButton
@@ -28,29 +45,10 @@ const Dashboard = () => {
                 />
               </div>
             )}
-            {!!displayBackButton && !backButton.display && (
-              <div className="flex items-center px-6 py-3">
-                <img
-                  className="w-8 h-8 mr-3"
-                  alt="security-icon"
-                  src="./assets/security.svg"
-                />
-                <span className="font-bold text-lg">Security</span>
-              </div>
-            )}
+            {!!displayBackButton && !backButton.display && <Brand />}
 
-            {!displayBackButton && (
-              <div className="flex items-center px-6 py-3">
-                <img
-                  className="w-8 h-8 mr-3"
-                  alt="security-icon"
-                  src="./assets/security.svg"
-                />
-                <span className="font-bold text-lg">Security</span>
-              </div>
-            )}
+            {!displayBackButton && <Brand />}
           </div>
-          <div />
         </header>
         <main className="grid grid-cols-[1fr_minmax(0,_560px)_1fr]">
           <div />
