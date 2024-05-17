@@ -34,6 +34,7 @@ import SeedResyncReset from "./components/Security/ArchiveReset/SeedResync/index
 import Archives from "./components/Security/ArchiveReset/Archives/index.tsx";
 import IntegrityCheck from "./components/Security/IntegrityCheck/index.tsx";
 import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
+import QuickSync from "./components/Security/QuickSync/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
@@ -131,6 +132,15 @@ const router = createHashRouter(
           element={
             <SlideIn delay={100}>
               <LockPrivateKeys />
+            </SlideIn>
+          }
+        />
+        
+        <Route
+          path="quicksync"
+          element={
+            <SlideIn delay={100}>
+              <QuickSync />
             </SlideIn>
           }
         />
