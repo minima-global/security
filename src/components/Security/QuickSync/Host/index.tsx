@@ -3,7 +3,6 @@ import { appContext } from "../../../../AppContext";
 import { Formik } from "formik";
 import * as yup from "yup";
 import AnimatedDialog from "../../../UI/AnimatedDialog";
-import Logs from "../../../Logs";
 
 const Host = () => {
   const { _currentRestoreWindow } = useContext(appContext);
@@ -40,20 +39,18 @@ const Host = () => {
               /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9][0-9]|[1-5](\d){4}|[1-9](\d){0,3})$/,
               "Invalid IP:Port format"
             )
-            .required("IP:Port is required"),
+            .required("IP:Port is required").trim(),
         })}
         onSubmit={async ({ ip }) => {
           setLoading(true);
           setError(false);
 
           try {
-            console.log("doing it..");
 
             await new Promise((resolve, reject) => {
               (window as any).MDS.cmd(
-                `megammrsync action:resync host:${ip}`,
+                `megammrsync action:resync host:${ip.trim()}`,
                 (resp) => {
-                  console.log("DOING IT", resp);
                   if (!resp.status)
                     reject(
                       resp.error
@@ -97,8 +94,8 @@ const Host = () => {
             }`}
           >
             <div className=" grid grid-rows-[auto_1fr]">
-              <label className="text-xs mb-2">
-                Enter the IP:Port of a Mega node to restore from
+              <label className="text-sm mb-3">
+                Enter the IP:Port of a mega node to restore from
               </label>
 
               <input
@@ -198,7 +195,7 @@ const Host = () => {
                         type="button"
                         className="disabled:bg-opacity-50 font-bold !py-2 text-black bg-teal-300"
                       >
-                        {DEFAULT && "Ok"}
+                        {DEFAULT && "Okay"}
                         {ERROR && "Re-try"}
                         {SUCCESS && "Close"}
                         {RESYNCING && "Re-syncing"}
