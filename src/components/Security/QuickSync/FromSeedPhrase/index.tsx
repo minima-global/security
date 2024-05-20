@@ -85,7 +85,7 @@ const FromSeedPhrase = () => {
           keys: 64,
           keyuses: 1000,
           seedPhrase: Array.from({ length: 24 }, (_, i) => ({
-            [i + 1]: "TEST".toUpperCase(),
+            [i + 1]: "".toUpperCase(),
           })).reduce((acc, cur) => Object.assign(acc, cur), {}),
         }}
         validationSchema={yup.object().shape({
