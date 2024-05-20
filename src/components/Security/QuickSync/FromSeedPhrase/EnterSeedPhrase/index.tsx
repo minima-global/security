@@ -85,9 +85,11 @@ const EnterSeedPhrase = ({formNext, formPrev}: IProps) => {
     return false;
   };
 
+
+  const TOUCHED_ALL_SEEDPHRASES = touched.seedPhrase && touched.seedPhrase.length === 25;
   return (
     <>
-      {step === 3 && !!errors.seedPhrase && (
+      {step === 3 && !!errors.seedPhrase && TOUCHED_ALL_SEEDPHRASES && (
         <p className="text-black text-sm bg-yellow-300 rounded p-2 mb-3">
           There is something wrong with your seed phrase, double check that you have
           entered it correctly.

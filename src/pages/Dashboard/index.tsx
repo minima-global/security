@@ -8,7 +8,7 @@ import useCanUseTitleBar from "../../hooks/useCanUseTitleBar";
 
 const Brand = () => {
   return (
-    <div className="grid grid-cols-[auto_1fr]">
+    <div className="grid grid-cols-[auto_1fr] px-3">
       <div className="my-auto">
         <img
           className="w-[32px]"
@@ -25,6 +25,7 @@ const Dashboard = () => {
   const { displayBackButton, backButton } = useContext(appContext);
   const openTitleBar = useCanUseTitleBar();
 
+  const DISPLAY_BACK_BUTTON = displayBackButton && displayBackButton.display;
   return (
     <>
       <AppIsInReadMode />
@@ -33,10 +34,13 @@ const Dashboard = () => {
       <div className="grid grid-rows-[56px_1fr] h-[100vh]">
         <header
           onClick={openTitleBar}
-          className="max-w-sm mx-auto my-auto w-full"
+          className="grid grid-cols-[1fr_minmax(0,_860px)_1fr]"
         >
-          <div className="flex items-start justify-start">
-            {!!displayBackButton && !!backButton.display && (
+
+          <div/>
+
+          <div className="py-3">
+            {DISPLAY_BACK_BUTTON && (
               <div className="flex items-center px-6 py-3 gap-3">
                 <BackButton
                   to={backButton.to}
@@ -45,10 +49,12 @@ const Dashboard = () => {
                 />
               </div>
             )}
-            {!!displayBackButton && !backButton.display && <Brand />}
+            
 
-            {!displayBackButton && <Brand />}
+            {!DISPLAY_BACK_BUTTON && <Brand />}
           </div>
+
+          <div />
         </header>
         <main className="grid grid-cols-[1fr_minmax(0,_560px)_1fr]">
           <div />

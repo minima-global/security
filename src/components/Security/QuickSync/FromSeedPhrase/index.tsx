@@ -1,10 +1,9 @@
 import { useContext, useState } from "react";
 import { appContext } from "../../../../AppContext";
-import { Formik, getIn } from "formik";
+import { Formik } from "formik";
 import * as yup from "yup";
 import AnimatedDialog from "../../../UI/AnimatedDialog";
 import RightArrow from "../../../Icons/RightArrow";
-import Autocomplete from "../../../UI/Autocomplete";
 import bip39 from "../../../../utils/bip39";
 import EnterSeedPhrase from "./EnterSeedPhrase";
 
@@ -36,14 +35,14 @@ const FromSeedPhrase = () => {
         latest block.
       </p>
       <p className="text-center text-teal-300 mt-3">Step {step}/3</p>
-      <div className="grid grid-cols-[auto_16px_auto_16px_auto] my-3 text-center items-center">
+      <div className="grid grid-cols-[auto_16px_auto_16px_auto_16px_auto] my-3 text-center items-center">
         <p
           onClick={() => (!RESYNCING && step === 2 ? setStep(1) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
             step === 1 && "opacity-100 text-yellow-300 font-bold"
           } ${step > 1 && "opacity-100 text-teal-300 font-bold"}`}
         >
-          Enter Host
+          Host
         </p>
         <span className={`${step > 1 && "text-teal-300 opacity-50"}`}>
           <RightArrow />
@@ -54,50 +53,40 @@ const FromSeedPhrase = () => {
             step === 2 && "opacity-100 text-yellow-300"
           } ${step > 2 && "opacity-100 text-teal-300 font-bold"}`}
         >
-          Enter Seed Phrase
+          Seed Phrase
         </p>
         <span className={`${step > 2 && "text-teal-300 opacity-50"}`}>
           <RightArrow />
         </span>
         <p
-          //   onClick={() => (!RESYNCING ? setStep(3) : null)}
+          onClick={() => (!RESYNCING && step === 4 ? setStep(3) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
             step === 3 && "opacity-100 text-yellow-300"
           } ${step > 2 && "opacity-100 text-teal-300 font-bold"}`}
         >
-          Enter Keys
+          Keys
+        </p>
+        <span className={`${step > 3 && "text-teal-300 opacity-50"}`}>
+          <RightArrow />
+        </span>
+        <p
+          //   onClick={() => (!RESYNCING ? setStep(3) : null)}
+          className={`text-xs opacity-50 cursor-pointer ${
+            step === 4 && "opacity-100 text-yellow-300"
+          } ${step > 3 && "opacity-100 text-teal-300 font-bold"}`}
+        >
+          Key Uses
         </p>
       </div>
       <Formik
         validateOnMount
         initialValues={{
           ip: "",
-          seedPhrase: {
-            1: "".toUpperCase(),
-            2: "".toUpperCase(),
-            3: "".toUpperCase(),
-            4: "".toUpperCase(),
-            5: "".toUpperCase(),
-            6: "".toUpperCase(),
-            7: "".toUpperCase(),
-            8: "".toUpperCase(),
-            9: "".toUpperCase(),
-            10: "".toUpperCase(),
-            11: "".toUpperCase(),
-            12: "".toUpperCase(),
-            13: "".toUpperCase(),
-            14: "".toUpperCase(),
-            15: "".toUpperCase(),
-            16: "".toUpperCase(),
-            17: "".toUpperCase(),
-            18: "".toUpperCase(),
-            19: "".toUpperCase(),
-            20: "".toUpperCase(),
-            21: "".toUpperCase(),
-            22: "".toUpperCase(),
-            23: "".toUpperCase(),
-            24: "".toUpperCase(),
-          },
+          keys: 64,
+          keyuses: 1000,
+          seedPhrase: Array.from({ length: 24 }, (_, i) => ({
+            [i + 1]: "TEST".toUpperCase(),
+          })).reduce((acc, cur) => Object.assign(acc, cur), {}),
         }}
         validationSchema={yup.object().shape({
           ip: yup
@@ -230,16 +219,25 @@ const FromSeedPhrase = () => {
               .oneOf(bip39, "Invalid word.")
               .required("Looks like you missed a word"),
           }),
+          keys: yup.number().required("This field is required"),
+          keyuses: yup.number().required("This field is required"),
         })}
-        onSubmit={async ({ ip }) => {
+        onSubmit={async ({ ip, seedPhrase, keys, keyuses }) => {
           setLoading(true);
           setError(false);
 
+          console.log("Doing it..")
           try {
+            // do your thing
+            const phraseAsString = Object.values(seedPhrase)
+              .toString()
+              .replaceAll(",", " ");
+              console.log("Phrase", phraseAsString);
             await new Promise((resolve, reject) => {
               (window as any).MDS.cmd(
-                `megammrsync action:resync host:${ip.trim()}`,
+                `megammrsync action:resync host:${ip.trim()} phrase:"${phraseAsString}" keys:${keys} keyuses:${keyuses}`,
                 (resp) => {
+                  console.log(resp);
                   if (!resp.status)
                     reject(
                       resp.error
@@ -262,7 +260,7 @@ const FromSeedPhrase = () => {
               return setError(error.message);
             }
 
-            setError("Host re-sync failed, please try again.");
+            setError("Seed phrase re-sync failed, please try again.");
           }
         }}
       >
@@ -326,6 +324,98 @@ const FromSeedPhrase = () => {
               </div>
             )}
 
+            {step === 3 && (
+              <div>
+                <div className=" grid grid-rows-[auto_1fr]">
+                  <label className="text-sm mb-3">
+                    Enter the number of keys (addresses) to create (default is
+                    64)
+                  </label>
+
+                  <input
+                    id="keys"
+                    name="keys"
+                    onChange={handleChange}
+                    value={values.keys}
+                    onFocus={() => setF(true)}
+                    onBlur={(e) => {
+                      handleBlur(e);
+                      setF(false);
+                    }}
+                    placeholder="Number of keys (addresses)"
+                    className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
+                      errors.ip && "!outline !outline-[#FF627E]"
+                    }`}
+                    type="number"
+                  />
+                  {errors.keys && (
+                    <span className="mt-3 text-[#FF627E]">{errors.keys}</span>
+                  )}
+
+                  <p className="my-2">
+                    All Minima nodes are started with 64 addresses by default.
+                    If you created more, you can set the number of addresses to
+                    create manually here. Note that in future you should always
+                    create at least this many addresses to ensure all your coins
+                    are recovered.
+                  </p>
+
+                  <button
+                    onClick={() => setStep(4)}
+                    disabled={!!errors.keys}
+                    type="button"
+                    className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+            {step === 4 && (
+              <div>
+                <div className=" grid grid-rows-[auto_1fr]">
+                  <label className="text-sm mb-3">
+                    Enter the number of key uses
+                  </label>
+
+                  <input
+                    id="keyuses"
+                    name="keyuses"
+                    onChange={handleChange}
+                    value={values.keyuses}
+                    onFocus={() => setF(true)}
+                    onBlur={(e) => {
+                      handleBlur(e);
+                      setF(false);
+                    }}
+                    placeholder="Number of signatures"
+                    className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
+                      errors.ip && "!outline !outline-[#FF627E]"
+                    }`}
+                    type="number"
+                  />
+                  {errors.keyuses && (
+                    <span className="mt-3 text-[#FF627E]">{errors.keyuses}</span>
+                  )}
+
+                  <p className="my-2">
+                    Please enter the maximum times you have signed a
+                    transaction. Otherwise leave the default 1000 if you think
+                    you haven't signed over 1000 transactions
+                  </p>
+
+                  <button
+                    onClick={() => setConfirm(true)}
+                    disabled={!!errors.keyuses}
+                    type="button"
+                    className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
+
             <AnimatedDialog
               isOpen={confirm}
               onClose={() => null}
@@ -336,15 +426,18 @@ const FromSeedPhrase = () => {
               <div className="h-full">
                 <div className="flex justify-between items-center pr-4">
                   <div className="grid grid-cols-[auto_1fr] ml-2">
-                    <h3 className="my-auto font-bold ml-2">Host Resync</h3>
+                    <h3 className="my-auto font-bold ml-2">
+                      Seed Phrase Restore
+                    </h3>
                   </div>
                 </div>
 
                 <div className="px-4 h-full flex flex-col justify-between">
                   {DEFAULT && (
                     <p className="text-sm my-3">
-                      Are you sure you wish to restore the coins for this node
-                      and re-sync to the latest block?
+                      Are you sure you wish to wipe and restore this node to the
+                      seed phrase provided? Your coins will be restored and the
+                      node will re-sync to the latest block.
                     </p>
                   )}
                   {SUCCESS && (
@@ -363,7 +456,7 @@ const FromSeedPhrase = () => {
                   <div className="flex justify-end mb-4">
                     <div></div>
                     <div className="grid grid-cols-[auto_1fr] gap-2">
-                      {!SUCCESS && (
+                      {!SUCCESS && !RESYNCING && (
                         <button
                           disabled={isSubmitting}
                           className="disabled:bg-opacity-10 bg-gray-600 !py-2  font-bold tracking-tighter"

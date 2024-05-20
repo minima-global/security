@@ -163,7 +163,7 @@ const Host = () => {
                   <div className="flex justify-end mb-4">
                     <div></div>
                     <div className="grid grid-cols-[auto_1fr] gap-2">
-                      {!SUCCESS && (
+                      {!SUCCESS && !RESYNCING && (
                         <button
                           disabled={isSubmitting}
                           className="disabled:bg-opacity-10 bg-gray-600 !py-2  font-bold tracking-tighter"

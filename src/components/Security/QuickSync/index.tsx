@@ -1,4 +1,3 @@
-import { Outlet } from "react-router-dom";
 import Navigation from "./Navigation";
 import Host from "./Host";
 import FromSeedPhrase from "./FromSeedPhrase";

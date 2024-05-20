@@ -69,7 +69,7 @@ export function Security() {
           <div className="grid grid-cols-[1fr_auto_1fr] items-center">
             <hr className="border-gray-500 w-full" />
             <div className="mx-3">
-              <span className="text-xs text-gray-200">Legacy</span>
+              <span className="text-xs text-violet-400">Legacy</span>
             </div>
             <hr className="border-gray-500 w-full" />
           </div>
