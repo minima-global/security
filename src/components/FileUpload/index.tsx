@@ -30,7 +30,7 @@ const FileUpload = () => {
           {_promptFileUpload && _promptFileUpload.status === true && (
             <>
               <p>File upload completed!</p>
-              <span>
+              <span className="text-teal-300">
                 <DoneIcon fill="currentColor" />
               </span>
             </>

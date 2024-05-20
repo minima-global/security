@@ -8,6 +8,9 @@ import MinimaFileUploader from "../../MinimaFileUploader";
 import { format } from "date-fns";
 import * as utils from "../../../../utils";
 
+import * as fileManager from "../../../../__minima__/libs/fileManager";
+import TogglePasswordIcon from "../../../UI/TogglePasswordIcon/TogglePasswordIcon";
+
 const makeTimestamp = (filename: string) => {
   const regex = /^(auto_)?minima_backup_(\d+)__([^_]+)_(\d+)\.bak$/;
   // Extracting components from the filename using regex
@@ -41,6 +44,7 @@ const FromBackup = () => {
   const [f, setF] = useState(false);
   const [step, setStep] = useState(1);
 
+  const [hidePassword, setHidePassword] = useState(true);
   const [searchText, setSearchText] = useState("");
   const [confirm, setConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -77,7 +81,7 @@ const FromBackup = () => {
             // Extract the date strings from backup names
             const dateA: any = new Date(makeTimestamp(a.name));
             const dateB: any = new Date(makeTimestamp(b.name));
-        
+
             // Compare the dates
             return dateA - dateB; // Sort in ascneding order (most recent first)
           })
@@ -118,8 +122,8 @@ const FromBackup = () => {
         when the backup was taken. Restore the backup with QuickSync to ensure
         all your coins are restored and the chain is synced to the latest block.
       </p>
-      <p className="text-center text-teal-300 mt-3">Step {step}/2</p>
-      <div className="grid grid-cols-[auto_16px_auto] my-3 text-center items-center">
+      <p className="text-center text-teal-300 mt-3">Step {step}/3</p>
+      <div className="grid grid-cols-[auto_16px_auto_16px_auto] my-3 text-center items-center">
         <p
           onClick={() => (!RESYNCING && step === 2 ? setStep(1) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
@@ -139,11 +143,23 @@ const FromBackup = () => {
         >
           Host
         </p>
+        <span className={`${step > 2 && "text-teal-300 opacity-50"}`}>
+          <RightArrow />
+        </span>
+        <p
+          className={`text-xs opacity-50 cursor-pointer ${
+            step === 3 && "opacity-100 text-yellow-300"
+          } ${step > 3 && "opacity-100 text-teal-300 font-bold"}`}
+        >
+          Password
+        </p>
       </div>
       <Formik
         validateOnMount
         initialValues={{
           ip: "",
+          file: "",
+          password: "",
         }}
         validationSchema={yup.object().shape({
           ip: yup
@@ -154,15 +170,19 @@ const FromBackup = () => {
             )
             .required("IP:Port is required")
             .trim(),
+          file: yup.string().required("Backup required").min(1).trim(),
         })}
-        onSubmit={async ({ ip }) => {
+        onSubmit={async ({ ip, file, password }) => {
           setLoading(true);
           setError(false);
 
           try {
+            const fullPath = await fileManager.getPath(file);
             await new Promise((resolve, reject) => {
               (window as any).MDS.cmd(
-                `megammrsync action:resync host:${ip.trim()}`,
+                `megammrsync action:resync host:${ip.trim()} file:"${fullPath}" ${
+                  password.length > 0 && "password:" + password
+                }`,
                 (resp) => {
                   if (!resp.status)
                     reject(
@@ -174,19 +194,25 @@ const FromBackup = () => {
                   resolve(resp);
                 }
               );
-            }).catch((error) => {
-              throw error;
             });
 
             setShutdown(true);
             setLoading(false);
           } catch (error) {
             setLoading(false);
+
+            if (typeof error === "string") {
+              return setError(
+                error.includes("Incorrect Password!")
+                  ? "Incorrect password!"
+                  : error
+              );
+            }
             if (error instanceof Error) {
               return setError(error.message);
             }
 
-            setError("Seed phrase re-sync failed, please try again.");
+            setError("Backup re-sync failed, please try again.");
           }
         }}
       >
@@ -194,9 +220,10 @@ const FromBackup = () => {
           handleSubmit,
           handleChange,
           handleBlur,
+          setFieldValue,
+          submitForm,
           errors,
           values,
-          submitForm,
           isSubmitting,
         }) => (
           <form
@@ -205,7 +232,61 @@ const FromBackup = () => {
               f && "outline outline-none"
             }`}
           >
-            {JSON.stringify(values)}
+            {step === 1 && (
+              <div>
+                <label className="text-sm mb-3">
+                  Select a backup to restore
+                </label>
+
+                <div className="grid grid-rows-[16px_1fr]">
+                  <div />
+                  {values.file.length === 0 && (
+                    <MinimaFileUploader
+                      renderData={renderBackups}
+                      internalDataName="backups"
+                      internalListStyle="my-3"
+                      internalSearch={
+                        <div className="px-3">
+                          <input
+                            value={searchText}
+                            onChange={handleSearchEvent}
+                            placeholder="Search by date/time"
+                            className="w-full rounded px-3 mt-3 !text-black focus:!outline focus:outline-violet-300 py-2"
+                          />
+                        </div>
+                      }
+                      externalAcceptFileType=".bak"
+                    />
+                  )}
+
+                  {values.file.length > 0 && (
+                    <div>
+                      <div className="grid grid-rows-2 bg-[#1B1B1B] px-3 my-2 rounded py-2">
+                        <p className="text-teal-300">Selected file</p>
+                        <p className="text-sm break-all">{values.file}</p>
+                      </div>
+                      <button
+                        onClick={() => setFieldValue("file", "")}
+                        type="button"
+                        className="!p-2 bg-black focus:outline focus:outline-violet-300 text-white hover:!cursor-pointer w-full font-bold mb-2"
+                      >
+                        Use another file
+                      </button>
+
+                      <button
+                        disabled={!!errors.file}
+                        onClick={() => setStep(2)}
+                        type="button"
+                        className="bg-white focus:outline focus:outline-violet-300 text-black hover:bg-opacity-80 w-full font-bold disabled:opacity-10"
+                      >
+                        Next
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {step === 2 && (
               <div className=" grid grid-rows-[auto_1fr]">
                 <label className="text-sm mb-3">
@@ -232,7 +313,7 @@ const FromBackup = () => {
                 )}
 
                 <button
-                  onClick={() => setStep(2)}
+                  onClick={() => setStep(3)}
                   disabled={!!errors.ip}
                   type="button"
                   className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
@@ -242,31 +323,55 @@ const FromBackup = () => {
               </div>
             )}
 
-            {step === 1 && (
-              <div>
+            {step === 3 && (
+              <div className=" grid grid-rows-[auto_1fr]">
                 <label className="text-sm mb-3">
-                  Select a backup to restore
+                  Enter your backup password{" "}
+                  <span className="text-xs">(if applicable)</span>
                 </label>
 
-                <div className="grid grid-rows-[2px_1fr] my-4 gap-2">
-                  <div />
-                  <MinimaFileUploader
-                    renderData={renderBackups}
-                    internalDataName="backups"
-                    internalListStyle="my-3"
-                    internalSearch={
-                      <div className="px-3">
-                        <input
-                            value={searchText}
-                          onChange={handleSearchEvent}
-                          placeholder="Search by date/time"
-                          className="w-full rounded px-3 mt-3 !text-black focus:!outline focus:outline-violet-300 py-2"
-                        />
-                      </div>
-                    }
-                    externalAcceptFileType=".bak"
+                <div
+                  className={`w-full bg-[#1B1B1B] grid grid-cols-[1fr_auto] ${
+                    errors.password && "!outline !outline-[#FF627E]"
+                  } ${f && "outline outline-violet-300"} rounded`}
+                >
+                  <input
+                    id="password"
+                    name="password"
+                    type={hidePassword ? "password" : "text"}
+                    onChange={handleChange}
+                    value={values.password}
+                    onFocus={() => setF(true)}
+                    onBlur={(e) => {
+                      handleBlur(e);
+                      setF(false);
+                    }}
+                    placeholder="Enter password"
+                    className={`truncate focus:outline-none px-4 py-3 core-black-contrast `}
                   />
+                  <div
+                    className="my-auto px-3"
+                    onClick={() => setHidePassword((prevState) => !prevState)}
+                  >
+                    <TogglePasswordIcon toggle={!hidePassword} />
+                  </div>
                 </div>
+                {errors.password && (
+                  <span className="mt-3 text-[#FF627E]">{errors.password}</span>
+                )}
+
+                <p className="my-2">
+                  Keep the field empty if you haven't set any.
+                </p>
+
+                <button
+                  onClick={() => setConfirm(true)}
+                  disabled={!!errors.password}
+                  type="button"
+                  className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
+                >
+                  Next
+                </button>
               </div>
             )}
 
@@ -280,18 +385,17 @@ const FromBackup = () => {
               <div className="h-full">
                 <div className="flex justify-between items-center pr-4">
                   <div className="grid grid-cols-[auto_1fr] ml-2">
-                    <h3 className="my-auto font-bold ml-2">
-                      Seed Phrase Restore
-                    </h3>
+                    <h3 className="my-auto font-bold ml-2">Backup Restore</h3>
                   </div>
                 </div>
 
                 <div className="px-4 h-full flex flex-col justify-between">
                   {DEFAULT && (
                     <p className="text-sm my-3">
-                      Are you sure you wish to wipe and restore this node to the
-                      seed phrase provided? Your coins will be restored and the
-                      node will re-sync to the latest block.
+                      This will restore the backup and attempt to sync to the
+                      latest block which may or may not be successful if the
+                      backup is old or was taken when out of sync with the
+                      chain. Continue?
                     </p>
                   )}
                   {SUCCESS && (

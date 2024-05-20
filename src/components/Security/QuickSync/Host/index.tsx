@@ -69,6 +69,13 @@ const Host = () => {
             setLoading(false);
           } catch (error) {
             setLoading(false);
+            if (typeof error === "string") {
+              return setError(
+                error.includes("Incorrect Password!")
+                  ? "Incorrect password!"
+                  : error
+              );
+            }
             if (error instanceof Error) {
               return setError(error.message);
             }

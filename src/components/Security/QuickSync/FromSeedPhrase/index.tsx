@@ -245,14 +245,19 @@ const FromSeedPhrase = () => {
                   resolve(resp);
                 }
               );
-            }).catch((error) => {
-              throw error;
             });
 
             setShutdown(true);
             setLoading(false);
           } catch (error) {
             setLoading(false);
+            if (typeof error === "string") {
+              return setError(
+                error.includes("Incorrect Password!")
+                  ? "Incorrect password!"
+                  : error
+              );
+            }
             if (error instanceof Error) {
               return setError(error.message);
             }
@@ -392,7 +397,9 @@ const FromSeedPhrase = () => {
                     type="number"
                   />
                   {errors.keyuses && (
-                    <span className="mt-3 text-[#FF627E]">{errors.keyuses}</span>
+                    <span className="mt-3 text-[#FF627E]">
+                      {errors.keyuses}
+                    </span>
                   )}
 
                   <p className="my-2">

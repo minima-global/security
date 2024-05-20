@@ -45,7 +45,7 @@ const MinimaFileUploader = ({
   externalAcceptFileType,
 }: IProps) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const { promptFileUpload } = useContext(appContext);
+  const { _promptFileUpload, promptFileUpload } = useContext(appContext);
   const { setFieldValue }: any = useFormikContext();
 
   const [promptInternal, setPromptInternal] = useState(false);
@@ -152,7 +152,7 @@ const MinimaFileUploader = ({
               } finally {
                 setTimeout(() => {
                   promptFileUpload(false);
-                }, 5000);
+                }, _promptFileUpload && _promptFileUpload.status === false ? 5000 : 2000);
               }
             }}
           />

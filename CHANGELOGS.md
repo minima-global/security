@@ -1,3 +1,9 @@
+##### [1.8.0] - 20 May 24
+
+- Tweak design of home page
+- Added legacy opts for Archive Reset & Restore from backup
+- Added new feature "Restore node"
+
 ##### [1.1.0] - 11 December 23
 
 - Key down while clicked in a seed phrase input element will open suggestions
