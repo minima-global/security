@@ -5,6 +5,7 @@ import { useContext } from "react";
 import { appContext } from "../../AppContext";
 import BackButton from "../../components/UI/BackButton";
 import useCanUseTitleBar from "../../hooks/useCanUseTitleBar";
+import FileUpload from "../../components/FileUpload";
 
 const Brand = () => {
   return (
@@ -30,6 +31,7 @@ const Dashboard = () => {
     <>
       <AppIsInReadMode />
       <MinidappSystemFailed />
+      <FileUpload />
 
       <div className="grid grid-rows-[56px_1fr] h-[100vh]">
         <header

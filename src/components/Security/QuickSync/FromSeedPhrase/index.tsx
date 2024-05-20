@@ -34,7 +34,7 @@ const FromSeedPhrase = () => {
         your coins from the seed phrase you provide and re-sync the chain to the
         latest block.
       </p>
-      <p className="text-center text-teal-300 mt-3">Step {step}/3</p>
+      <p className="text-center text-teal-300 mt-3">Step {step}/4</p>
       <div className="grid grid-cols-[auto_16px_auto_16px_auto_16px_auto] my-3 text-center items-center">
         <p
           onClick={() => (!RESYNCING && step === 2 ? setStep(1) : null)}
@@ -226,18 +226,15 @@ const FromSeedPhrase = () => {
           setLoading(true);
           setError(false);
 
-          console.log("Doing it..")
           try {
             // do your thing
             const phraseAsString = Object.values(seedPhrase)
               .toString()
               .replaceAll(",", " ");
-              console.log("Phrase", phraseAsString);
             await new Promise((resolve, reject) => {
               (window as any).MDS.cmd(
                 `megammrsync action:resync host:${ip.trim()} phrase:"${phraseAsString}" keys:${keys} keyuses:${keyuses}`,
                 (resp) => {
-                  console.log(resp);
                   if (!resp.status)
                     reject(
                       resp.error

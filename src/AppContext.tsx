@@ -83,6 +83,9 @@ const AppProvider = ({ children }: IProps) => {
     null
   );
 
+  // uploading file state
+  const [_promptFileUpload, setPromptFileUpload] = useState<false | {status: boolean, progress: string, error: string}>(false);
+
   const [minidappSystemFailed, setMinidappSystemFailed] = useState<
     boolean | null
   >(null);
@@ -283,6 +286,10 @@ const AppProvider = ({ children }: IProps) => {
   const promptArchives = () => {
     setPromptArchives((prevState) => !prevState);
   };
+  
+  const promptFileUpload = (progress: {status: boolean, progress: string, error: string} | false) => {
+    setPromptFileUpload(progress);
+  };
 
   return (
     <appContext.Provider
@@ -309,6 +316,9 @@ const AppProvider = ({ children }: IProps) => {
         backButton,
         setBackButton,
         displayBackButton,
+
+        _promptFileUpload,
+        promptFileUpload,
 
         //backups
         _backupLogs,

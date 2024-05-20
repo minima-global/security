@@ -35,9 +35,6 @@ import Archives from "./components/Security/ArchiveReset/Archives/index.tsx";
 import IntegrityCheck from "./components/Security/IntegrityCheck/index.tsx";
 import ManageSeedPhrase from "./components/Security/ManageSeedPhrase/index.tsx";
 import QuickSync from "./components/Security/QuickSync/index.tsx";
-import Host from "./components/Security/QuickSync/Host/index.tsx";
-import FromBackup from "./components/Security/QuickSync/FromBackup/index.tsx";
-import FromSeedPhrase from "./components/Security/QuickSync/FromSeedPhrase/index.tsx";
 
 const router = createHashRouter(
   createRoutesFromElements(
