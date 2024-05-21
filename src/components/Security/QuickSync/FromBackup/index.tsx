@@ -10,6 +10,7 @@ import * as utils from "../../../../utils";
 
 import * as fileManager from "../../../../__minima__/libs/fileManager";
 import TogglePasswordIcon from "../../../UI/TogglePasswordIcon/TogglePasswordIcon";
+import DialogLogs from "../DialogLogs";
 
 const makeTimestamp = (filename: string) => {
   const regex = /^(auto_)?minima_backup_(\d+)__([^_]+)_(\d+)\.bak$/;
@@ -155,7 +156,7 @@ const FromBackup = () => {
         </p>
       </div>
       <Formik
-        validateOnMount
+        // validateOnMount
         initialValues={{
           ip: "",
           file: "",
@@ -303,7 +304,7 @@ const FromBackup = () => {
                     handleBlur(e);
                     setF(false);
                   }}
-                  placeholder="e.g. xxx.xxx.xxx.xxx:9001"
+                  placeholder="e.g. 34.32.59.133:9001"
                   className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
                     errors.ip && "!outline !outline-[#FF627E]"
                   }`}
@@ -408,6 +409,8 @@ const FromBackup = () => {
                   {RESYNCING && (
                     <div>
                       <p className="animate-pulse">Re-syncing...</p>
+
+                      <DialogLogs />
                     </div>
                   )}
 

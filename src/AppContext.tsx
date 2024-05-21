@@ -262,6 +262,7 @@ const AppProvider = ({ children }: IProps) => {
         }
         if (msg.event === "MINIMALOG") {
           const log = msg.data.message;
+          
           setLogs((prevState) => [...prevState, log]);
         }
 

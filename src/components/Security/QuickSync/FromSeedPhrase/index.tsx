@@ -6,6 +6,7 @@ import AnimatedDialog from "../../../UI/AnimatedDialog";
 import RightArrow from "../../../Icons/RightArrow";
 import bip39 from "../../../../utils/bip39";
 import EnterSeedPhrase from "./EnterSeedPhrase";
+import DialogLogs from "../DialogLogs";
 
 const FromSeedPhrase = () => {
   const { _currentRestoreWindow } = useContext(appContext);
@@ -79,7 +80,7 @@ const FromSeedPhrase = () => {
         </p>
       </div>
       <Formik
-        validateOnMount
+        // validateOnMount
         initialValues={{
           ip: "",
           keys: 64,
@@ -269,8 +270,9 @@ const FromSeedPhrase = () => {
         {({
           handleSubmit,
           handleChange,
-          handleBlur,
+          handleBlur,          
           errors,
+          touched,
           values,
           submitForm,
           isSubmitting,
@@ -297,7 +299,7 @@ const FromSeedPhrase = () => {
                     handleBlur(e);
                     setF(false);
                   }}
-                  placeholder="e.g. xxx.xxx.xxx.xxx:9001"
+                  placeholder="e.g. 34.32.59.133:9001"
                   className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
                     errors.ip && "!outline !outline-[#FF627E]"
                   }`}
@@ -308,7 +310,7 @@ const FromSeedPhrase = () => {
 
                 <button
                   onClick={() => setStep(2)}
-                  disabled={!!errors.ip}
+                  disabled={!!errors.ip || !touched.ip}
                   type="button"
                   className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
                 >
@@ -454,6 +456,8 @@ const FromSeedPhrase = () => {
                   {RESYNCING && (
                     <div>
                       <p className="animate-pulse">Re-syncing...</p>
+
+                      <DialogLogs />
                     </div>
                   )}
 

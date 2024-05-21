@@ -1,3 +1,8 @@
+##### [1.8.2] - 21 May 24
+
+- Add cli logs to Dialog
+- Add spartacusrex default host ip for a placeholder
+
 ##### [1.8.0] - 20 May 24
 
 - Tweak design of home page

@@ -11,7 +11,7 @@
 /**
  * e.g for renderData method could be..
  * const renderBackups = ({setFieldValue, setPromptInternal}) => {
-    console.log(backups);
+   
     return (
       <>
         {backups.map((backup, index) => (
@@ -190,39 +190,3 @@ const MinimaFileUploader = ({
 
 export default MinimaFileUploader;
 
-/**
- * (window as any).MDS.file.upload(
-                                      values.upload,
-                                      async function (resp: any) {
-                                        if (resp.allchunks >= 10) {
-                                          setProgress(
-                                            resp.chunk / resp.allchunks
-                                          );
-                                        }
-                                        const fileName = resp.filename;
-                                        if (resp.allchunks === resp.chunk) {
-                                          setFileUpload(false);
-
-                                          // Move uploaded file to internal, then set full path to prepare for reset command
-                                          (window as any).MDS.file.move(
-                                            "/fileupload/" + fileName,
-                                            "/archives/" + fileName,
-                                            (resp: any) => {
-                                              if (resp.status) {
-                                                setFieldValue(
-                                                  "file",
-                                                  "/archives/" + fileName
-                                                );
-                                                setFieldValue(
-                                                  "upload",
-                                                  undefined
-                                                );
-                                                setFileUpload(false);
-                                                getArchives();
-                                              }
-                                            }
-                                          );
-                                        }
-                                      }
-                                    );
- */

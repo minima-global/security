@@ -154,7 +154,7 @@ const EnterSeedPhrase = ({formNext, formPrev}: IProps) => {
             Previous
           </button>
           <button
-            disabled={step === 3 && !!errors.seedPhrase}
+            disabled={(step === 3 && !!errors.seedPhrase) || (step === 3 && !TOUCHED_ALL_SEEDPHRASES)}
             type="button"
             onClick={() => step !== 3 ? handleNext() : formNext()}
             className="font-bold bg-white text-black disabled:bg-opacity-10"

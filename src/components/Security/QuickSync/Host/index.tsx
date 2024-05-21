@@ -3,6 +3,7 @@ import { appContext } from "../../../../AppContext";
 import { Formik } from "formik";
 import * as yup from "yup";
 import AnimatedDialog from "../../../UI/AnimatedDialog";
+import DialogLogs from "../DialogLogs";
 
 const Host = () => {
   const { _currentRestoreWindow } = useContext(appContext);
@@ -22,6 +23,7 @@ const Host = () => {
   const ERROR = !loading && error && !shutdown;
   const SUCCESS = !loading && !error && shutdown;
 
+  
   return (
     <div>
       <h3 className="text-xl mb-2 font-bold">Host</h3>
@@ -30,7 +32,7 @@ const Host = () => {
         the latest block.
       </p>
       <Formik
-        validateOnMount
+        // validateOnMount
         initialValues={{ ip: "" }}
         validationSchema={yup.object().shape({
           ip: yup
@@ -39,14 +41,14 @@ const Host = () => {
               /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9][0-9]|[1-5](\d){4}|[1-9](\d){0,3})$/,
               "Invalid IP:Port format"
             )
-            .required("IP:Port is required").trim(),
+            .required("IP:Port is required")
+            .trim(),
         })}
         onSubmit={async ({ ip }) => {
           setLoading(true);
           setError(false);
 
           try {
-
             await new Promise((resolve, reject) => {
               (window as any).MDS.cmd(
                 `megammrsync action:resync host:${ip.trim()}`,
@@ -89,10 +91,11 @@ const Host = () => {
           handleChange,
           handleBlur,
           errors,
+          touched,
           values,
           isValid,
           submitForm,
-          isSubmitting
+          isSubmitting,
         }) => (
           <form
             onSubmit={handleSubmit}
@@ -115,7 +118,7 @@ const Host = () => {
                   handleBlur(e);
                   setF(false);
                 }}
-                placeholder="e.g. xxx.xxx.xxx.xxx:9001"
+                placeholder="e.g. 34.32.59.133:9001"
                 className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
                   errors.ip && "!outline !outline-[#FF627E]"
                 }`}
@@ -127,7 +130,7 @@ const Host = () => {
             <button
               onClick={() => setConfirm(true)}
               type="button"
-              disabled={!isValid}
+              disabled={!isValid || !touched.ip}
               className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
             >
               Restore
@@ -155,15 +158,19 @@ const Host = () => {
                     </p>
                   )}
                   {SUCCESS && (
-                    <p>
-                      Re-sync completed. Please close this screen and re-login
-                      to the Minihub.
-                    </p>
+                    <div>
+                      <p>
+                        Re-sync completed. Please close this screen and re-login
+                        to the Minihub.
+                      </p>
+                    </div>
                   )}
                   {ERROR && <p>{error}</p>}
                   {RESYNCING && (
                     <div>
                       <p className="animate-pulse">Re-syncing...</p>
+
+                      <DialogLogs />
                     </div>
                   )}
 
