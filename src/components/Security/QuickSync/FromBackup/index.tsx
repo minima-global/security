@@ -11,6 +11,7 @@ import * as utils from "../../../../utils";
 import * as fileManager from "../../../../__minima__/libs/fileManager";
 import TogglePasswordIcon from "../../../UI/TogglePasswordIcon/TogglePasswordIcon";
 import DialogLogs from "../DialogLogs";
+import SlideIn from "../../../UI/Animations/SlideIn";
 
 const makeTimestamp = (filename: string) => {
   const regex = /^(auto_)?minima_backup_(\d+)__([^_]+)_(\d+)\.bak$/;
@@ -41,9 +42,9 @@ const makeAuto = (filename: string) => {
 };
 
 const FromBackup = () => {
-  const { _currentRestoreWindow, backups } = useContext(appContext);
+  const { backups } = useContext(appContext);
   const [f, setF] = useState(false);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(2);
 
   const [hidePassword, setHidePassword] = useState(true);
   const [searchText, setSearchText] = useState("");
@@ -52,9 +53,9 @@ const FromBackup = () => {
   const [error, setError] = useState<false | string>(false);
   const [shutdown, setShutdown] = useState(false);
 
-  if (_currentRestoreWindow !== "frombackup") {
-    return null;
-  }
+  // if (_currentRestoreWindow !== "frombackup") {
+  //   return null;
+  // }
 
   const handleSearchEvent = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);
@@ -75,7 +76,7 @@ const FromBackup = () => {
     }
 
     return (
-      <>
+      <SlideIn isOpen={true} delay={0}>
         {backups
           .filter((b) => makeTimestamp(b.name).includes(searchText))
           .sort((a, b) => {
@@ -106,7 +107,7 @@ const FromBackup = () => {
               </div>
             </li>
           ))}
-      </>
+      </SlideIn>
     );
   };
 
@@ -116,43 +117,41 @@ const FromBackup = () => {
   const SUCCESS = !loading && !error && shutdown;
 
   return (
-    <div>
-      <h3 className="text-xl mb-2 font-bold">From Backup</h3>
+    <SlideIn isOpen={true} delay={0}>
+      <h3 className="text-xl mb-2 font-bold">Import a Backup</h3>
       <p>
-        Restoring a backup will restore the node to its locked or unlocked state
-        when the backup was taken. Restore the backup with QuickSync to ensure
-        all your coins are restored and the chain is synced to the latest block.
+      Importing a backup will restore the node to its locked or unlocked state when the backup was taken. QuickSync will ensure your coins are restored and the chain is synced to the latest block (optional but recommended)
       </p>
-      <p className="text-center text-teal-300 mt-3">Step {step}/3</p>
+      <p className="text-center text-violet-300 mt-3">Step {step}/3</p>
       <div className="grid grid-cols-[auto_16px_auto_16px_auto] my-3 text-center items-center">
         <p
           onClick={() => (!RESYNCING && step === 2 ? setStep(1) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
             step === 1 && "opacity-100 text-yellow-300 font-bold"
-          } ${step > 1 && "opacity-100 text-teal-300 font-bold"}`}
+          } ${step > 1 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Back up
         </p>
-        <span className={`${step > 1 && "text-teal-300 opacity-50"}`}>
+        <span className={`${step > 1 && "text-violet-300 opacity-50"}`}>
           <RightArrow />
         </span>
         <p
           onClick={() => (!RESYNCING && step === 3 ? setStep(2) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
             step === 2 && "opacity-100 text-yellow-300"
-          } ${step > 2 && "opacity-100 text-teal-300 font-bold"}`}
+          } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
         >
-          Host
+          Password
         </p>
-        <span className={`${step > 2 && "text-teal-300 opacity-50"}`}>
+        <span className={`${step > 2 && "text-violet-300 opacity-50"}`}>
           <RightArrow />
         </span>
         <p
           className={`text-xs opacity-50 cursor-pointer ${
             step === 3 && "opacity-100 text-yellow-300"
-          } ${step > 3 && "opacity-100 text-teal-300 font-bold"}`}
+          } ${step > 3 && "opacity-100 text-violet-300 font-bold"}`}
         >
-          Password
+          QuickSync
         </p>
       </div>
       <Formik
@@ -169,7 +168,7 @@ const FromBackup = () => {
               /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9][0-9]|[1-5](\d){4}|[1-9](\d){0,3})$/,
               "Invalid IP:Port format"
             )
-            .required("IP:Port is required")
+            // .required("IP:Port is required")
             .trim(),
           file: yup.string().required("Backup required").min(1).trim(),
         })}
@@ -181,7 +180,7 @@ const FromBackup = () => {
             const fullPath = await fileManager.getPath(file);
             await new Promise((resolve, reject) => {
               (window as any).MDS.cmd(
-                `megammrsync action:resync host:${ip.trim()} file:"${fullPath}" ${
+                `megammrsync action:resync ${ip.length && `host:${ip.trim()}`} file:"${fullPath}" ${
                   password.length > 0 && "password:" + password
                 }`,
                 (resp) => {
@@ -263,7 +262,7 @@ const FromBackup = () => {
                   {values.file.length > 0 && (
                     <div>
                       <div className="grid grid-rows-2 bg-[#1B1B1B] px-3 my-2 rounded py-2">
-                        <p className="text-teal-300">Selected file</p>
+                        <p className="text-violet-300">Selected file</p>
                         <p className="text-sm break-all">{values.file}</p>
                       </div>
                       <button
@@ -288,10 +287,10 @@ const FromBackup = () => {
               </div>
             )}
 
-            {step === 2 && (
+            {step === 3 && (
               <div className=" grid grid-rows-[auto_1fr]">
                 <label className="text-sm mb-3">
-                  Enter the IP:Port of a Mega node to restore from
+                  Enter the IP:Port of a Mega node to QuickSync from
                 </label>
 
                 <input
@@ -313,8 +312,8 @@ const FromBackup = () => {
                   <span className="mt-3 text-[#FF627E]">{errors.ip}</span>
                 )}
 
-                <button
-                  onClick={() => setStep(3)}
+                <button                  
+                  onClick={() => setConfirm(true)}
                   disabled={!!errors.ip}
                   type="button"
                   className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
@@ -324,7 +323,7 @@ const FromBackup = () => {
               </div>
             )}
 
-            {step === 3 && (
+            {step === 2 && (
               <div className=" grid grid-rows-[auto_1fr]">
                 <label className="text-sm mb-3">
                   Enter your backup password{" "}
@@ -365,8 +364,8 @@ const FromBackup = () => {
                   Keep the field empty if you haven't set any.
                 </p>
 
-                <button
-                  onClick={() => setConfirm(true)}
+                <button   
+                  onClick={() => setStep(3)}               
                   disabled={!!errors.password}
                   type="button"
                   className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
@@ -381,22 +380,20 @@ const FromBackup = () => {
               onClose={() => null}
               position="items-start mt-20"
               extraClass="max-w-sm mx-auto"
-              dialogStyles="h-[400px] rounded-lg !shadow-teal-800 !shadow-sm overflow-hidden bg-black"
+              dialogStyles="h-[400px] rounded-lg !shadow-violet-800 !shadow-sm overflow-hidden bg-black"
             >
               <div className="h-full">
                 <div className="flex justify-between items-center pr-4">
                   <div className="grid grid-cols-[auto_1fr] ml-2">
-                    <h3 className="my-auto font-bold ml-2">Backup Restore</h3>
+                    <h3 className="my-auto font-bold ml-2">Import backup</h3>
                   </div>
                 </div>
 
                 <div className="px-4 h-full flex flex-col justify-between">
                   {DEFAULT && (
                     <p className="text-sm my-3">
-                      This will restore the backup and attempt to sync to the
-                      latest block which may or may not be successful if the
-                      backup is old or was taken when out of sync with the
-                      chain. Continue?
+                      {!values.ip.length && "This will restore the backup and attempt to sync to the latest block. If not using QuickSync and the backup is old or was taken when out of sync with the chain, it may not be possible to sync to the latest block. Continue?"}
+                      {!!values.ip.length && "This will restore the backup and attempt to re-sync the chain to the latest block using the QuickSync host provided.” Continue?"}                      
                     </p>
                   )}
                   {SUCCESS && (
@@ -405,7 +402,7 @@ const FromBackup = () => {
                       to the Minihub.
                     </p>
                   )}
-                  {ERROR && <p>{error}</p>}
+                  {ERROR && <p>{error.replace("Archive", "")}</p>}
                   {RESYNCING && (
                     <div>
                       <p className="animate-pulse">Re-syncing...</p>
@@ -447,7 +444,7 @@ const FromBackup = () => {
                           return window.close();
                         }}
                         type="button"
-                        className="disabled:bg-opacity-50 font-bold !py-2 text-black bg-teal-300"
+                        className="disabled:bg-opacity-50 font-bold !py-2 text-black bg-violet-300"
                       >
                         {DEFAULT && "Okay"}
                         {ERROR && "Re-try"}
@@ -462,7 +459,7 @@ const FromBackup = () => {
           </form>
         )}
       </Formik>
-    </div>
+    </SlideIn>
   );
 };
 

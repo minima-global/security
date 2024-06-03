@@ -3,12 +3,12 @@ import { useState } from "react";
 import Autocomplete from "../../../../UI/Autocomplete";
 import bip39 from "../../../../../utils/bip39";
 
-const SEEDS_PER_STEP = 6;
+// const SEEDS_PER_STEP = 6;
 interface IProps {
     formNext: () => void;
     formPrev: () => void;
 }
-const EnterSeedPhrase = ({formNext, formPrev}: IProps) => {
+const EnterSeedPhrase = ({formNext}: IProps) => {
   const {
     values,
     setFieldValue,
@@ -19,25 +19,25 @@ const EnterSeedPhrase = ({formNext, formPrev}: IProps) => {
     errors,
     handleBlur,
   }: any = useFormikContext();
-  const [step, setStep] = useState(0);
+  const [step, _] = useState(3);
 
   const seeds = Object.keys(values.seedPhrase);
-  const totalSteps = Math.ceil(seeds.length / SEEDS_PER_STEP);
+  // const totalSteps = Math.ceil(seeds.length / SEEDS_PER_STEP);
 
-  const startIndex = step * SEEDS_PER_STEP;
-  const endIndex = startIndex + SEEDS_PER_STEP;
+  // const startIndex = step * SEEDS_PER_STEP;
+  // const endIndex = startIndex + SEEDS_PER_STEP;
 
-  const handleNext = () => {
-    if (step < totalSteps - 1) {
-      setStep(step + 1);
-    }
-  };
+  // const handleNext = () => {
+  //   if (step < totalSteps - 1) {
+  //     setStep(step + 1);
+  //   }
+  // };
 
-  const handlePrevious = () => {
-    if (step > 0) {
-      setStep(step - 1);
-    }
-  };
+  // const handlePrevious = () => {
+  //   if (step > 0) {
+  //     setStep(step - 1);
+  //   }
+  // };
 
   const handlePaste = async (
     event: React.ClipboardEvent<HTMLInputElement>,
@@ -98,7 +98,7 @@ const EnterSeedPhrase = ({formNext, formPrev}: IProps) => {
 
       <ul className="grid grid-cols-2 gap-2 mb-4">
         {values.seedPhrase &&
-          seeds.slice(startIndex, endIndex).map((seed) => (
+          seeds.map((seed) => (
             <li key={`seedInputField_${seed}`} className="relative">
               <Autocomplete
                 onPaste={(e) =>
@@ -145,19 +145,19 @@ const EnterSeedPhrase = ({formNext, formPrev}: IProps) => {
           ))}
       </ul>
       
-        <div className="grid grid-cols-2 gap-2 mt-3">
-          <button
+        <div className="mt-3">
+          {/* <button
            type="button"
-            onClick={() => step !== 0 ? handlePrevious() : formPrev()}
+            onClick={() => formPrev()}
             className="font-bold text-white bg-[#1B1B1B]"
           >
             Previous
-          </button>
+          </button> */}
           <button
             disabled={(step === 3 && !!errors.seedPhrase) || (step === 3 && !TOUCHED_ALL_SEEDPHRASES)}
             type="button"
-            onClick={() => step !== 3 ? handleNext() : formNext()}
-            className="font-bold bg-white text-black disabled:bg-opacity-10"
+            onClick={() => formNext()}
+            className="font-bold bg-white text-black disabled:bg-opacity-10 w-full"
           >
             Next
           </button>

@@ -7,13 +7,14 @@ interface IProps {
   icon?: ReactNode;
   location?: string;
   extraClass?: string;
+  handleClick?: () => void;
 }
-const HomeScreenNavigation = ({ extraClass, location, children, icon }: IProps) => {
+const HomeScreenNavigation = ({ extraClass, location, children, icon, handleClick }: IProps) => {
   const navigate = useNavigate();
 
   return (
     <div
-      onClick={() => location ? navigate(location) : null}
+      onClick={() => location ? navigate(location) : handleClick ? handleClick() : null}
       className={`bg-[#1B1B1B] p-4 rounded grid grid-cols-[1fr_auto] cursor-pointer ${extraClass && extraClass}`}
     >
       <span className="text-sm tracking-wide opacity-80 font-bold">{children}</span>

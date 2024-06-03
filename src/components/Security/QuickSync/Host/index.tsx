@@ -1,12 +1,12 @@
-import { useContext, useState } from "react";
-import { appContext } from "../../../../AppContext";
+import { useState } from "react";
 import { Formik } from "formik";
 import * as yup from "yup";
 import AnimatedDialog from "../../../UI/AnimatedDialog";
 import DialogLogs from "../DialogLogs";
+import SlideIn from "../../../UI/Animations/SlideIn";
 
 const Host = () => {
-  const { _currentRestoreWindow } = useContext(appContext);
+  // const { _currentRestoreWindow } = useContext(appContext);
   const [f, setF] = useState(false);
 
   const [confirm, setConfirm] = useState(false);
@@ -14,9 +14,6 @@ const Host = () => {
   const [error, setError] = useState<false | string>(false);
   const [shutdown, setShutdown] = useState(false);
 
-  if (_currentRestoreWindow !== "host") {
-    return null;
-  }
 
   const DEFAULT = !loading && !error && !shutdown;
   const RESYNCING = loading && !error && !shutdown;
@@ -25,14 +22,14 @@ const Host = () => {
 
   
   return (
-    <div>
-      <h3 className="text-xl mb-2 font-bold">Host</h3>
+    <SlideIn isOpen={true} delay={0}>
+      <h3 className="text-xl mb-2 font-bold">QuickSync</h3>
       <p>
         QuickSync will restore the coins for this node and re-sync the chain to
         the latest block.
       </p>
       <Formik
-        // validateOnMount
+        validateOnMount
         initialValues={{ ip: "" }}
         validationSchema={yup.object().shape({
           ip: yup
@@ -91,7 +88,6 @@ const Host = () => {
           handleChange,
           handleBlur,
           errors,
-          touched,
           values,
           isValid,
           submitForm,
@@ -105,7 +101,7 @@ const Host = () => {
           >
             <div className=" grid grid-rows-[auto_1fr]">
               <label className="text-sm mb-3">
-                Enter the IP:Port of a mega node to restore from
+                Enter the IP:Port of a Mega node to QuickSync from
               </label>
 
               <input
@@ -130,7 +126,7 @@ const Host = () => {
             <button
               onClick={() => setConfirm(true)}
               type="button"
-              disabled={!isValid || !touched.ip}
+              disabled={!isValid}
               className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
             >
               Restore
@@ -165,7 +161,7 @@ const Host = () => {
                       </p>
                     </div>
                   )}
-                  {ERROR && <p>{error}</p>}
+                  {ERROR && <p>{error.replace("Archive", "")}</p>}
                   {RESYNCING && (
                     <div>
                       <p className="animate-pulse">Re-syncing...</p>
@@ -207,7 +203,7 @@ const Host = () => {
                           return window.close();
                         }}
                         type="button"
-                        className="disabled:bg-opacity-50 font-bold !py-2 text-black bg-teal-300"
+                        className="disabled:bg-opacity-50 font-bold !py-2 text-black bg-violet-300"
                       >
                         {DEFAULT && "Okay"}
                         {ERROR && "Re-try"}
@@ -222,7 +218,7 @@ const Host = () => {
           </form>
         )}
       </Formik>
-    </div>
+    </SlideIn>
   );
 };
 

@@ -1,3 +1,7 @@
+##### [1.9.0] - 03 June 24
+
+- Feedback changes
+
 ##### [1.8.2] - 21 May 24
 
 - Add cli logs to Dialog

@@ -1,5 +1,4 @@
-import { useContext, useState } from "react";
-import { appContext } from "../../../../AppContext";
+import { useState } from "react";
 import { Formik } from "formik";
 import * as yup from "yup";
 import AnimatedDialog from "../../../UI/AnimatedDialog";
@@ -7,9 +6,9 @@ import RightArrow from "../../../Icons/RightArrow";
 import bip39 from "../../../../utils/bip39";
 import EnterSeedPhrase from "./EnterSeedPhrase";
 import DialogLogs from "../DialogLogs";
+import SlideIn from "../../../UI/Animations/SlideIn";
 
 const FromSeedPhrase = () => {
-  const { _currentRestoreWindow } = useContext(appContext);
   const [f, setF] = useState(false);
   const [step, setStep] = useState(1);
 
@@ -18,9 +17,9 @@ const FromSeedPhrase = () => {
   const [error, setError] = useState<false | string>(false);
   const [shutdown, setShutdown] = useState(false);
 
-  if (_currentRestoreWindow !== "fromseedphrase") {
-    return null;
-  }
+  // if (_currentRestoreWindow !== "fromseedphrase") {
+  //   return null;
+  // }
 
   const DEFAULT = !loading && !error && !shutdown;
   const RESYNCING = loading && !error && !shutdown;
@@ -28,59 +27,57 @@ const FromSeedPhrase = () => {
   const SUCCESS = !loading && !error && shutdown;
 
   return (
-    <div>
-      <h3 className="text-xl mb-2 font-bold">From Seed Phrase</h3>
+    <SlideIn isOpen={true} delay={0}>
+      <h3 className="text-xl mb-2 font-bold">Import Seed Phrase with QuickSync</h3>
       <p>
-        Restoring your seed phrase with QuickSync will wipe this node, restore
-        your coins from the seed phrase you provide and re-sync the chain to the
-        latest block.
+      Importing your seed phrase with QuickSync will wipe this node, restore your coins using the seed phrase provided and re-sync the chain to the latest block using the QuickSync host provided.
       </p>
-      <p className="text-center text-teal-300 mt-3">Step {step}/4</p>
+      <p className="text-center text-violet-300 mt-3">Step {step}/4</p>
       <div className="grid grid-cols-[auto_16px_auto_16px_auto_16px_auto] my-3 text-center items-center">
         <p
           onClick={() => (!RESYNCING && step === 2 ? setStep(1) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
             step === 1 && "opacity-100 text-yellow-300 font-bold"
-          } ${step > 1 && "opacity-100 text-teal-300 font-bold"}`}
+          } ${step > 1 && "opacity-100 text-violet-300 font-bold"}`}
         >
-          Host
+          QuickSync
         </p>
-        <span className={`${step > 1 && "text-teal-300 opacity-50"}`}>
+        <span className={`${step > 1 && "text-violet-300 opacity-50"}`}>
           <RightArrow />
         </span>
         <p
           onClick={() => (!RESYNCING && step === 3 ? setStep(2) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
             step === 2 && "opacity-100 text-yellow-300"
-          } ${step > 2 && "opacity-100 text-teal-300 font-bold"}`}
+          } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Seed Phrase
         </p>
-        <span className={`${step > 2 && "text-teal-300 opacity-50"}`}>
+        <span className={`${step > 2 && "text-violet-300 opacity-50"}`}>
           <RightArrow />
         </span>
         <p
           onClick={() => (!RESYNCING && step === 4 ? setStep(3) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
             step === 3 && "opacity-100 text-yellow-300"
-          } ${step > 2 && "opacity-100 text-teal-300 font-bold"}`}
+          } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Keys
         </p>
-        <span className={`${step > 3 && "text-teal-300 opacity-50"}`}>
+        <span className={`${step > 3 && "text-violet-300 opacity-50"}`}>
           <RightArrow />
         </span>
         <p
           //   onClick={() => (!RESYNCING ? setStep(3) : null)}
           className={`text-xs opacity-50 cursor-pointer ${
             step === 4 && "opacity-100 text-yellow-300"
-          } ${step > 3 && "opacity-100 text-teal-300 font-bold"}`}
+          } ${step > 3 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Key Uses
         </p>
       </div>
       <Formik
-        // validateOnMount
+        validateOnMount
         initialValues={{
           ip: "",
           keys: 64,
@@ -272,7 +269,6 @@ const FromSeedPhrase = () => {
           handleChange,
           handleBlur,          
           errors,
-          touched,
           values,
           submitForm,
           isSubmitting,
@@ -286,7 +282,7 @@ const FromSeedPhrase = () => {
             {step === 1 && (
               <div className=" grid grid-rows-[auto_1fr]">
                 <label className="text-sm mb-3">
-                  Enter the IP:Port of a Mega node to restore from
+                  Enter the IP:Port of a Mega node to QuickSync from
                 </label>
 
                 <input
@@ -310,7 +306,7 @@ const FromSeedPhrase = () => {
 
                 <button
                   onClick={() => setStep(2)}
-                  disabled={!!errors.ip || !touched.ip}
+                  disabled={!!errors.ip}
                   type="button"
                   className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
                 >
@@ -405,9 +401,7 @@ const FromSeedPhrase = () => {
                   )}
 
                   <p className="my-2">
-                    Please enter the maximum times you have signed a
-                    transaction. Otherwise leave the default 1000 if you think
-                    you haven't signed over 1000 transactions
+                  Enter the maximum times you have signed a transaction or leave the default if you think you haven't signed over 1000 transactions.
                   </p>
 
                   <button
@@ -448,11 +442,11 @@ const FromSeedPhrase = () => {
                   )}
                   {SUCCESS && (
                     <p>
-                      Re-sync completed. Please close this screen and re-login
+                      Re-sync complete. Please close this screen and re-login
                       to the Minihub.
                     </p>
                   )}
-                  {ERROR && <p>{error}</p>}
+                  {ERROR && <p>{error.replace("Archive", "")}</p>}
                   {RESYNCING && (
                     <div>
                       <p className="animate-pulse">Re-syncing...</p>
@@ -494,7 +488,7 @@ const FromSeedPhrase = () => {
                           return window.close();
                         }}
                         type="button"
-                        className="disabled:bg-opacity-50 font-bold !py-2 text-black bg-teal-300"
+                        className="disabled:bg-opacity-50 font-bold !py-2 text-black bg-violet-300"
                       >
                         {DEFAULT && "Okay"}
                         {ERROR && "Re-try"}
@@ -509,7 +503,7 @@ const FromSeedPhrase = () => {
           </form>
         )}
       </Formik>
-    </div>
+    </SlideIn>
   );
 };
 

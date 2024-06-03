@@ -95,7 +95,7 @@ const AppProvider = ({ children }: IProps) => {
   // archive stuff
   const [archives, setArchives] = useState<any[]>([]);
 
-  const [_currentRestoreWindow, setCurrentRestoreWindow] = useState("host");
+  const [_currentRestoreWindow, setCurrentRestoreWindow] = useState("none");
 
   // apply these whenever vault is locked or unlocked
   useEffect(() => {

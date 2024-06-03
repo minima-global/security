@@ -42,7 +42,7 @@ const DialogLogs = () => {
 
           <div className="bg-[#1B1B1B] rounded-lg px-3 py-3 overflow-auto max-h-[200px] grid gap-2">
             {cliLogs.map((l) => (
-              <span className="text-xs">{l}</span>
+              <span key={l} className="text-xs">{l}</span>
             ))}
             <div ref={logsEndRef} />
           </div>
