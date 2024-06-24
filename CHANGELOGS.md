@@ -1,3 +1,8 @@
+##### [1.9.2] - 24 June 24
+
+- Restore from backup when no host selected
+- Make Confirm pwd disabled on Create Backup
+
 ##### [1.9.0] - 03 June 24
 
 - Feedback changes

@@ -44,7 +44,7 @@ const makeAuto = (filename: string) => {
 const FromBackup = () => {
   const { backups } = useContext(appContext);
   const [f, setF] = useState(false);
-  const [step, setStep] = useState(2);
+  const [step, setStep] = useState(1);
 
   const [hidePassword, setHidePassword] = useState(true);
   const [searchText, setSearchText] = useState("");
@@ -179,21 +179,40 @@ const FromBackup = () => {
           try {
             const fullPath = await fileManager.getPath(file);
             await new Promise((resolve, reject) => {
-              (window as any).MDS.cmd(
-                `megammrsync action:resync ${ip.length && `host:${ip.trim()}`} file:"${fullPath}" ${
-                  password.length > 0 && "password:" + password
-                }`,
-                (resp) => {
-                  if (!resp.status)
-                    reject(
-                      resp.error
-                        ? resp.error
-                        : `Mega node re-sync failed with host:${ip}`
-                    );
 
-                  resolve(resp);
-                }
-              );
+              if (ip.trim().length === 0) {
+                // normal re-sync
+                (window as any).MDS.cmd(
+                  `restoresync file:"${fullPath}" password:"${password.length ? password : "minima"}"`,
+                  (response: any) => {
+                    if (!response.status)
+                      return reject(
+                        response.error
+                          ? response.error
+                          : "Restoring from backup failed, please try again"
+                      );
+            
+                    resolve(response);
+                  }
+                );
+              } else {
+                (window as any).MDS.cmd(
+                  `megammrsync action:resync file:"${fullPath}" ${ip.length > 0 ? `host:${ip.trim()}` : ""} ${
+                    password.length > 0 ? "password:" + password : ''
+                  }`,
+                  (resp) => {
+                    if (!resp.status)
+                      reject(
+                        resp.error
+                          ? resp.error
+                          : `Mega node re-sync failed with host:${ip}`
+                      );
+  
+                    resolve(resp);
+                  }
+                );
+              }
+              
             });
 
             setShutdown(true);

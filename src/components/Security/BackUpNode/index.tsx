@@ -471,7 +471,7 @@ const BackupNode = () => {
                             }
                           />
                           <Input
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || values.password.length === 0}
                             extraClass="core-black-contrast"
                             autoComplete="new-password"
                             handleEndIconClick={() =>
