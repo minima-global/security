@@ -222,6 +222,7 @@ const FromBackup = () => {
 
             if (typeof error === "string") {
               return setError(
+                error.includes("GZIP") ||
                 error.includes("Incorrect Password!")
                   ? "Incorrect password!"
                   : error

@@ -1,3 +1,7 @@
+##### [1.9.3] - 26 June 24
+
+- Restore from backup error msg
+
 ##### [1.9.2] - 24 June 24
 
 - Restore from backup when no host selected
