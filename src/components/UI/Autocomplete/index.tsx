@@ -81,7 +81,7 @@ const Autocomplete = ({
         // Move selection up
         setSelectedIndex((prevIndex) => Math.max(prevIndex - 1, 0));
         break;
-      case "Enter":
+      case "Enter":        
         // Handle selection (e.g., set input value)
         if (selectedIndex !== -1 && filteredSuggestions[selectedIndex]) {
           onChange(filteredSuggestions[selectedIndex]);
@@ -89,6 +89,12 @@ const Autocomplete = ({
         }
         break;
       case "Tab":
+        // If hasn't highlighted any, prevent default behavior, highlight first
+        if (selectedIndex === -1) {
+          setSelectedIndex(0);
+          event.preventDefault();
+        }
+        // If highlighted then select that..
         if (selectedIndex !== -1 && filteredSuggestions[selectedIndex]) {
           onChange(filteredSuggestions[selectedIndex]);
           setFilteredSuggestions([]);

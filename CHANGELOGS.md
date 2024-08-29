@@ -1,3 +1,32 @@
+##### [1.10.0] - 27 Aug 24
+
+- Add support for URLs for QuickSync
+- Design & UX Tweak on QuickSync dialog
+
+##### [1.9.3] - 26 June 24
+
+- Restore from backup error msg
+
+##### [1.9.2] - 24 June 24
+
+- Restore from backup when no host selected
+- Make Confirm pwd disabled on Create Backup
+
+##### [1.9.0] - 03 June 24
+
+- Feedback changes
+
+##### [1.8.2] - 21 May 24
+
+- Add cli logs to Dialog
+- Add spartacusrex default host ip for a placeholder
+
+##### [1.8.0] - 20 May 24
+
+- Tweak design of home page
+- Added legacy opts for Archive Reset & Restore from backup
+- Added new feature "Restore node"
+
 ##### [1.1.0] - 11 December 23
 
 - Key down while clicked in a seed phrase input element will open suggestions
