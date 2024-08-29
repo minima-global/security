@@ -1,3 +1,8 @@
+##### [1.10.0] - 27 Aug 24
+
+- Add support for URLs for QuickSync
+- Design & UX Tweak on QuickSync dialog
+
 ##### [1.9.3] - 26 June 24
 
 - Restore from backup error msg

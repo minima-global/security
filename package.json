@@ -1,7 +1,7 @@
 {
   "name": "security",
   "private": true,
-  "version": "1.9.3",
+  "version": "1.10.1",
   "type": "module",
   "description": "secure your node",
   "scripts": {

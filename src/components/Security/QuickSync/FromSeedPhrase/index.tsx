@@ -8,6 +8,8 @@ import EnterSeedPhrase from "./EnterSeedPhrase";
 import DialogLogs from "../DialogLogs";
 import SlideIn from "../../../UI/Animations/SlideIn";
 
+const ipPortRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9]|[1-5](\d){4}|[1-9](\d){0,3})$/;
+const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)+)(:\d+)?(\/[^\s]*)?$/;
 const FromSeedPhrase = () => {
   const [f, setF] = useState(false);
   const [step, setStep] = useState(1);
@@ -90,8 +92,8 @@ const FromSeedPhrase = () => {
           ip: yup
             .string()
             .matches(
-              /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9][0-9]|[1-5](\d){4}|[1-9](\d){0,3})$/,
-              "Invalid IP:Port format"
+              new RegExp(`(${ipPortRegex.source})|(${urlRegex.source})`),
+              "Invalid IP:Port or URL format"
             )
             .required("IP:Port is required")
             .trim(),
@@ -442,8 +444,7 @@ const FromSeedPhrase = () => {
                   )}
                   {SUCCESS && (
                     <p>
-                      Re-sync complete. Please close this screen and re-login
-                      to the Minihub.
+                      Resync completed. Please close this screen and re-login. You may need to restart your node manually.
                     </p>
                   )}
                   {ERROR && <p>{error.replace("Archive", "")}</p>}
@@ -461,9 +462,12 @@ const FromSeedPhrase = () => {
                       {!SUCCESS && !RESYNCING && (
                         <button
                           disabled={isSubmitting}
-                          className="disabled:bg-opacity-10 bg-gray-600 !py-2  font-bold tracking-tighter"
+                          className="text-neutral-200 border border-neutral-500 hover:!border-neutral-400 disabled:border-neutral-800 disabled:text-neutral-600"
                           type="button"
-                          onClick={() => setConfirm(false)}
+                          onClick={() => {
+                            setConfirm(false);
+                            setError(false);                            
+                          }}
                         >
                           Dismiss
                         </button>
@@ -488,9 +492,9 @@ const FromSeedPhrase = () => {
                           return window.close();
                         }}
                         type="button"
-                        className="disabled:bg-opacity-50 font-bold !py-2 text-black bg-violet-300"
+                        className="disabled:bg-[#1B1B1B] px-4 font-bold tracking-wide text-neutral-100 bg-violet-500 hover:bg-violet-600"
                       >
-                        {DEFAULT && "Okay"}
+                        {DEFAULT && "Re-sync"}
                         {ERROR && "Re-try"}
                         {SUCCESS && "Close"}
                         {RESYNCING && "Re-syncing"}
