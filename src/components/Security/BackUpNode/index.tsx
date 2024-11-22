@@ -106,7 +106,7 @@ const BackupNode = () => {
     const origFilePath = `/${folder}/${mdsfile}`;
     const newFilePath = `/my_downloads/${mdsfile}_minima_download_as_file_`;
 
-    (window as any).MDS.file.copytoweb(origFilePath, newFilePath, function () {
+    (window as any).MDS.file.copytoweb(origFilePath, newFilePath, async function () {
       const url = `my_downloads/${mdsfile}` + "_minima_download_as_file_";
       // create an a
       const temporaryLink = document.createElement("a");
@@ -114,6 +114,8 @@ const BackupNode = () => {
       temporaryLink.target = "_blank";
       temporaryLink.href = url;
       temporaryLink.click();
+      await new Promise(resolve => setTimeout(resolve, 5000));
+
       (window as any).MDS.file.deletefromweb(url, function () {
         temporaryLink.remove();
       });

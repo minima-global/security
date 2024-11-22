@@ -22,7 +22,7 @@ import PERMISSIONS from "./permissions.ts";
 import * as utils from "./utils";
 import Backups from "./components/Security/BackUpNode/Backups/index.tsx";
 import Security from "./components/Security/index.tsx";
-import Dialog from "./components/Dialog/index.tsx";
+import Dialog from "./components/dialog/index.tsx";
 import AutoCreatePassword from "./components/Security/BackUpNode/AutoCreatePassword/index.tsx";
 import FadeIn from "./components/UI/Animations/FadeIn/index.tsx";
 import SlideIn from "./components/UI/Animations/SlideIn/index.tsx";
