@@ -1,3 +1,7 @@
+##### [1.12.0] - 18 Dec 24
+
+- Disable the ability to QuickSync when the vault is locked
+
 ##### [1.10.0] - 27 Aug 24
 
 - Add support for URLs for QuickSync

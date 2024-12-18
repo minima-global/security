@@ -84,7 +84,7 @@ const AppProvider = ({ children }: IProps) => {
   );
 
   // uploading file state
-  const [_promptFileUpload, setPromptFileUpload] = useState<false | {status: boolean, progress: string, error: string}>(false);
+  const [_promptFileUpload, setPromptFileUpload] = useState<false | { status: boolean, progress: string, error: string }>(false);
 
   const [minidappSystemFailed, setMinidappSystemFailed] = useState<
     boolean | null
@@ -262,7 +262,7 @@ const AppProvider = ({ children }: IProps) => {
         }
         if (msg.event === "MINIMALOG") {
           const log = msg.data.message;
-          
+
           setLogs((prevState) => [...prevState, log]);
         }
 
@@ -287,8 +287,8 @@ const AppProvider = ({ children }: IProps) => {
   const promptArchives = () => {
     setPromptArchives((prevState) => !prevState);
   };
-  
-  const promptFileUpload = (progress: {status: boolean, progress: string, error: string} | false) => {
+
+  const promptFileUpload = (progress: { status: boolean, progress: string, error: string } | false) => {
     setPromptFileUpload(progress);
   };
 
