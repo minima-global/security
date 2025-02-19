@@ -1,6 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Roboto+Mono:wght@400&display=swap');
-
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,7 +20,7 @@
   --core-black-contrast: #17191C;
   --core-black-contrast-2: #282B2E;
   --core-black-contrast-3: #464C4F;
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: 'Manrope', system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -47,7 +44,10 @@ body {
   min-height: -webkit-fill-available;
   font-weight: 500;
   letter-spacing: 0.3px;
-  font-family: 'Manrope', sans-serif;
+  font-family: "Manrope", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--background-color);
@@ -55,6 +55,7 @@ body {
   background-repeat: no-repeat;
   -webkit-tap-highlight-color: transparent;
   background-color: #08090B;
+  overflow-x: hidden;
 }
 
 .text-good {

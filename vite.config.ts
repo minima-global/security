@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import { createHtmlPlugin } from "vite-plugin-html";
 import legacy from "@vitejs/plugin-legacy";
+import { copyFileSync } from "fs";
 
 export default ({ mode }) => {
   let devEnv = "";
@@ -40,6 +41,16 @@ export default ({ mode }) => {
           },
         },
       }),
+      {
+        name: 'copy-changelog',
+        closeBundle() {
+          try {
+            copyFileSync('CHANGELOG.md', 'build/CHANGELOG.md');
+          } catch (error) {
+            console.warn('Could not copy CHANGELOG.md, please check that it exists in the root directory');
+          }
+        }
+      }
     ],
   });
 };

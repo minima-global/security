@@ -25,9 +25,12 @@ const Host = () => {
   
   return (
     <SlideIn isOpen={true} delay={0}>
-      <p>
+      <p className="mb-4">
         QuickSync will restore the coins for this node and re-sync the chain to
         the latest block.
+      </p>
+      <p className="mb-6">
+        Please note: <span className="italic"> Transaction history will be wiped during the re-sync, if required, download your transaction history from the Wallet before continuing</span>
       </p>
       {vaultLocked && (
         <div className="text-sm text-white mt-6 py-3 px-4 bg-neutral-300/5 rounded-lg text-red-500">
@@ -36,16 +39,18 @@ const Host = () => {
       )}
       {!vaultLocked && (
         <Formik
-          validateOnMount
+          isInitialValid={false}
+          validateOnChange={true}
+          validateOnBlur={true}
           initialValues={{ ip: "" }}
           validationSchema={yup.object().shape({
             ip: yup
               .string()
               .matches(
                 new RegExp(`(${ipPortRegex.source})|(${urlRegex.source})`),
-                "Invalid IP:Port or URL format"
+                "A valid host:port is required"
               )
-              .required("IP:Port is required")
+              .required("A valid host:port is required")
               .trim(),
           })}
           onSubmit={async ({ ip }) => {
@@ -108,7 +113,7 @@ const Host = () => {
             >
               <div className=" grid grid-rows-[auto_1fr]">
                 <label className="text-sm mb-3">
-                  Enter the IP:Port of a Mega node to QuickSync from
+                  Enter the host:port of a Mega node to QuickSync from
                 </label>
 
                 <input
@@ -121,12 +126,12 @@ const Host = () => {
                     handleBlur(e);
                     setF(false);
                   }}
-                  placeholder="e.g. 34.32.59.133:9001"
+                  placeholder="megammr.minima.global:9001"
                   className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
-                    errors.ip && "!outline !outline-[#FF627E]"
+                    values.ip && errors.ip && "!outline !outline-[#FF627E]"
                   }`}
                 />
-                {errors.ip && (
+                {errors.ip && values.ip && (
                   <span className="mt-3 text-[#FF627E]">{errors.ip}</span>
                 )}
               </div>

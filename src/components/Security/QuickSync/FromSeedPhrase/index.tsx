@@ -31,16 +31,18 @@ const FromSeedPhrase = () => {
   return (
     <SlideIn isOpen={true} delay={0}>
       <h3 className="text-xl mb-2 font-bold">Import Seed Phrase with QuickSync</h3>
-      <p>
-      Importing your seed phrase with QuickSync will wipe this node, restore your coins using the seed phrase provided and re-sync the chain to the latest block using the QuickSync host provided.
+      <p className="mb-4">
+        Importing your seed phrase with QuickSync will wipe this node, restore your coins using the seed phrase provided and re-sync the chain to the latest block using the QuickSync host provided.
+      </p>
+      <p className="mb-6">
+        Please note: <span className="italic"> Transaction history will be wiped during the re-sync, if required, download your transaction history from the Wallet before continuing</span>
       </p>
       <p className="text-center text-violet-300 mt-3">Step {step}/4</p>
       <div className="grid grid-cols-[auto_16px_auto_16px_auto_16px_auto] my-3 text-center items-center">
         <p
           onClick={() => (!RESYNCING && step === 2 ? setStep(1) : null)}
-          className={`text-xs opacity-50 cursor-pointer ${
-            step === 1 && "opacity-100 text-yellow-300 font-bold"
-          } ${step > 1 && "opacity-100 text-violet-300 font-bold"}`}
+          className={`text-xs opacity-50 cursor-pointer ${step === 1 && "opacity-100 text-yellow-300 font-bold"
+            } ${step > 1 && "opacity-100 text-violet-300 font-bold"}`}
         >
           QuickSync
         </p>
@@ -49,9 +51,8 @@ const FromSeedPhrase = () => {
         </span>
         <p
           onClick={() => (!RESYNCING && step === 3 ? setStep(2) : null)}
-          className={`text-xs opacity-50 cursor-pointer ${
-            step === 2 && "opacity-100 text-yellow-300"
-          } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
+          className={`text-xs opacity-50 cursor-pointer ${step === 2 && "opacity-100 text-yellow-300"
+            } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Seed Phrase
         </p>
@@ -60,9 +61,8 @@ const FromSeedPhrase = () => {
         </span>
         <p
           onClick={() => (!RESYNCING && step === 4 ? setStep(3) : null)}
-          className={`text-xs opacity-50 cursor-pointer ${
-            step === 3 && "opacity-100 text-yellow-300"
-          } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
+          className={`text-xs opacity-50 cursor-pointer ${step === 3 && "opacity-100 text-yellow-300"
+            } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Keys
         </p>
@@ -71,15 +71,17 @@ const FromSeedPhrase = () => {
         </span>
         <p
           //   onClick={() => (!RESYNCING ? setStep(3) : null)}
-          className={`text-xs opacity-50 cursor-pointer ${
-            step === 4 && "opacity-100 text-yellow-300"
-          } ${step > 3 && "opacity-100 text-violet-300 font-bold"}`}
+          className={`text-xs opacity-50 cursor-pointer ${step === 4 && "opacity-100 text-yellow-300"
+            } ${step > 3 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Key Uses
         </p>
       </div>
       <Formik
-        validateOnMount
+        isInitialValid={false}
+        validateOnMount={false}
+        validateOnChange={true}
+        validateOnBlur={true}
         initialValues={{
           ip: "",
           keys: 64,
@@ -93,9 +95,9 @@ const FromSeedPhrase = () => {
             .string()
             .matches(
               new RegExp(`(${ipPortRegex.source})|(${urlRegex.source})`),
-              "Invalid IP:Port or URL format"
+              "A valid host:port is required"
             )
-            .required("IP:Port is required")
+            .required("A valid host:port is required")
             .trim(),
           seedPhrase: yup.object({
             "1": yup
@@ -269,7 +271,7 @@ const FromSeedPhrase = () => {
         {({
           handleSubmit,
           handleChange,
-          handleBlur,          
+          handleBlur,
           errors,
           values,
           submitForm,
@@ -277,14 +279,13 @@ const FromSeedPhrase = () => {
         }) => (
           <form
             onSubmit={handleSubmit}
-            className={`my-3 core-black-contrast-2 p-4 rounded ${
-              f && "outline outline-none"
-            }`}
+            className={`my-3 core-black-contrast-2 p-4 rounded ${f && "outline outline-none"
+              }`}
           >
             {step === 1 && (
               <div className=" grid grid-rows-[auto_1fr]">
                 <label className="text-sm mb-3">
-                  Enter the IP:Port of a Mega node to QuickSync from
+                  Enter the host:port of a Mega node to QuickSync from
                 </label>
 
                 <input
@@ -297,18 +298,17 @@ const FromSeedPhrase = () => {
                     handleBlur(e);
                     setF(false);
                   }}
-                  placeholder="e.g. 34.32.59.133:9001"
-                  className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
-                    errors.ip && "!outline !outline-[#FF627E]"
-                  }`}
+                  placeholder="megammr.minima.global:9001"
+                  className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${values.ip && errors.ip && "!outline !outline-[#FF627E]"
+                    }`}
                 />
-                {errors.ip && (
+                {errors.ip && values.ip && (
                   <span className="mt-3 text-[#FF627E]">{errors.ip}</span>
                 )}
 
                 <button
                   onClick={() => setStep(2)}
-                  disabled={!!errors.ip}
+                  disabled={!!(!values.ip || errors.ip)}
                   type="button"
                   className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
                 >
@@ -345,9 +345,8 @@ const FromSeedPhrase = () => {
                       setF(false);
                     }}
                     placeholder="Number of keys (addresses)"
-                    className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
-                      errors.ip && "!outline !outline-[#FF627E]"
-                    }`}
+                    className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${errors.ip && "!outline !outline-[#FF627E]"
+                      }`}
                     type="number"
                   />
                   {errors.keys && (
@@ -391,9 +390,8 @@ const FromSeedPhrase = () => {
                       setF(false);
                     }}
                     placeholder="Number of signatures"
-                    className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
-                      errors.ip && "!outline !outline-[#FF627E]"
-                    }`}
+                    className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${errors.ip && "!outline !outline-[#FF627E]"
+                      }`}
                     type="number"
                   />
                   {errors.keyuses && (
@@ -403,7 +401,7 @@ const FromSeedPhrase = () => {
                   )}
 
                   <p className="my-2">
-                  Enter the maximum times you have signed a transaction or leave the default if you think you haven't signed over 1000 transactions.
+                    Enter the maximum times you have signed a transaction or leave the default if you think you haven't signed over 1000 transactions.
                   </p>
 
                   <button
@@ -466,7 +464,7 @@ const FromSeedPhrase = () => {
                           type="button"
                           onClick={() => {
                             setConfirm(false);
-                            setError(false);                            
+                            setError(false);
                           }}
                         >
                           Dismiss

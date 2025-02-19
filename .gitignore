@@ -24,3 +24,5 @@ build
 *.sw?
 
 .env
+
+*.mds.zip

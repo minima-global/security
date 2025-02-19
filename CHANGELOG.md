@@ -1,3 +1,14 @@
+
+##### [1.13.1] - 19 Feb 25
+
+- Minor text updates
+- Fixed validation issues on the QuickSync dialog on page load
+
+##### [1.13.0] - 18 Feb 25
+
+- Added overflow-x hidden on body to prevent scrollbar from appearing
+- Added the ability to navigate to a specific page via url when the app is loaded
+
 ##### [1.12.0] - 18 Dec 24
 
 - Disable the ability to QuickSync when the vault is locked
