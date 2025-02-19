@@ -2,7 +2,7 @@
 ##### [1.13.1] - 19 Feb 25
 
 - Minor text updates
-- Fixed validation issues on the QuickSync dialog on page load
+- Fixed validation issues on the QuickSync and Restore from Seed Phrase dialogs on page load
 
 ##### [1.13.0] - 18 Feb 25
 
