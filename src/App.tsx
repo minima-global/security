@@ -5,6 +5,7 @@ import { AuthProvider } from "./providers/authProvider";
 import { ArchiveProvider } from "./providers/archiveProvider";
 import { useEffect, useState } from "react";
 import * as utils from "./utils";
+import TapTitleBar from "./reusable/TapTitleBar";
 
 function App() {
   const navigate = useNavigate();
@@ -34,6 +35,7 @@ function App() {
     <AuthProvider>
       <ArchiveProvider>
         <AppProvider>
+          <TapTitleBar />
           <Outlet />
         </AppProvider>
       </ArchiveProvider>

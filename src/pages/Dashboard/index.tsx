@@ -36,7 +36,7 @@ const Dashboard = () => {
       <div className="grid grid-rows-[56px_1fr] h-[100vh]">
         <header
           onClick={openTitleBar}
-          className="grid grid-cols-[1fr_minmax(0,_860px)_1fr]"
+          className="hidden grid grid-cols-[1fr_minmax(0,_860px)_1fr]"
         >
 
           <div/>
@@ -58,12 +58,10 @@ const Dashboard = () => {
 
           <div />
         </header>
-        <main className="grid grid-cols-[1fr_minmax(0,_560px)_1fr]">
-          <div />
-          <div>
+        <main className="w-full text-left">
+          <div className="max-w-[560px] mx-auto">
             <Outlet />
           </div>
-          <div />
         </main>
       </div>
     </>
