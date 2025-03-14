@@ -66,19 +66,19 @@ export function Security() {
           <HomeScreenNavigation location="manageseedphrase">
             Manage seed phrase
           </HomeScreenNavigation>
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+          {/* <div className="grid grid-cols-[1fr_auto_1fr] items-center">
             <hr className="border-gray-500 w-full" />
             <div className="mx-3">
               <span className="text-xs text-violet-400">Legacy</span>
             </div>
             <hr className="border-gray-500 w-full" />
-          </div>
-          <HomeScreenNavigation location="restore">
+          </div> */}
+          {/* <HomeScreenNavigation location="restore">
             Restore from backup
           </HomeScreenNavigation>
           <HomeScreenNavigation location="archivereset">
             Archive reset
-          </HomeScreenNavigation>
+          </HomeScreenNavigation> */}
         </div>
       </div>
     </>

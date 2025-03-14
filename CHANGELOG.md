@@ -1,4 +1,9 @@
 
+##### [1.2.0] - 14 Mar 2025
+
+- Removed legacy stuff
+
+
 ##### [1.13.1] - 19 Feb 25
 
 - Minor text updates
