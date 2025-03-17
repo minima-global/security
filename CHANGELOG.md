@@ -1,4 +1,11 @@
 
+##### [1.14.2] - 17 Mar 2025
+
+- Added text explaining 'restore from back up without a Mega-node'
+
+##### [1.14.0] - 14 Mar 2025
+
+- Removed legacy stuff
 ##### [1.14.0] - 14 Mar 2025
 
 - Removed legacy stuff

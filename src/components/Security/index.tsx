@@ -75,6 +75,9 @@ export function Security() {
           </div> */}
           {/* <HomeScreenNavigation location="restore">
             Restore from backup
+          </HomeScreenNavigation> */}
+          {/* <HomeScreenNavigation location="restore">
+            Restore from backup
           </HomeScreenNavigation>
           <HomeScreenNavigation location="archivereset">
             Archive reset

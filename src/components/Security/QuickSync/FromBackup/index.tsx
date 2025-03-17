@@ -312,7 +312,7 @@ const FromBackup = () => {
             {step === 3 && (
               <div className=" grid grid-rows-[auto_1fr]">
                 <label className="text-sm mb-3">
-                  Enter the IP:Port of a Mega node to QuickSync from
+                  Enter the IP:Port of a Mega node to QuickSync from <span className="opacity-80">(leave empty for a regular restoration without a Mega node)</span>
                 </label>
 
                 <input

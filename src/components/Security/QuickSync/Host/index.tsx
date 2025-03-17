@@ -126,7 +126,7 @@ const Host = () => {
                     handleBlur(e);
                     setF(false);
                   }}
-                  placeholder="megammr.minima.global:9001"
+                  placeholder="Enter a megammr node"
                   className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
                     values.ip && errors.ip && "!outline !outline-[#FF627E]"
                   }`}
