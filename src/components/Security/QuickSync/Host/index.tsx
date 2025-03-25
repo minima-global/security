@@ -1,10 +1,9 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { Formik } from "formik";
 import * as yup from "yup";
 import AnimatedDialog from "../../../UI/AnimatedDialog";
 import DialogLogs from "../DialogLogs";
 import SlideIn from "../../../UI/Animations/SlideIn";
-import { appContext } from "../../../../AppContext";
 
 const ipPortRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9]|[1-5](\d){4}|[1-9](\d){0,3})$/;
 const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)+)(:\d+)?(\/[^\s]*)?$/;
@@ -16,7 +15,6 @@ const Host = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<false | string>(false);
   const [shutdown, setShutdown] = useState(false);
-  const { vaultLocked } = useContext(appContext);
 
   const DEFAULT = !loading && !error && !shutdown;
   const RESYNCING = loading && !error && !shutdown;
@@ -32,12 +30,8 @@ const Host = () => {
       <p className="mb-6">
         Please note: <span className="italic"> Transaction history will be wiped during the re-sync, if required, download your transaction history from the Wallet before continuing</span>
       </p>
-      {vaultLocked && (
-        <div className="text-sm text-white mt-6 py-3 px-4 bg-neutral-300/5 rounded-lg text-red-500">
-          To QuickSync, please first unlock your node.
-        </div>
-      )}
-      {!vaultLocked && (
+      
+      
         <Formik
           isInitialValid={false}
           validateOnChange={true}
@@ -233,7 +227,7 @@ const Host = () => {
             </form>
           )}
         </Formik>
-      )}
+
     </SlideIn>
   );
 };
