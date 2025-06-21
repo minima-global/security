@@ -1,3 +1,6 @@
+##### [1.16.0] - 21 Jun 2025
+
+- Added auto-select megammr node functionality when doing a quicksync, restore with seedphrase and quick sync and restore with backup and quick sync
 
 ##### [1.14.2] - 17 Mar 2025
 

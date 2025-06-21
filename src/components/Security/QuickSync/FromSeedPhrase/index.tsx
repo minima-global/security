@@ -7,6 +7,7 @@ import bip39 from "../../../../utils/bip39";
 import EnterSeedPhrase from "./EnterSeedPhrase";
 import DialogLogs from "../DialogLogs";
 import SlideIn from "../../../UI/Animations/SlideIn";
+import AutoSelectNode from "../components/AutoSelectNode";
 
 const ipPortRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9]|[1-5](\d){4}|[1-9](\d){0,3})$/;
 const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)+)(:\d+)?(\/[^\s]*)?$/;
@@ -276,6 +277,7 @@ const FromSeedPhrase = () => {
           values,
           submitForm,
           isSubmitting,
+          setValues,
         }) => (
           <form
             onSubmit={handleSubmit}
@@ -302,9 +304,12 @@ const FromSeedPhrase = () => {
                   className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${values.ip && errors.ip && "!outline !outline-[#FF627E]"
                     }`}
                 />
+
                 {errors.ip && values.ip && (
                   <span className="mt-3 text-[#FF627E]">{errors.ip}</span>
                 )}
+
+                <AutoSelectNode ip={values.ip} setValues={(newValues: { ip: string }) => setValues({ ...values, ip: newValues.ip })} />
 
                 <button
                   onClick={() => setStep(2)}

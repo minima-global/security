@@ -12,6 +12,7 @@ import * as fileManager from "../../../../__minima__/libs/fileManager";
 import TogglePasswordIcon from "../../../UI/TogglePasswordIcon/TogglePasswordIcon";
 import DialogLogs from "../DialogLogs";
 import SlideIn from "../../../UI/Animations/SlideIn";
+import AutoSelectNode from "../components/AutoSelectNode";
 
 const ipPortRegex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?):(6553[0-5]|655[0-2][0-9]|65[0-4][0-9][0-9]|6[0-4][0-9][0-9][0-9]|[1-5](\d){4}|[1-9](\d){0,3})$/;
 const urlRegex = /^(https?:\/\/)?([a-zA-Z0-9\-_]+(\.[a-zA-Z0-9\-_]+)+)(:\d+)?(\/[^\s]*)?$/;
@@ -122,15 +123,14 @@ const FromBackup = () => {
     <SlideIn isOpen={true} delay={0}>
       <h3 className="text-xl mb-2 font-bold">Import a Backup</h3>
       <p>
-      Importing a backup will restore the node to its locked or unlocked state when the backup was taken. QuickSync will ensure your coins are restored and the chain is synced to the latest block (optional but recommended)
+        Importing a backup will restore the node to its locked or unlocked state when the backup was taken. QuickSync will ensure your coins are restored and the chain is synced to the latest block (optional but recommended)
       </p>
       <p className="text-center text-violet-300 mt-3">Step {step}/3</p>
       <div className="grid grid-cols-[auto_16px_auto_16px_auto] my-3 text-center items-center">
         <p
           onClick={() => (!RESYNCING && step === 2 ? setStep(1) : null)}
-          className={`text-xs opacity-50 cursor-pointer ${
-            step === 1 && "opacity-100 text-yellow-300 font-bold"
-          } ${step > 1 && "opacity-100 text-violet-300 font-bold"}`}
+          className={`text-xs opacity-50 cursor-pointer ${step === 1 && "opacity-100 text-yellow-300 font-bold"
+            } ${step > 1 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Back up
         </p>
@@ -139,9 +139,8 @@ const FromBackup = () => {
         </span>
         <p
           onClick={() => (!RESYNCING && step === 3 ? setStep(2) : null)}
-          className={`text-xs opacity-50 cursor-pointer ${
-            step === 2 && "opacity-100 text-yellow-300"
-          } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
+          className={`text-xs opacity-50 cursor-pointer ${step === 2 && "opacity-100 text-yellow-300"
+            } ${step > 2 && "opacity-100 text-violet-300 font-bold"}`}
         >
           Password
         </p>
@@ -149,9 +148,8 @@ const FromBackup = () => {
           <RightArrow />
         </span>
         <p
-          className={`text-xs opacity-50 cursor-pointer ${
-            step === 3 && "opacity-100 text-yellow-300"
-          } ${step > 3 && "opacity-100 text-violet-300 font-bold"}`}
+          className={`text-xs opacity-50 cursor-pointer ${step === 3 && "opacity-100 text-yellow-300"
+            } ${step > 3 && "opacity-100 text-violet-300 font-bold"}`}
         >
           QuickSync
         </p>
@@ -193,14 +191,13 @@ const FromBackup = () => {
                           ? response.error
                           : "Restoring from backup failed, please try again"
                       );
-            
+
                     resolve(response);
                   }
                 );
               } else {
                 (window as any).MDS.cmd(
-                  `megammrsync action:resync file:"${fullPath}" ${ip.length > 0 ? `host:${ip.trim()}` : ""} ${
-                    password.length > 0 ? "password:" + password : ''
+                  `megammrsync action:resync file:"${fullPath}" ${ip.length > 0 ? `host:${ip.trim()}` : ""} ${password.length > 0 ? "password:" + password : ''
                   }`,
                   (resp) => {
                     if (!resp.status)
@@ -209,12 +206,12 @@ const FromBackup = () => {
                           ? resp.error
                           : `Mega node re-sync failed with host:${ip}`
                       );
-  
+
                     resolve(resp);
                   }
                 );
               }
-              
+
             });
 
             setShutdown(true);
@@ -225,7 +222,7 @@ const FromBackup = () => {
             if (typeof error === "string") {
               return setError(
                 error.includes("GZIP") ||
-                error.includes("Incorrect Password!")
+                  error.includes("Incorrect Password!")
                   ? "Incorrect password!"
                   : error
               );
@@ -247,12 +244,12 @@ const FromBackup = () => {
           errors,
           values,
           isSubmitting,
+          setValues,
         }) => (
           <form
             onSubmit={handleSubmit}
-            className={`my-3 core-black-contrast-2 p-4 rounded ${
-              f && "outline outline-none"
-            }`}
+            className={`my-3 core-black-contrast-2 p-4 rounded ${f && "outline outline-none"
+              }`}
           >
             {step === 1 && (
               <div>
@@ -325,16 +322,18 @@ const FromBackup = () => {
                     handleBlur(e);
                     setF(false);
                   }}
-                  placeholder="e.g. 34.32.59.133:9001"
-                  className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${
-                    errors.ip && "!outline !outline-[#FF627E]"
-                  }`}
+                  placeholder="Enter a megammr node"
+                  className={`truncate focus:!outline-violet-300 px-4 py-3 core-black-contrast ${errors.ip && "!outline !outline-[#FF627E]"
+                    }`}
                 />
+
                 {errors.ip && (
                   <span className="mt-3 text-[#FF627E]">{errors.ip}</span>
                 )}
 
-                <button                  
+                <AutoSelectNode ip={values.ip} setValues={(newValues: { ip: string }) => setValues({ ...values, ip: newValues.ip })} />
+
+                <button
                   onClick={() => setConfirm(true)}
                   disabled={!!errors.ip}
                   type="button"
@@ -353,9 +352,8 @@ const FromBackup = () => {
                 </label>
 
                 <div
-                  className={`w-full bg-[#1B1B1B] grid grid-cols-[1fr_auto] ${
-                    errors.password && "!outline !outline-[#FF627E]"
-                  } ${f && "outline outline-violet-300"} rounded`}
+                  className={`w-full bg-[#1B1B1B] grid grid-cols-[1fr_auto] ${errors.password && "!outline !outline-[#FF627E]"
+                    } ${f && "outline outline-violet-300"} rounded`}
                 >
                   <input
                     id="password"
@@ -386,8 +384,8 @@ const FromBackup = () => {
                   Keep the field empty if you haven't set any.
                 </p>
 
-                <button   
-                  onClick={() => setStep(3)}               
+                <button
+                  onClick={() => setStep(3)}
                   disabled={!!errors.password}
                   type="button"
                   className="bg-white text-black w-full mt-4 font-bold hover:bg-opacity-80 disabled:opacity-10"
@@ -415,7 +413,7 @@ const FromBackup = () => {
                   {DEFAULT && (
                     <p className="text-sm my-3">
                       {!values.ip.length && "This will restore the backup and attempt to sync to the latest block. If not using QuickSync and the backup is old or was taken when out of sync with the chain, it may not be possible to sync to the latest block. Continue?"}
-                      {!!values.ip.length && "This will restore the backup and attempt to re-sync the chain to the latest block using the QuickSync host provided.” Continue?"}                      
+                      {!!values.ip.length && "This will restore the backup and attempt to re-sync the chain to the latest block using the QuickSync host provided.” Continue?"}
                     </p>
                   )}
                   {SUCCESS && (
@@ -442,7 +440,7 @@ const FromBackup = () => {
                           type="button"
                           onClick={() => {
                             setConfirm(false);
-                            setError(false);                            
+                            setError(false);
                           }}
                         >
                           Dismiss
